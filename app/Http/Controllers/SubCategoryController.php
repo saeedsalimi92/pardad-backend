@@ -21,6 +21,11 @@ class SubCategoryController extends Controller
 
         return response()->json($subcategory);
     }
+    public function indexByParent(Request $request)
+    {
+        $subcategory = SubCategory::where('parent_id', $request->parent_id)->paginate(15);
+        return response()->json($subcategory);
+    }
 
     public function list()
     {

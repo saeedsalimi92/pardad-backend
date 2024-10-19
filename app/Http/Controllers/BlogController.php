@@ -23,6 +23,53 @@ class BlogController extends Controller
 
         return response()->json($blog);
     }
+    public function indexByParent(Request $request)
+    {
+        $blog = Blog::where('parent_id', $request->parent_id)->orderBy('created_at', 'desc')->paginate(15);
+        foreach ($blog as $item){
+            $image = (new ImagesController)->showByParent('blog' , $item->id);
+            $item->images = json_decode($image);
+        }
+
+        return response()->json($blog);
+    }
+    public function list()
+    {
+
+        $category = Blog::all();
+        $data = [];
+
+        foreach ($category as $item){
+
+            $data[] = (object) [
+                'label' => $item->title,
+                'value' => $item->id
+            ];
+
+        }
+        return response()->json($data);
+    }
+
+
+    public function listByParent(Request $request)
+    {
+
+        $category = Blog::where('parent_id', $request->parent_id)->get();
+
+
+        $data = [];
+
+        foreach ($category as $item){
+
+            $data[] = (object) [
+                'label' => $item->title,
+                'value' => $item->id
+            ];
+
+        }
+
+        return response()->json($data);
+    }
 
     public function store(Request $request)
     {

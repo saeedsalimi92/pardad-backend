@@ -71,6 +71,9 @@ Route::delete('/product/{product}/images/{id}',[ProductController::class, 'delet
 Route::get('/blog', [BlogController::class, 'index']);
 Route::get('/blog/{id}', [BlogController::class, 'show']);
 Route::post('/blog', [BlogController::class, 'store']);
+Route::get('/list/blog', [BlogController::class, 'list']);
+Route::get('/list/blog/{parent_id}', [BlogController::class, 'listByParent']);
+Route::get('/blog/list/{parent_id}', [BlogController::class, 'indexByParent']);
 Route::post('/blog/{id}', [BlogController::class, 'update']);
 Route::delete('/blog/{id}', [BlogController::class, 'destroy']);
 Route::post('/blog/{id}/images',[BlogController::class, 'updateImages']);
@@ -92,7 +95,7 @@ Route::get('/sub-category', [SubCategoryController::class, 'index']);
 Route::get('/sub-category/{id}', [SubCategoryController::class, 'show']);
 Route::get('/list/sub-category', [SubCategoryController::class, 'list']);
 Route::get('/list/sub-category/{parent_id}', [SubCategoryController::class, 'listByParent']);
-Route::get('/sub-category/list', [SubCategoryController::class, 'list']);
+Route::get('/sub-category/list/{parent_id}', [SubCategoryController::class, 'indexByParent']);
 Route::post('/sub-category', [SubCategoryController::class, 'store']);
 Route::post('/sub-category/{id}', [SubCategoryController::class, 'update']);
 Route::delete('/sub-category/{id}', [SubCategoryController::class, 'destroy']);
