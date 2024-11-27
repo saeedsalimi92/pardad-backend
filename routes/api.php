@@ -15,6 +15,7 @@ use App\Http\Controllers\ProductController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -138,6 +139,10 @@ Route::delete('/tags/{id}', [TagController::class, 'destroy']);
 
 
 Route::get('/logo', [LogoController::class, 'index']);
+Route::get('/storage', function () {
+
+    Artisan::call('storage:link');
+});
 Route::get('/logo/{id}', [LogoController::class, 'show']);
 Route::post('/logo', [LogoController::class, 'store']);
 Route::delete('/logo/{id}', [LogoController::class, 'destroy']);

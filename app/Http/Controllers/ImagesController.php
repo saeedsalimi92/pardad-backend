@@ -219,7 +219,7 @@ class ImagesController extends Controller
         $image = new Images();
 
         $image->name = $fileNameToStore;
-        $image->src = 'http://localhost:8000/' . $path;
+        $image->src = env('') . $path;
         $image->isActive = true;
         $image->status = $image->status = 'accepted';
         $image->type = 0;

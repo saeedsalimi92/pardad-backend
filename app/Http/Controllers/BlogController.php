@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 
 use App\Models\Category;
-use App\Models\subCategory;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Psy\Util\Json;
@@ -89,7 +89,7 @@ class BlogController extends Controller
             return response()->json(['error' => $error], 400);
         }
 
-        $subCategory = subCategory::find($request->parent_id);
+        $subCategory = SubCategory::find($request->parent_id);
         if (!empty($subCategory)) {
             $blog = new Blog;
             $blog->title = $request->title;
