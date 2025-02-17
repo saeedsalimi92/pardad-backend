@@ -27,6 +27,7 @@ return new class extends Migration
             $table->longText('meta_title')->nullable();
             $table->string('no_index')->nullable();
             $table->longText('canonical')->nullable();
+            $table->string('url')->nullable();
             $table->timestamps();
         });
     }

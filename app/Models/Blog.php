@@ -27,6 +27,7 @@ class Blog extends Model
         'parent_id',
         'logos',
         'canonical',
-        'mo_index',
+        'no_index',
+        'url'
     ];
 }

@@ -36,8 +36,10 @@ class SubCategoryController extends Controller
         foreach ($category as $item){
 
             $data[] = (object) [
-                'label' => $item->title,
-                'value' => $item->id
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
             ];
 
         }
@@ -56,8 +58,10 @@ class SubCategoryController extends Controller
         foreach ($category as $item){
 
             $data[] = (object) [
-                'label' => $item->title,
-                'value' => $item->id
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
             ];
 
         }
@@ -75,7 +79,10 @@ class SubCategoryController extends Controller
     }
     public function store(Request $request)
     {
-        $data = [];
+        $data = $request->all();
+        $data['url'] = $this->generateUrl($request->url, $request->title);
+
+
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:4',
             'subtitle' => 'required|min:4',
@@ -85,13 +92,14 @@ class SubCategoryController extends Controller
 
         if ($validator->fails()) {
             $error = $validator->errors()->first();
-            return response()->json(['message' => $error], 400);
+            return response()->json(['message' => $error], 422);
         }
 
         $category = Category::find($request->parent_id);
         if (!empty($category)) {
             $subcategory = new SubCategory;
             $subcategory->title = $request->title;
+            $subcategory->url = $data['url'];
             $subcategory->en_title = is_null($request->en_title) ? '' : $request->en_title;
             $subcategory->en_subtitle = is_null($request->en_subtitle) ? '' : $request->en_subtitle;
             $subcategory->subtitle = is_null($request->subtitle) ? '' : $request->subtitle;
@@ -157,6 +165,9 @@ class SubCategoryController extends Controller
     {
         if (SubCategory::where('id', $id)->exists()) {
             $subcategory = SubCategory::find($id);
+            $data = $request->all();
+            $data['url'] = $this->generateUrl($request->url, $request->title);
+            $subcategory->url = $data['url'];
             $subcategory->title = is_null($request->title) ? $subcategory->title : $request->title;
             $subcategory->en_title = is_null($request->en_title) ? $subcategory->en_title : $request->en_title;
             $subcategory->en_subtitle = is_null($request->en_subtitle) ? $subcategory->en_subtitle : $request->en_subtitle;
@@ -290,5 +301,10 @@ class SubCategoryController extends Controller
                 "message" => " زیر شاخه یافت نشد."
             ], 404);
         }
+    }
+
+    private function generateUrl($url, $title)
+    {
+        return $url ? str_replace(' ', '-', $url) : str_replace(' ', '-', $title);
     }
 }

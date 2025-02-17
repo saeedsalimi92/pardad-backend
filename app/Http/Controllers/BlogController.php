@@ -42,8 +42,10 @@ class BlogController extends Controller
         foreach ($category as $item){
 
             $data[] = (object) [
-                'label' => $item->title,
-                'value' => $item->id
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
             ];
 
         }
@@ -62,8 +64,10 @@ class BlogController extends Controller
         foreach ($category as $item){
 
             $data[] = (object) [
-                'label' => $item->title,
-                'value' => $item->id
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
             ];
 
         }
@@ -73,7 +77,9 @@ class BlogController extends Controller
 
     public function store(Request $request)
     {
-        $data = [];
+        $data = $request->all();
+        $data['url'] = $this->generateUrl($request->url, $request->title);
+
 
 
 
@@ -82,17 +88,19 @@ class BlogController extends Controller
             'subtitle' => 'required|min:4',
             'description' => 'required|min:4',
             'parent_id' => 'required',
+
         ]);
 
         if ($validator->fails()) {
             $error = $validator->errors()->first();
-            return response()->json(['error' => $error], 400);
+            return response()->json(['message' => $error], 422);
         }
 
         $subCategory = SubCategory::find($request->parent_id);
         if (!empty($subCategory)) {
             $blog = new Blog;
             $blog->title = $request->title;
+            $blog->url = $data['url'];
             $blog->en_title = is_null($request->en_title) ? '' : $request->en_title;
             $blog->en_subtitle = is_null($request->en_subtitle) ? '' : $request->en_subtitle;
             $blog->subtitle = is_null($request->subtitle) ? '' : $request->subtitle;
@@ -172,6 +180,10 @@ class BlogController extends Controller
         if (Blog::where('id', $id)->exists()) {
             $blog = Blog::find($id);
             $blog->title = is_null($request->title) ? $blog->title : $request->title;
+
+            $data = $request->all();
+            $data['url'] = $this->generateUrl($request->url, $request->title);
+            $blog->url = $data['url'];
             $blog->en_title = is_null($request->en_title) ? $blog->en_title : $request->en_title;
             $blog->en_subtitle = is_null($request->en_subtitle) ? $blog->en_subtitle : $request->en_subtitle;
             $blog->subtitle = is_null($request->subtitle) ? $blog->subtitle : $request->subtitle;
@@ -307,5 +319,10 @@ class BlogController extends Controller
                 "message" => " بلاگ یافت نشد."
             ], 404);
         }
+    }
+
+    private function generateUrl($url, $title)
+    {
+        return $url ? str_replace(' ', '-', $url) : str_replace(' ', '-', $title);
     }
 }

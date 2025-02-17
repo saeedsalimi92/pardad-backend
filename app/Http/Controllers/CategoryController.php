@@ -33,8 +33,10 @@ class CategoryController extends Controller
         foreach ($category as $item){
 
             $data[] = (object) [
-                'label' => $item->title,
-                'value' => $item->id
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
             ];
 
         }
@@ -43,7 +45,8 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        $data = [];
+        $data = $request->all();
+        $data['url'] = $this->generateUrl($request->url, $request->title);
 
 
         $validator = Validator::make($request->all(), [
@@ -51,15 +54,15 @@ class CategoryController extends Controller
             'subtitle' => 'required|min:4',
             'description' => 'required|min:4',
         ]);
-
         if ($validator->fails()) {
             $error = $validator->errors()->first();
-            return response()->json(['error' => $error], 400);
+            return response()->json(['message' => $error], 422);
         }
 
 
         $category = new Category;
         $category->title = $request->title;
+        $category->url = $data['url'];
         $category->en_title = is_null($request->en_title) ? '' : $request->en_title;
         $category->en_subtitle = is_null($request->en_subtitle) ? '' : $request->en_subtitle;
         $category->subtitle = is_null($request->subtitle) ? '' : $request->subtitle;
@@ -122,6 +125,9 @@ class CategoryController extends Controller
     {
         if (Category::where('id', $id)->exists()) {
             $category = Category::find($id);
+            $data = $request->all();
+            $data['url'] = $this->generateUrl($request->url, $request->title);
+            $category->url = $data['url'];
             $category->title = is_null($request->title) ? $category->title : $request->title;
             $category->en_title = is_null($request->en_title) ? $category->en_title : $request->en_title;
             $category->en_subtitle = is_null($request->en_subtitle) ? $category->en_subtitle : $request->en_subtitle;
@@ -146,6 +152,10 @@ class CategoryController extends Controller
         }
     }
 
+    private function generateUrl($url, $title)
+    {
+        return $url ? str_replace(' ', '-', $url) : str_replace(' ', '-', $title);
+    }
     public function updateLogos(Request $request, $id)
     {
         if (Category::where('id', $id)->exists()) {
