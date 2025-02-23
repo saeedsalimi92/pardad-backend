@@ -23,6 +23,6 @@ class subCategory extends Model
         'parent_id',
         'logos',
         'canonical',
-        'mo_index',
+        'no_index',
     ];
 }

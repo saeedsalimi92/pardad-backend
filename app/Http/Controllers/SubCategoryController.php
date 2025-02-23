@@ -73,7 +73,6 @@ class SubCategoryController extends Controller
         $data = [];
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:4',
-            'subtitle' => 'required|min:4',
             'description' => 'required|min:4',
             'parent_id' => 'required',
         ]);

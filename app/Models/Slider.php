@@ -23,6 +23,6 @@ class Slider extends Model
         'meta_title',
         'priority',
         'canonical',
-        'mo_index',
+        'no_index',
     ];
 }

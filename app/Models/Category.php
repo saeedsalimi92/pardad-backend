@@ -22,6 +22,6 @@ class Category extends Model
         'meta_title',
         'logos',
         'canonical',
-        'mo_index',
+        'no_index',
     ];
 }
