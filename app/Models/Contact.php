@@ -32,6 +32,6 @@ class Contact extends Model
         'email',
         'email2',
         'canonical',
-        'mo_index',
+        'no_index',
     ];
 }

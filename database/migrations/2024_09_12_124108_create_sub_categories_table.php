@@ -14,20 +14,20 @@ return new class extends Migration
         Schema::create('sub_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('en_title');
-            $table->string('subtitle');
-            $table->string('en_subtitle');
+            $table->string('en_title')->nullable();
+            $table->string('subtitle')->nullable();
+            $table->string('en_subtitle')->nullable();
             $table->longText('description');
-            $table->longText('en_description');
+            $table->longText('en_description')->nullable();
+            $table->integer('parent_id')->nullable();
             $table->string('status');
-            $table->string('parent_id')->nullable();
             $table->json('images');
             $table->json('logos');
             $table->longText('meta_description')->nullable();
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_title')->nullable();
-            $table->string('no_index')->nullable();
             $table->longText('canonical')->nullable();
+            $table->string('no_index');
             $table->string('url')->nullable();
             $table->timestamps();
         });

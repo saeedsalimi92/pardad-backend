@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Validator;
 
@@ -77,61 +78,81 @@ class SubCategoryController extends Controller
 
         return response()->json($category);
     }
+
     public function store(Request $request)
     {
-        $data = $request->all();
-        $data['url'] = $this->generateUrl($request->url, $request->title);
 
 
+        // پیام‌های خطا
+        $messages = [
+            'title.required' => 'عنوان الزامی است.',
+            'title.min' => 'عنوان باید حداقل ۴ کاراکتر باشد.',
+            'description.required' => 'توضیحات الزامی است.',
+            'description.min' => 'توضیحات باید حداقل ۴ کاراکتر باشد.',
+            'parent_id.required' => 'دسته بندی الزامی است.',
+
+        ];
+
+        // اعتبارسنجی فیلدهای الزامی
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:4',
-            'subtitle' => 'required|min:4',
-            'description' => 'required|min:4',
             'parent_id' => 'required',
-        ]);
+            'description' => 'required|min:4',
+        ], $messages);
 
+        // اگر اعتبارسنجی با خطا مواجه شد
         if ($validator->fails()) {
             $error = $validator->errors()->first();
             return response()->json(['message' => $error], 422);
         }
+        $data = [];
+        // تولید URL
+        $data['url'] = $this->generateUrl($request->url, $request->title);
+        $image = [];
 
-        $category = Category::find($request->parent_id);
-        if (!empty($category)) {
-            $subcategory = new SubCategory;
-            $subcategory->title = $request->title;
-            $subcategory->url = $data['url'];
-            $subcategory->en_title = is_null($request->en_title) ? '' : $request->en_title;
-            $subcategory->en_subtitle = is_null($request->en_subtitle) ? '' : $request->en_subtitle;
-            $subcategory->subtitle = is_null($request->subtitle) ? '' : $request->subtitle;
-            $subcategory->description = is_null($request->description) ? '' : $request->description;
-            $subcategory->en_description = is_null($request->en_description) ? '' : $request->en_description;
-            $subcategory->parent_id = is_null($request->parent_id) ? '' : $request->parent_id;
-            $subcategory->images = json_encode($data);
-            $subcategory->logos = json_encode($data);
-            $subcategory->status = is_null($request->status) ? 0 : $request->status;
-            $subcategory->meta_description = is_null($request->meta_description) ? '' : $request->meta_description;
-            $subcategory->meta_title = is_null($request->meta_title) ? '' : $request->meta_title;
-            $subcategory->meta_keywords = is_null($request->meta_keywords) ? '' : $request->meta_keywords;
-            $subcategory->canonical = is_null($request->canonical) ? '' : $request->canonical;
-            $subcategory->no_index = is_null($request->no_index) ? '' : $request->no_index;
+        $subCategory = Category::find($request->parent_id);
+        if (!empty($subCategory)) {
+            $category = new SubCategory();
+            $category->title = $request->title;
+            $category->url = $data['url'];
+            $category->description = $request->description;
 
-            $subcategory->save();
-            $id = $subcategory->latest()->first()->id;
+            // تنظیم مقادیر پیش‌فرض برای فیلدهای اختیاری
+            $category->en_title = $request->en_title ?? '';
+            $category->en_subtitle = $request->en_subtitle ?? '';
+            $category->subtitle = $request->subtitle ?? '';
+            $category->en_description = $request->en_description ?? '';
+            $category->status = $request->status ?? 'inactive';
+            $category->meta_description = $request->meta_description ?? '';
+            $category->meta_title = $request->meta_title ?? '';
+            $category->parent_id = $request->parent_id ?? '';
+            $category->meta_keywords = $request->meta_keywords ?? '';
+            $category->canonical = $request->canonical ?? '';
+            $category->no_index = $request->no_index ?? 'inactive';
+            $category->images = json_encode($image);
+            $category->logos = json_encode($image);
+            $category->save();
+
+            $id = $category->latest()->first()->id;
             if ($files = $request->file('image')) {
                 foreach ($files as $file) {
-                    $path = (new ImagesController)->store($file, 'images', 'subcategory', $id);
-                    $data['images'][] = $path->original;
+                    $path = (new ImagesController)->store($file, 'images', 'category', $id);
+                    $image['images'][] = $path->original;
                 }
             }
-            $subcategory->images = json_encode($data);
+            $category->images = json_encode($image);
 
-            $subcategory->save();
+            $category->save();
             return response()->json([
-                "message" => " دسته بندی با موفقیت اضافه شد."
+                "message" => " زیر شاخه با موفقیت اضافه شد."
             ], 201);
         }else{
-            return response()->json(['message' => 'دسته بندی الزامی است.'], 400);
+            return response()->json([
+                "message" => " شناسه دسته بندی یافت نشد."
+            ], 404);
         }
+
+
     }
 
     public function show($id)
@@ -153,6 +174,7 @@ class SubCategoryController extends Controller
 
             $subcategory->logos_image = $data;
 
+
             return response()->json($subcategory);
         } else {
             return response()->json([
@@ -163,25 +185,53 @@ class SubCategoryController extends Controller
 
     public function update(Request $request, $id)
     {
+
+        // پیام‌های خطا
+        $messages = [
+            'title.required' => 'عنوان الزامی است.',
+            'title.min' => 'عنوان باید حداقل ۴ کاراکتر باشد.',
+            'description.required' => 'توضیحات الزامی است.',
+            'description.min' => 'توضیحات باید حداقل ۴ کاراکتر باشد.',
+            'parent_id.required' => 'دسته بندی الزامی است.',
+
+        ];
+
+        // اعتبارسنجی فیلدهای الزامی
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|min:4',
+            'parent_id' => 'required',
+            'description' => 'required|min:4',
+        ], $messages);
+
+        // اگر اعتبارسنجی با خطا مواجه شد
+        if ($validator->fails()) {
+            $error = $validator->errors()->first();
+            return response()->json(['message' => $error], 422);
+        }
         if (SubCategory::where('id', $id)->exists()) {
             $subcategory = SubCategory::find($id);
+
+
+
             $data = $request->all();
             $data['url'] = $this->generateUrl($request->url, $request->title);
             $subcategory->url = $data['url'];
-            $subcategory->title = is_null($request->title) ? $subcategory->title : $request->title;
-            $subcategory->en_title = is_null($request->en_title) ? $subcategory->en_title : $request->en_title;
-            $subcategory->en_subtitle = is_null($request->en_subtitle) ? $subcategory->en_subtitle : $request->en_subtitle;
-            $subcategory->subtitle = is_null($request->subtitle) ? $subcategory->subtitle : $request->subtitle;
-            $subcategory->en_description = is_null($request->en_description) ? $subcategory->en_description : $request->en_description;
-            $subcategory->description = is_null($request->description) ? $subcategory->description : $request->description;
-            $subcategory->status = is_null($request->status) ? $subcategory->status : $request->status;
+            $subcategory->title = $request->has('title') ? (!empty($request->title) ? $request->title : '') : ($subcategory->title ?? '');
+            $subcategory->en_title = $request->has('en_title') ? (!empty($request->en_title) ? $request->en_title : '') : ($subcategory->en_title ?? '');
+            $subcategory->en_subtitle = $request->has('en_subtitle') ? (!empty($request->en_subtitle) ? $request->en_subtitle : '') : ($subcategory->en_subtitle ?? '');
+            $subcategory->subtitle = $request->has('subtitle') ? (!empty($request->subtitle) ? $request->subtitle : '') : $subcategory->subtitle;
+            $subcategory->en_description = $request->has('en_description') ? (!empty($request->en_description) ? $request->en_description : '') : $subcategory->en_description;
+            $subcategory->description = $request->has('description') ? (!empty($request->description) ? $request->description : '') : $subcategory->description;
+            $subcategory->meta_description = $request->has('meta_description') ? (!empty($request->meta_description) ? $request->meta_description : '') : $subcategory->meta_description;
+            $subcategory->meta_title = $request->has('meta_title') ? (!empty($request->meta_title) ? $request->meta_title : '') : $subcategory->meta_title;
+            $subcategory->meta_keywords = $request->has('meta_keywords') ? (!empty($request->meta_keywords) ? $request->meta_keywords : '') : $subcategory->meta_keywords;
+            $subcategory->canonical = $request->has('canonical') ? (!empty($request->canonical) ? $request->canonical : '') : $subcategory->canonical;
+            $subcategory->no_index = $request->has('no_index') ? (!empty($request->no_index) ? $request->no_index : 'inactive') : $subcategory->no_index;
+            $subcategory->status = $request->has('status') ? (!empty($request->status) ? $request->status : 'inactive') : $subcategory->status;
+            $subcategory->parent_id = $request->has('parent_id') ? (!empty($request->parent_id) ? $request->parent_id : '') : $subcategory->parent_id;
 
-            $subcategory->parent_id = is_null($request->parent_id) ? '' : $request->parent_id;
-            $subcategory->meta_description = is_null($request->meta_description) ? '' : $request->meta_description;
-            $subcategory->meta_title = is_null($request->meta_title) ? '' : $request->meta_title;
-            $subcategory->meta_keywords = is_null($request->meta_keywords) ? '' : $request->meta_keywords;
-            $subcategory->canonical = is_null($request->canonical) ? '' : $request->canonical;
-            $subcategory->no_index = is_null($request->no_index) ? '' : $request->no_index;
+
+
             $subcategory->save();
             return response()->json([
                 "message" => " زیر شاخه با موفقیت بروزرسانی شد"

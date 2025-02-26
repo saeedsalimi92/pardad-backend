@@ -77,69 +77,82 @@ class BlogController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all();
-        $data['url'] = $this->generateUrl($request->url, $request->title);
 
+        $messages = [
+            'title.required' => 'عنوان الزامی است.',
+            'title.min' => 'عنوان باید حداقل ۴ کاراکتر باشد.',
+            'description.required' => 'توضیحات الزامی است.',
+            'description.min' => 'توضیحات باید حداقل ۴ کاراکتر باشد.',
+            'parent_id.required' => 'زیرشاخه الزامی است.',
 
+        ];
 
-
+        // اعتبارسنجی فیلدهای الزامی
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:4',
-            'subtitle' => 'required|min:4',
-            'description' => 'required|min:4',
             'parent_id' => 'required',
+            'description' => 'required|min:4',
+        ], $messages);
 
-        ]);
-
+        // اگر اعتبارسنجی با خطا مواجه شد
         if ($validator->fails()) {
             $error = $validator->errors()->first();
             return response()->json(['message' => $error], 422);
         }
+
+        $data = [];
+        // تولید URL
+        $data['url'] = $this->generateUrl($request->url, $request->title);
+        $image = [];
+
+
+
+
+
 
         $subCategory = SubCategory::find($request->parent_id);
         if (!empty($subCategory)) {
             $blog = new Blog;
             $blog->title = $request->title;
             $blog->url = $data['url'];
-            $blog->en_title = is_null($request->en_title) ? '' : $request->en_title;
-            $blog->en_subtitle = is_null($request->en_subtitle) ? '' : $request->en_subtitle;
-            $blog->subtitle = is_null($request->subtitle) ? '' : $request->subtitle;
-            $blog->description = is_null($request->description) ? '' : $request->description;
-            $blog->en_description = is_null($request->en_description) ? '' : $request->en_description;
-            $blog->instagram = is_null($request->instagram) ? '' : $request->instagram;
-            $blog->telegram = is_null($request->telegram) ? '' : $request->telegram;
-            $blog->whatsapp = is_null($request->whatsapp) ? '' : $request->whatsapp;
-            $blog->author = is_null($request->author) ? '' : $request->author;
-            $blog->parent_id = is_null($request->parent_id) ? '' : $request->parent_id;
-            $blog->images =  json_encode($data);
-            $blog->logos =  json_encode($data);
-            $blog->status = is_null($request->status) ? 0 : $request->status;
-            $blog->meta_description = is_null($request->meta_description) ? '' : $request->meta_description;
-            $blog->meta_title = is_null($request->meta_title) ? '' : $request->meta_title;
-            $blog->meta_keywords = is_null($request->meta_keywords) ? '' : $request->meta_keywords;
-            $blog->canonical = is_null($request->canonical) ? '' : $request->canonical;
-            $blog->no_index = is_null($request->no_index) ? '' : $request->no_index;
-
+            $blog->en_title = $request->en_title ?? '';
+            $blog->title = $request->title ?? '';
+            $blog->en_subtitle = $request->en_subtitle ?? '';
+            $blog->subtitle = $request->subtitle ?? '';
+            $blog->en_description = $request->en_description ?? '';
+            $blog->description = $request->description ?? '';
+            $blog->status = $request->status ?? 'inactive';
+            $blog->meta_description = $request->meta_description ?? '';
+            $blog->meta_title = $request->meta_title ?? '';
+            $blog->meta_keywords = $request->meta_keywords ?? '';
+            $blog->canonical = $request->canonical ?? '';
+            $blog->no_index = $request->no_index ?? 'inactive';
+            $blog->parent_id = $request->parent_id ?? '';
+            $blog->images =  json_encode($image);
+            $blog->logos =  json_encode($image);
+            $blog->instagram = $request->instagram ?? '';
+            $blog->telegram = $request->telegram ?? '';
+            $blog->whatsapp = $request->whatsapp ?? '';
+            $blog->author = $request->author ?? '';
             $blog->save();
+
+
+
             $id = $blog->latest()->first()->id;
-            if($files = $request->file('image')){
-                foreach($files as $file){
-                    $path = (new ImagesController)->store($file , 'images' ,'blog' , $id);
-                    $data['images'][] = $path->original;
+            if ($files = $request->file('image')) {
+                foreach ($files as $file) {
+                    $path = (new ImagesController)->store($file, 'images', 'category', $id);
+                    $image['images'][] = $path->original;
                 }
             }
-            $blog->images = json_encode($data);
+            $blog->images = json_encode($image);
 
-            $blog->save();
             return response()->json([
                 "message" => " بلاگ با موفقیت اضافه شد."
             ], 201);
         }else{
-            return response()->json(['error' => 'زیر شاخه الزامی است.'], 400);
+            return response()->json(['error' => 'شناسه ریز شاخه یافت نشد.'], 422);
         }
-
-
-
 
     }
 
@@ -156,6 +169,7 @@ class BlogController extends Controller
 
             $blog->images = json_decode($image);
             $blog->logos = is_null($blog->logos) ? Null: json_decode($blog->logos);
+
 
             foreach ($blog->logos as $item){
                 $logos = (new LogoController)->show($item);
@@ -179,27 +193,31 @@ class BlogController extends Controller
     {
         if (Blog::where('id', $id)->exists()) {
             $blog = Blog::find($id);
-            $blog->title = is_null($request->title) ? $blog->title : $request->title;
-
             $data = $request->all();
             $data['url'] = $this->generateUrl($request->url, $request->title);
             $blog->url = $data['url'];
-            $blog->en_title = is_null($request->en_title) ? $blog->en_title : $request->en_title;
-            $blog->en_subtitle = is_null($request->en_subtitle) ? $blog->en_subtitle : $request->en_subtitle;
-            $blog->subtitle = is_null($request->subtitle) ? $blog->subtitle : $request->subtitle;
-            $blog->en_description = is_null($request->en_description) ? $blog->en_description : $request->en_description;
-            $blog->description = is_null($request->description) ? $blog->description : $request->description;
-            $blog->status = is_null($request->status) ? $blog->status : $request->status;
-            $blog->instagram = is_null($request->instagram) ? $blog->instagram : $request->instagram;
-            $blog->telegram = is_null($request->telegram) ? $blog->telegram : $request->telegram;
-            $blog->whatsapp = is_null($request->whatsapp) ? $blog->whatsapp : $request->whatsapp;
-            $blog->parent_id = is_null($request->parent_id) ? '' : $request->parent_id;
-            $blog->author = is_null($request->author) ? $blog->author : $request->author;
-            $blog->meta_description = is_null($request->meta_description) ? '' : $request->meta_description;
-            $blog->meta_title = is_null($request->meta_title) ? '' : $request->meta_title;
-            $blog->meta_keywords = is_null($request->meta_keywords) ? '' : $request->meta_keywords;
-            $blog->canonical = is_null($request->canonical) ? '' : $request->canonical;
-            $blog->no_index = is_null($request->no_index) ? '' : $request->no_index;
+            $blog->title = $request->has('title') ? (!empty($request->title) ? $request->title : '') : ($blog->title ?? '');
+            $blog->en_title = $request->has('en_title') ? (!empty($request->en_title) ? $request->en_title : '') : ($blog->en_title ?? '');
+            $blog->en_subtitle = $request->has('en_subtitle') ? (!empty($request->en_subtitle) ? $request->en_subtitle : '') : ($blog->en_subtitle ?? '');
+            $blog->subtitle = $request->has('subtitle') ? (!empty($request->subtitle) ? $request->subtitle : '') : $blog->subtitle;
+            $blog->en_description = $request->has('en_description') ? (!empty($request->en_description) ? $request->en_description : '') : $blog->en_description;
+            $blog->description = $request->has('description') ? (!empty($request->description) ? $request->description : '') : $blog->description;
+            $blog->meta_description = $request->has('meta_description') ? (!empty($request->meta_description) ? $request->meta_description : '') : $blog->meta_description;
+            $blog->meta_title = $request->has('meta_title') ? (!empty($request->meta_title) ? $request->meta_title : '') : $blog->meta_title;
+            $blog->meta_keywords = $request->has('meta_keywords') ? (!empty($request->meta_keywords) ? $request->meta_keywords : '') : $blog->meta_keywords;
+            $blog->canonical = $request->has('canonical') ? (!empty($request->canonical) ? $request->canonical : '') : $blog->canonical;
+            $blog->no_index = $request->has('no_index') ? (!empty($request->no_index) ? $request->no_index : 'inactive') : $blog->no_index;
+            $blog->status = $request->has('status') ? (!empty($request->status) ? $request->status : 'inactive') : $blog->status;
+            $blog->parent_id = $request->has('parent_id') ? (!empty($request->parent_id) ? $request->parent_id : '') : $blog->parent_id;
+            $blog->telegram = $request->has('telegram') ? (!empty($request->telegram) ? $request->telegram : '') : $blog->telegram;
+            $blog->instagram = $request->has('instagram') ? (!empty($request->instagram) ? $request->instagram : '') : $blog->instagram;
+            $blog->whatsapp = $request->has('whatsapp') ? (!empty($request->whatsapp) ? $request->whatsapp : '') : $blog->whatsapp;
+            $blog->author = $request->has('author') ? (!empty($request->author) ? $request->author : '') : $blog->author;
+
+
+
+
+
             $blog->save();
             return response()->json([
                 "message" => " بلاگ با موفقیت بروزرسانی شد"

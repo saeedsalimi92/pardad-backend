@@ -4,14 +4,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LogoController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SliderController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MenuController;
 
 use Illuminate\Http\Request;
@@ -32,44 +29,6 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/menu', [MenuController::class, 'getMenu']);
-
-
-/*Route::get('/users', [UsersController::class, 'index']);
-Route::get('/users/{id}', [UsersController::class, 'show']);
-Route::post('/users', [UsersController::class, 'store']);
-Route::post('/users/{id}', [UsersController::class, 'update']);
-Route::delete('/users/{id}', [UsersController::class, 'destroy']);
-Route::post('/users/{id}/images',[UsersController::class, 'updateImages']);
-Route::delete('/users/{user}/images/{id}',[UsersController::class, 'deleteImage']);
-*/
-
-Route::get('/slider', [SliderController::class, 'index']);
-Route::get('/slider/list', [SliderController::class, 'list']);
-Route::get('/slider/{id}', [SliderController::class, 'show']);
-Route::get('/slider/{id}/list', [SliderController::class, 'singleList']);
-Route::post('/slider', [SliderController::class, 'store']);
-Route::post('/slider/{id}', [SliderController::class, 'update']);
-Route::delete('/slider/{id}', [SliderController::class, 'destroy']);
-Route::post('/slider/{id}/images',[SliderController::class, 'updateImages']);
-Route::delete('/slider/{slider}/images/{id}',[SliderController::class, 'deleteImage']);
-
-
-Route::get('/service', [ServiceController::class, 'index']);
-Route::get('/service/{id}', [ServiceController::class, 'show']);
-Route::post('/service', [ServiceController::class, 'store']);
-Route::post('/service/{id}', [ServiceController::class, 'update']);
-Route::delete('/service/{id}', [ServiceController::class, 'destroy']);
-Route::post('/service/{id}/images',[ServiceController::class, 'updateImages']);
-Route::delete('/service/{service}/images/{id}',[ServiceController::class, 'deleteImage']);
-
-
-Route::get('/product', [ProductController::class, 'index']);
-Route::get('/product/{id}', [ProductController::class, 'show']);
-Route::post('/product', [ProductController::class, 'store']);
-Route::post('/product/{id}', [ProductController::class, 'update']);
-Route::delete('/product/{id}', [ProductController::class, 'destroy']);
-Route::post('/product/{id}/images',[ProductController::class, 'updateImages']);
-Route::delete('/product/{product}/images/{id}',[ProductController::class, 'deleteImage']);
 
 
 Route::get('/blog', [BlogController::class, 'index']);

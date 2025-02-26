@@ -25,6 +25,7 @@ class Teams extends Model
         'meta_keywords',
         'meta_title',
         'canonical',
-        'mo_index',
+        'no_index',
+        'url'
     ];
 }
