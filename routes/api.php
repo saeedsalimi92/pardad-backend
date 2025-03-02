@@ -10,6 +10,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\UploadController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,10 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/menu', [MenuController::class, 'getMenu']);
+
+Route::post('/upload-image', [UploadController::class , 'uploadImage']);
+Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
+
 
 
 Route::get('/blog', [BlogController::class, 'index']);
