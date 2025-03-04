@@ -22,6 +22,20 @@ class SubCategoryController extends Controller
 
         return response()->json($subcategory);
     }
+
+    public function client_Index()
+    {
+        $subcategory = SubCategory::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        foreach ($subcategory as $item) {
+            $image = (new ImagesController)->showByParent('subcategory', $item->id);
+            $item->images = json_decode($image);
+        }
+
+        return response()->json($subcategory);
+    }
+
     public function indexByParent(Request $request)
     {
         $subcategory = SubCategory::where('parent_id', $request->parent_id)->paginate(15);
@@ -34,9 +48,28 @@ class SubCategoryController extends Controller
         $category = SubCategory::all();
         $data = [];
 
-        foreach ($category as $item){
+        foreach ($category as $item) {
 
-            $data[] = (object) [
+            $data[] = (object)[
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
+            ];
+
+        }
+        return response()->json($data);
+    }
+
+    public function client_list()
+    {
+
+        $category = SubCategory::where('status', 'active')->get();
+        $data = [];
+
+        foreach ($category as $item) {
+
+            $data[] = (object)[
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
@@ -51,14 +84,14 @@ class SubCategoryController extends Controller
     public function listByParent(Request $request)
     {
 
-        $category = SubCategory::where('parent_id', $request->parent_id)->get();
+        $category = SubCategory::where('parent_id', $request->parent_id)->where('status', 'active')->get();
 
 
         $data = [];
 
-        foreach ($category as $item){
+        foreach ($category as $item) {
 
-            $data[] = (object) [
+            $data[] = (object)[
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
@@ -69,11 +102,33 @@ class SubCategoryController extends Controller
 
         return response()->json($data);
     }
+
+    public function client_listByParent(Request $request)
+    {
+
+        $category = SubCategory::where('parent_id', $request->parent_id)->where('status', 'active')->get();
+
+
+        $data = [];
+
+        foreach ($category as $item) {
+
+            $data[] = (object)[
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
+            ];
+
+        }
+
+        return response()->json($data);
+    }
+
     public function getByParent(Request $request)
     {
 
-        $category = SubCategory::where('parent_id', $request->parent_id)->get();
-
+        $category = SubCategory::where('parent_id', $request->parent_id)->where('status', 'active')->get();
 
 
         return response()->json($category);
@@ -146,7 +201,7 @@ class SubCategoryController extends Controller
             return response()->json([
                 "message" => " زیر شاخه با موفقیت اضافه شد."
             ], 201);
-        }else{
+        } else {
             return response()->json([
                 "message" => " شناسه دسته بندی یافت نشد."
             ], 404);
@@ -183,6 +238,35 @@ class SubCategoryController extends Controller
         }
     }
 
+    public function client_show($id)
+    {
+        $subcategory = SubCategory::find($id);
+        if (empty($subcategory) || $subcategory->status === 'inactive') {
+            return response()->json([
+                "message" => "زیر شاخه بندی یافت نشد یا غیرفعال است"
+            ], 404);
+        }
+
+        $data = array();
+        $image = (new ImagesController)->showByParent('subcategory', $id);
+        $subcategory->images = json_decode($image);
+
+        $subcategory->images = json_decode($image);
+        $subcategory->logos = is_null($subcategory->logos) ? Null : json_decode($subcategory->logos);
+
+        foreach ($subcategory->logos as $item) {
+            $logos = (new LogoController)->show($item);
+            array_push($data, $logos->original);
+        }
+
+
+        $subcategory->logos_image = $data;
+
+
+        return response()->json($subcategory);
+
+    }
+
     public function update(Request $request, $id)
     {
 
@@ -212,7 +296,6 @@ class SubCategoryController extends Controller
             $subcategory = SubCategory::find($id);
 
 
-
             $data = $request->all();
             $data['url'] = $this->generateUrl($request->url, $request->title);
             $subcategory->url = $data['url'];
@@ -229,7 +312,6 @@ class SubCategoryController extends Controller
             $subcategory->no_index = $request->has('no_index') ? (!empty($request->no_index) ? $request->no_index : 'inactive') : $subcategory->no_index;
             $subcategory->status = $request->has('status') ? (!empty($request->status) ? $request->status : 'inactive') : $subcategory->status;
             $subcategory->parent_id = $request->has('parent_id') ? (!empty($request->parent_id) ? $request->parent_id : '') : $subcategory->parent_id;
-
 
 
             $subcategory->save();

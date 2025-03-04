@@ -15,10 +15,10 @@ class UploadController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/uploads/image', $fileName);
+            $file->storeAs('image', $fileName,'public');
 
             return response()->json([
-                'location' => asset('storage/uploads/image/' . $fileName)
+                'location' => asset('storage/image/' . $fileName)
             ]);
         }
 
@@ -33,10 +33,10 @@ class UploadController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/uploads/media', $fileName);
+            $file->storeAs('media', $fileName,'public');
 
             return response()->json([
-                'location' => asset('storage/uploads/media/' . $fileName)
+                'location' => asset('storage/media/' . $fileName)
             ]);
         }
 

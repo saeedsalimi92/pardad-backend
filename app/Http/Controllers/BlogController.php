@@ -23,9 +23,31 @@ class BlogController extends Controller
 
         return response()->json($blog);
     }
+    public function client_Index()
+    {
+        $blog = Blog::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        foreach ($blog as $item){
+            $image = (new ImagesController)->showByParent('blog' , $item->id);
+            $item->images = json_decode($image);
+        }
+
+        return response()->json($blog);
+    }
     public function indexByParent(Request $request)
     {
         $blog = Blog::where('parent_id', $request->parent_id)->orderBy('created_at', 'desc')->paginate(15);
+        foreach ($blog as $item){
+            $image = (new ImagesController)->showByParent('blog' , $item->id);
+            $item->images = json_decode($image);
+        }
+
+        return response()->json($blog);
+    }
+    public function client_indexByParent(Request $request)
+    {
+        $blog = Blog::where('parent_id', $request->parent_id)->where('status', 'active')->orderBy('created_at', 'desc')->paginate(15);
         foreach ($blog as $item){
             $image = (new ImagesController)->showByParent('blog' , $item->id);
             $item->images = json_decode($image);
@@ -51,17 +73,56 @@ class BlogController extends Controller
         }
         return response()->json($data);
     }
+    public function client_list()
+    {
+
+        $category = Blog::where('status', 'active')->get();
+        $data = [];
+
+        foreach ($category as $item){
+
+            $data[] = (object) [
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
+            ];
+
+        }
+        return response()->json($data);
+    }
 
 
     public function listByParent(Request $request)
     {
 
-        $category = Blog::where('parent_id', $request->parent_id)->get();
+        $category = Blog::where('parent_id', $request->parent_id)->where('status', 'active')->get();
 
 
         $data = [];
 
         foreach ($category as $item){
+
+            $data[] = (object) [
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
+            ];
+
+        }
+
+        return response()->json($data);
+    }
+    public function client_listByParent(Request $request)
+    {
+
+        $blog = Blog::where('parent_id', $request->parent_id)->where('status', 'active')->get();
+
+
+        $data = [];
+
+        foreach ($blog as $item){
 
             $data[] = (object) [
                 'title' => $item->title,
@@ -187,6 +248,34 @@ class BlogController extends Controller
                 "message" => " بلاگ یافت نشد"
             ], 404);
         }
+    }
+    public function client_show($id)
+    {
+        $blog = Blog::find($id);
+        if (empty($blog) || $blog->status === 'inactive') {
+            return response()->json([
+                "message" => "بلاگ یافت نشد یا غیرفعال است"
+            ], 404);
+        }
+        $data =array();
+        $image = (new ImagesController)->showByParent('blog' , $id);
+        $blog->images = json_decode($image);
+
+
+
+        $blog->images = json_decode($image);
+        $blog->logos = is_null($blog->logos) ? Null: json_decode($blog->logos);
+
+
+        foreach ($blog->logos as $item){
+            $logos = (new LogoController)->show($item);
+            array_push($data , $logos->original);
+        }
+
+
+        $blog->logos_image = $data;
+
+        return response()->json($blog);
     }
 
     public function update(Request $request, $id)

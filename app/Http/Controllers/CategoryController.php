@@ -26,11 +26,40 @@ class CategoryController extends Controller
 
         return response()->json($category);
     }
+    public function client_Index()
+    {
+        $category = Category::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        foreach ($category as $item) {
+            $image = (new ImagesController)->showByParent('category', $item->id);
+            $item->images = json_decode($image);
+        }
+
+        return response()->json($category);
+    }
 
     public function list()
     {
         Log::info("test");
         $category = Category::all();
+        $data = [];
+
+        foreach ($category as $item) {
+
+            $data[] = (object)[
+                'title' => $item->title,
+                'url' => $item->url,
+                'id' => $item->id,
+                'value' => $item->id,
+            ];
+
+        }
+        return response()->json($data);
+    }
+    public function client_list()
+    {
+        $category = Category::where('status', 'active');
         $data = [];
 
         foreach ($category as $item) {
@@ -138,6 +167,35 @@ class CategoryController extends Controller
                 "message" => " دسته بندی یافت نشد"
             ], 404);
         }
+    }
+    public function client_show($id)
+    {
+        $category = Category::find($id);
+
+        if (empty($category) || $category->status === 'inactive') {
+            return response()->json([
+                "message" => "دسته‌بندی یافت نشد یا غیرفعال است"
+            ], 404);
+        }
+        $data = array();
+        $image = (new ImagesController)->showByParent('category', $id);
+        $category->images = json_decode($image);
+
+        $category->images = json_decode($image);
+        $category->logos = is_null($category->logos) ? Null : json_decode($category->logos);
+
+
+        foreach ($category->logos as $item) {
+            $logos = (new LogoController)->show($item);
+            array_push($data, $logos->original);
+        }
+
+
+        $category->logos_image = $data;
+
+
+
+        return response()->json($category);
     }
 
 
