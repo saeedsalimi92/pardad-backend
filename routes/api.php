@@ -17,27 +17,30 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
 
-Route::get('/menu', [MenuController::class, 'getMenu']);
 
-Route::post('/upload-image', [UploadController::class , 'uploadImage']);
-Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
+
+
 
 
 
 
 Route::prefix('v1')->group(function () {
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->middleware('auth:sanctum');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+    Route::get('/menu', [MenuController::class, 'getMenu']);
+
+    Route::post('/upload-image', [UploadController::class , 'uploadImage']);
+    Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
     Route::get('/blog', [BlogController::class, 'index']);
     Route::get('/blog/{id}', [BlogController::class, 'show']);
     Route::post('/blog', [BlogController::class, 'store']);
