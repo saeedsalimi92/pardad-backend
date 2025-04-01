@@ -243,6 +243,56 @@ class ImagesController extends Controller
         ], 200);
 
     }
+    public function storeFile(Request $request)
+    {
+        $file = $request->file('file');
+
+
+
+        // Get filename with the extension
+        $filenameWithExt = $file->getClientOriginalName();
+        // Get just filename
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        // Get just ext
+        $extension = $file->getClientOriginalExtension();
+
+        // Filename to store
+        $fileNameToStore = time() . '_' . Random::generate(15) . '_' . $filename . '.' . $extension;
+        // Upload Image
+        $path = $file->storeAs('images', $fileNameToStore, ['disk' => 'public']);
+
+        $path = str_replace('images/', 'storage/images/', $path);
+        if (!$path) {
+            return false;
+        }
+
+        $image = new Images();
+
+        $image->name = $fileNameToStore;
+        $image->src = env('') . $path;
+        $image->isActive = true;
+        $image->status = $image->status = 'accepted';
+        $image->type = 0;
+        $image->position = '';
+        $image->parent_type = '';
+        $image->parent_id ='';
+        $image->save();
+        $image_id = $image->latest()->first()->id;
+        $up_image = $image::find($image_id);
+        return response()->json([
+            "id" => $up_image->id,
+            "src" => $up_image->src,
+            "isActive" => $up_image->isActive,
+            "status" => $up_image->status,
+            "type" => $up_image->type,
+            "position" => $up_image->position,
+            "parent_type" => $up_image->parent_id,
+            "parent_id" => $up_image->parent_type,
+            "created_at" => $up_image->created_at,
+            "updated_at" => $up_image->updated_at
+        ], 200);
+
+    }
 
     public function getImages ($request){
         $images = Images::where('status', $request->query('status'))->orderBy('created_at', 'desc')->paginate(25);

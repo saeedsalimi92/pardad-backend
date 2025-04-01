@@ -7,10 +7,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\ImagesController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +42,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/menu', [MenuController::class, 'getMenu']);
 
     Route::post('/upload-image', [UploadController::class , 'uploadImage']);
+    Route::post('/upload-file', [ImagesController::class , 'storeFile']);
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
+
+
     Route::get('/blog', [BlogController::class, 'index']);
     Route::get('/blog/{id}', [BlogController::class, 'show']);
     Route::post('/blog', [BlogController::class, 'store']);
@@ -52,6 +57,12 @@ Route::prefix('v1')->group(function () {
     Route::post('/blog/{id}/images',[BlogController::class, 'updateImages']);
     Route::delete('/blog/{blog}/images/{id}',[BlogController::class, 'deleteImage']);
     Route::post('/blog/{blog}/logos',[BlogController::class, 'updateLogos']);
+
+    Route::get('/brand', [BrandController::class, 'index']);
+    Route::get('/brand/{id}', [BrandController::class, 'show']);
+    Route::post('/brand', [BrandController::class, 'store']);
+    Route::post('/brand/{id}', [BrandController::class, 'update']);
+    Route::delete('/brand/{id}', [BrandController::class, 'destroy']);
 
 
     Route::get('/category', [CategoryController::class, 'index']);
@@ -125,6 +136,9 @@ Route::prefix('v2')->group(function () {
     Route::get('/list/blog', [BlogController::class, 'client_list']);
     Route::get('/list/blog/{parent_id}', [BlogController::class, 'client_listByParent']);
     Route::get('/blog/list/{parent_id}', [BlogController::class, 'client_indexByParent']);
+
+    Route::get('/brand', [BrandController::class, 'client_Index']);
+    Route::get('/brand/{id}', [BrandController::class, 'client_show']);
 
     Route::get('/category', [CategoryController::class, 'client_index']);
     Route::get('/category/{id}', [CategoryController::class, 'client_show']);
