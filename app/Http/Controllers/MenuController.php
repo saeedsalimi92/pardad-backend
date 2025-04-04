@@ -119,7 +119,8 @@ class MenuController extends Controller
                 'isActive' => false,
                 'route'=> 'CategoryList',
                 'path' => '/dashboard/category',
-            ],[
+            ],
+           /* [
                 'title' => 'برند های صنعتی',
                 'id' => 4,
                 'type' => 'brand',
@@ -128,7 +129,7 @@ class MenuController extends Controller
                 'isActive' => false,
                 'route'=> 'BrandList',
                 'path' => '/dashboard/brand',
-            ]
+            ]*/
 
         ];
 

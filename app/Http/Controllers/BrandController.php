@@ -16,7 +16,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brand = Brand::orderBy('created_at', 'desc')->paginate(15);
+        $perPage = request()->input('per_page', 15);
+        $brand = Brand::orderBy('created_at', 'desc')->paginate($perPage);
         foreach ($brand as $item){
             $image = (new ImagesController)->showByParent('brand' , $item->id);
             $item->images = json_decode($image);
@@ -26,9 +27,10 @@ class BrandController extends Controller
     }
     public function client_Index()
     {
+        $perPage = request()->input('per_page', 6);
         $brand = Brand::where('status', 'active')
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate($perPage );
         foreach ($brand as $item){
             $image = (new ImagesController)->showByParent('brand' , $item->id);
             $item->images = json_decode($image);
