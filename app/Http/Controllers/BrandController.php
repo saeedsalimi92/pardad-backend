@@ -71,6 +71,9 @@ class BrandController extends Controller
         $brand->canonical = $request->canonical ?? '';
         $brand->no_index = $request->no_index ?? 'inactive';
         $brand->file = $request->file;
+        if ($request->has('pdf_file') && !empty($request->pdf_file)) {
+            $brand->pdf_file = $request->pdf_file;
+        }
         $brand->save();
 
 
@@ -126,7 +129,9 @@ class BrandController extends Controller
             $brand->no_index = $request->has('no_index') ? (!empty($request->no_index) ? $request->no_index : 'inactive') : $brand->no_index;
             $brand->status = $request->has('status') ? (!empty($request->status) ? $request->status : 'inactive') : $brand->status;
             $brand->file = $request->has('file') ? (!empty($request->file) ? $request->file : '') : $brand->file;
-
+            if ($request->has('pdf_file')) {
+                $brand->pdf_file = !empty($request->pdf_file) ? $request->pdf_file : null;
+            }
 
 
 

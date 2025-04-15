@@ -14,7 +14,9 @@ class SubCategoryController extends Controller
 {
     public function index()
     {
-        $subcategory = SubCategory::orderBy('created_at', 'desc')->paginate(15);
+        $perPage = request()->input('per_page', 15);
+
+        $subcategory = SubCategory::orderBy('created_at', 'desc')->paginate($perPage);
         foreach ($subcategory as $item) {
             $image = (new ImagesController)->showByParent('subcategory', $item->id);
             $item->images = json_decode($image);
@@ -25,9 +27,11 @@ class SubCategoryController extends Controller
 
     public function client_Index()
     {
+        $perPage = request()->input('per_page', 15);
+
         $subcategory = SubCategory::where('status', 'active')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->orderBy('created_at', 'desc')->paginate($perPage);
+
         foreach ($subcategory as $item) {
             $image = (new ImagesController)->showByParent('subcategory', $item->id);
             $item->images = json_decode($image);
@@ -38,12 +42,14 @@ class SubCategoryController extends Controller
 
     public function indexByParent(Request $request)
     {
-        $subcategory = SubCategory::where('parent_id', $request->parent_id)->paginate(15);
+        $perPage = request()->input('per_page', 15);
+        $subcategory = SubCategory::where('parent_id', $request->parent_id)->paginate($perPage);
         return response()->json($subcategory);
     }
     public function client_indexByParent(Request $request)
     {
-        $subcategory = SubCategory::where('parent_id', $request->parent_id)->where('status', 'active')->paginate(15);
+        $perPage = request()->input('per_page', 15);
+        $subcategory = SubCategory::where('parent_id', $request->parent_id)->where('status', 'active')->paginate($perPage);
         return response()->json($subcategory);
     }
 
@@ -59,6 +65,7 @@ class SubCategoryController extends Controller
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
+                'type'=>'sub_category',
                 'value' => $item->id,
             ];
 
@@ -78,6 +85,7 @@ class SubCategoryController extends Controller
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
+                'type'=>'sub_category',
                 'value' => $item->id,
             ];
 
@@ -100,6 +108,7 @@ class SubCategoryController extends Controller
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
+                'type'=>'sub_category',
                 'value' => $item->id,
             ];
 
@@ -122,6 +131,7 @@ class SubCategoryController extends Controller
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
+                'type'=>'sub_category',
                 'value' => $item->id,
             ];
 

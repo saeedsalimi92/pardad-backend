@@ -18,7 +18,9 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $category = Category::orderBy('created_at', 'desc')->paginate(15);
+        $perPage = request()->input('per_page', 15);
+
+        $category = Category::orderBy('created_at', 'desc')->paginate($perPage);
         foreach ($category as $item) {
             $image = (new ImagesController)->showByParent('category', $item->id);
             $item->images = json_decode($image);
@@ -28,9 +30,11 @@ class CategoryController extends Controller
     }
     public function client_Index()
     {
+        $perPage = request()->input('per_page', 15);
+
         $category = Category::where('status', 'active')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->orderBy('created_at', 'desc')->paginate($perPage);
+
         foreach ($category as $item) {
             $image = (new ImagesController)->showByParent('category', $item->id);
             $item->images = json_decode($image);
@@ -41,7 +45,6 @@ class CategoryController extends Controller
 
     public function list()
     {
-        Log::info("test");
         $category = Category::all();
         $data = [];
 
@@ -51,6 +54,7 @@ class CategoryController extends Controller
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
+                'type'=>'category',
                 'value' => $item->id,
             ];
 
@@ -68,6 +72,7 @@ class CategoryController extends Controller
                 'title' => $item->title,
                 'url' => $item->url,
                 'id' => $item->id,
+                'type'=>'category',
                 'value' => $item->id,
             ];
 
