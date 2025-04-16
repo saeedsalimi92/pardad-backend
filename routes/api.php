@@ -42,7 +42,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/menu', [MenuController::class, 'getMenu']);
 
     Route::post('/upload-image', [UploadController::class , 'uploadImage']);
-    Route::post('/upload-file', [ImagesController::class , 'storeFile']);
+    Route::post('/upload-file', [UploadController::class , 'uploadFile']);
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
 
 

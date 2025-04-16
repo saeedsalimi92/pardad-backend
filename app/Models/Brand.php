@@ -18,6 +18,6 @@ class Brand extends Model
         'file',
         'canonical',
         'no_index',
-        'pdf',
+        'pdf_file',
     ];
 }
