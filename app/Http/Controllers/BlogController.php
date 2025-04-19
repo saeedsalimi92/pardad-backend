@@ -29,9 +29,10 @@ class BlogController extends Controller
 
     public function indexByParent(Request $request)
     {
-        $perPage = $request->input('per_page', 15);
-
-        $query = Blog::where('parent_id', $request->parent_id);
+        $perPage = $request->input('per_page', 4);
+        if ($request->has('parent_id')) {
+            $query = Blog::where('parent_id', $request->parent_id);
+        }
 
         if ($request->has('parent_type')) {
             $query->where('parent_type', $request->parent_type);
@@ -66,15 +67,14 @@ class BlogController extends Controller
     public function client_indexByParent(Request $request)
     {
         $perPage = $request->input('per_page', 15);
+        $query = Blog::where('parent_id', $request->parent_id);
 
-        $query = Blog::where('parent_id', $request->parent_id)
-            ->where('status', 'active');
 
         if ($request->has('parent_type')) {
             $query->where('parent_type', $request->parent_type);
         }
 
-        $blog = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        $blog = $query->where('status', 'active')->orderBy('created_at', 'desc')->paginate($perPage);
 
         foreach ($blog as $item) {
             $image = (new ImagesController)->showByParent('blog', $item->id);

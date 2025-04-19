@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Slider;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -42,6 +43,54 @@ class CategoryController extends Controller
 
         return response()->json($category);
     }
+    public function client_index_parent()
+    {
+
+        $categories = Category::select('id', 'title', 'url')->get();
+
+        $mainItems = [
+
+
+
+        ];
+
+
+        $menu = [];
+        foreach ($categories as $category) {
+            $item = [
+                'title' => $category->title,
+                'id' => (int) $category->id,
+                'type' => 'category',
+                'icon' => null,
+                'children' => [],
+                'isActive' => false,
+                'path' => null,
+                'query' =>  null
+            ];
+
+            // کوئری برای دریافت زیر دسته‌بندی‌ها با parent_id برابر با category.id
+            $subcategories = SubCategory::select('id', 'title', 'url' ,'parent_id')
+                ->where('parent_id', $category->id)
+                ->get();
+            $query = [];
+            foreach ($subcategories as $subcategory) {
+                $item['children'][] = [
+                    'title' => $subcategory->title,
+                    'id' => (int) $subcategory->id,
+                    'type' => 'sub_category',
+                    'icon' => null,
+                    'children' => [],
+                    'isActive' => false,
+                    'parent_id'=>(int) $subcategory->parent_id,
+                ];
+            }
+
+            $menu[] = $item;
+        }
+        $mainItems = $menu;
+        return response()->json();
+
+    }
 
     public function list()
     {
@@ -61,6 +110,7 @@ class CategoryController extends Controller
         }
         return response()->json($data);
     }
+
     public function client_list()
     {
         $category = Category::where('status', 'active');

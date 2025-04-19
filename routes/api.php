@@ -78,6 +78,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/sub-category', [SubCategoryController::class, 'index']);
     Route::get('/sub-category/{id}', [SubCategoryController::class, 'show']);
     Route::get('/list/sub-category', [SubCategoryController::class, 'list']);
+    Route::get('/list', [CategoryController::class, 'allList']);
     Route::get('/list/sub-category/{parent_id}', [SubCategoryController::class, 'listByParent']);
     Route::get('/sub-category/list/{parent_id}', [SubCategoryController::class, 'indexByParent']);
     Route::post('/sub-category', [SubCategoryController::class, 'store']);
@@ -141,6 +142,7 @@ Route::prefix('v2')->group(function () {
     Route::get('/brand/{id}', [BrandController::class, 'client_show']);
 
     Route::get('/category', [CategoryController::class, 'client_index']);
+    Route::get('/categories', [CategoryController::class, 'client_index_parent']);
     Route::get('/category/{id}', [CategoryController::class, 'client_show']);
     Route::get('/list/category', [CategoryController::class, 'client_list']);
 

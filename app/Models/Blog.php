@@ -25,6 +25,7 @@ class Blog extends Model
         'meta_keywords',
         'meta_title',
         'parent_id',
+        'parent_type',
         'logos',
         'canonical',
         'no_index',
