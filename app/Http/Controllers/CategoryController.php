@@ -88,7 +88,7 @@ class CategoryController extends Controller
             $menu[] = $item;
         }
         $mainItems = $menu;
-        return response()->json();
+        return response()->json($mainItems);
 
     }
 
