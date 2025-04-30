@@ -27,7 +27,7 @@ class UploadController extends Controller
             $file->storeAs($folder, $fileName, 'public');
 
             return response()->json([
-                'location' => asset("storage/{$folder}/" . $fileName),
+                'location' => asset("storage/file/" . $fileName),
                 'filename' => $fileName,
                 'original_name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),

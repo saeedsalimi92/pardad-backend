@@ -20,6 +20,7 @@ class SubCategoryController extends Controller
         foreach ($subcategory as $item) {
             $image = (new ImagesController)->showByParent('subcategory', $item->id);
             $item->images = json_decode($image);
+            $item->type = 'sub_category';
         }
 
         return response()->json($subcategory);
@@ -35,6 +36,7 @@ class SubCategoryController extends Controller
         foreach ($subcategory as $item) {
             $image = (new ImagesController)->showByParent('subcategory', $item->id);
             $item->images = json_decode($image);
+            $item->type = 'sub_category';
         }
 
         return response()->json($subcategory);
@@ -44,12 +46,18 @@ class SubCategoryController extends Controller
     {
         $perPage = request()->input('per_page', 15);
         $subcategory = SubCategory::where('parent_id', $request->parent_id)->paginate($perPage);
+        foreach ($subcategory as $item) {
+            $item->type = 'sub_category';
+        }
         return response()->json($subcategory);
     }
     public function client_indexByParent(Request $request)
     {
         $perPage = request()->input('per_page', 15);
         $subcategory = SubCategory::where('parent_id', $request->parent_id)->where('status', 'active')->paginate($perPage);
+        foreach ($subcategory as $item) {
+            $item->type = 'sub_category';
+        }
         return response()->json($subcategory);
     }
 

@@ -25,6 +25,7 @@ class CategoryController extends Controller
         foreach ($category as $item) {
             $image = (new ImagesController)->showByParent('category', $item->id);
             $item->images = json_decode($image);
+            $item->type = 'category';
         }
 
         return response()->json($category);
@@ -39,6 +40,7 @@ class CategoryController extends Controller
         foreach ($category as $item) {
             $image = (new ImagesController)->showByParent('category', $item->id);
             $item->images = json_decode($image);
+            $item->type = 'category';
         }
 
         return response()->json($category);
