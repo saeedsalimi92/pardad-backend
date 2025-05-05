@@ -13,7 +13,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\ImagesController;
-
+use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
@@ -45,6 +45,27 @@ Route::prefix('v1')->group(function () {
     Route::post('/upload-file', [UploadController::class , 'uploadFile']);
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
 
+
+
+
+
+    Route::prefix('api/v1/comments')->group(function () {
+        Route::get('/', [CommentController::class, 'index']); // سایت
+        Route::get('/all', [CommentController::class, 'getAllComments']); // پنل ادمین با فیلتر
+        Route::post('/', [CommentController::class, 'store']); // ارسال کامنت
+        Route::post('/reply/{id}', [CommentController::class, 'reply']); // پاسخ به کامنت
+        Route::get('/replies/{id}', [CommentController::class, 'showReplies']); // گرفتن ریپلای‌ها
+        Route::patch('/status/{id}', [CommentController::class, 'updateStatus']); // تغییر وضعیت
+        Route::delete('/{id}', [CommentController::class, 'destroy']);
+    });
+
+    Route::prefix('v1')->group(function () {
+        Route::get('blog-faqs', [BlogFaqController::class, 'index']);
+        Route::get('blog-faqs/{id}', [BlogFaqController::class, 'show']);
+        Route::post('blog-faqs', [BlogFaqController::class, 'store']);
+        Route::put('blog-faqs/{id}', [BlogFaqController::class, 'update']);
+        Route::delete('blog-faqs/{id}', [BlogFaqController::class, 'destroy']);
+    });
 
     Route::get('/blog', [BlogController::class, 'index']);
     Route::get('/blog/{id}', [BlogController::class, 'show']);

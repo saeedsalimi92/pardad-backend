@@ -13,162 +13,189 @@ use Validator;
 
 class BlogController extends Controller
 {
-    public function index()
-    {
-        $perPage = request()->input('per_page', 15);
 
-        $blog = Blog::orderBy('created_at', 'desc')->paginate($perPage);
-
-        foreach ($blog as $item) {
-            $image = (new ImagesController)->showByParent('blog', $item->id);
-            $item->images = json_decode($image);
-        }
-
-        return response()->json($blog);
-    }
-
-    public function indexByParent(Request $request)
-    {
-        $perPage = $request->input('per_page', 4);
-        if ($request->has('parent_id')) {
-            $query = Blog::where('parent_id', $request->parent_id);
-        }
-
-        if ($request->has('parent_type')) {
-            $query->where('parent_type', $request->parent_type);
-        }
-
-        $blog = $query->orderBy('created_at', 'desc')->paginate($perPage);
-
-        foreach ($blog as $item) {
-            $image = (new ImagesController)->showByParent('blog', $item->id);
-            $item->images = json_decode($image);
-        }
-
-        return response()->json($blog);
-    }
-
-    public function client_Index()
-    {
-        $perPage = request()->input('per_page', 15);
-
-        $blog = Blog::where('status', 'active')
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
-
-        foreach ($blog as $item) {
-            $image = (new ImagesController)->showByParent('blog', $item->id);
-            $item->images = json_decode($image);
-        }
-
-        return response()->json($blog);
-    }
-
-    public function client_indexByParent(Request $request)
+    private function filterAndPaginateBlogs(Request $request, $onlyActive = false)
     {
         $perPage = $request->input('per_page', 15);
-        $query = Blog::where('parent_id', $request->parent_id);
 
+        $query = Blog::query();
 
-        if ($request->has('parent_type')) {
+        // 🔍 فیلتر بر اساس name
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        // 🔍 فیلتر بر اساس status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // 🔍 فیلتر بر اساس parent_id
+        if ($request->filled('parent_id')) {
+            $query->where('parent_id', $request->parent_id);
+        }
+
+        // 🔍 فیلتر بر اساس parent_type
+        if ($request->filled('parent_type')) {
             $query->where('parent_type', $request->parent_type);
         }
 
-        $blog = $query->where('status', 'active')->orderBy('created_at', 'desc')->paginate($perPage);
-
-        foreach ($blog as $item) {
-            $image = (new ImagesController)->showByParent('blog', $item->id);
-            $item->images = json_decode($image);
+        // 🔒 اگر فقط وضعیت active لازم باشد
+        if ($onlyActive) {
+            $query->where('status', 'active');
         }
 
-        return response()->json($blog);
+        $blogs = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return $blogs;
     }
 
-    public function list()
+
+
+    private function getBlogsList(Request $request, $onlyActive = false, $filterByParent = false)
     {
+        $query = Blog::query();
 
-        $category = Blog::all();
-        $data = [];
-
-        foreach ($category as $item) {
-
-            $data[] = (object)[
-                'title' => $item->title,
-                'url' => $item->url,
-                'id' => $item->id,
-                'value' => $item->id,
-            ];
-
+        if ($onlyActive) {
+            $query->where('status', 'active');
         }
-        return response()->json($data);
+
+        if ($filterByParent) {
+            $query->where('parent_type', $request->parent_type)
+                ->where('parent_id', $request->parent_id);
+        }
+
+        // فیلترهای داینامیک مشابه مرحله قبل
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('parent_id')) {
+            $query->where('parent_id', $request->parent_id);
+        }
+
+        if ($request->filled('parent_type')) {
+            $query->where('parent_type', $request->parent_type);
+        }
+
+        $blogs = $query->orderBy('created_at', 'desc')->get();
+
+        return $blogs;
     }
 
-    public function client_list()
+
+
+    public function index(Request $request)
     {
-
-        $category = Blog::where('status', 'active')->get();
-        $data = [];
-
-        foreach ($category as $item) {
-
-            $data[] = (object)[
-                'title' => $item->title,
-                'url' => $item->url,
-                'id' => $item->id,
-                'value' => $item->id,
-            ];
-
-        }
-        return response()->json($data);
+        return response()->json($this->filterAndPaginateBlogs($request));
     }
 
+    public function client_index(Request $request)
+    {
+        return response()->json($this->filterAndPaginateBlogs($request, true));
+    }
+
+
+
+    public function list(Request $request)
+    {
+        return response()->json($this->getBlogsList($request));
+    }
+
+    public function client_list(Request $request)
+    {
+        return response()->json($this->getBlogsList($request, true));
+    }
 
     public function listByParent(Request $request)
     {
-
-        $category = Blog::where('parent_id', $request->parent_id)->where('status', 'active')->get();
-
-
-        $data = [];
-
-        foreach ($category as $item) {
-
-            $data[] = (object)[
-                'title' => $item->title,
-                'url' => $item->url,
-                'id' => $item->id,
-                'value' => $item->id,
-            ];
-
-        }
-
-        return response()->json($data);
+        return response()->json($this->getBlogsList($request, false, true));
     }
 
     public function client_listByParent(Request $request)
     {
+        return response()->json($this->getBlogsList($request, true, true));
+    }
 
-        $blog = Blog::where('parent_id', $request->parent_id)->where('status', 'active')->get();
 
 
-        $data = [];
 
-        foreach ($blog as $item) {
 
-            $data[] = (object)[
-                'title' => $item->title,
-                'url' => $item->url,
-                'id' => $item->id,
-                'value' => $item->id,
-            ];
+    private function getBlogsByParent(Request $request, $onlyActive = false)
+    {
+        $perPage = $request->input('per_page', 15);
 
+        $query = Blog::query();
+
+        if ($request->has('parent_id')) {
+            $query->where('parent_id', $request->parent_id);
         }
 
-        return response()->json($data);
+        if ($request->has('parent_type')) {
+            $query->where('parent_type', $request->parent_type);
+        }
+
+        if ($onlyActive) {
+            $query->where('status', 'active');
+        }
+
+        $blogs = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return $blogs;
+    }
+
+    public function indexByParent(Request $request)
+    {
+        return response()->json($this->getBlogsByParent($request));
+    }
+
+    public function client_indexByParent(Request $request)
+    {
+        return response()->json($this->getBlogsByParent($request, true));
+    }
+
+
+
+    private function validateBlog(Request $request)
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'required|string|in:active,inactive',
+            'type' => 'nullable|string|max:255',
+            'canonical' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'content' => 'nullable|string',
+            'parent_type' => 'nullable|string|max:255',
+            'parent_id' => 'nullable|integer',
+        ]);
+    }
+
+    private function generateCanonical(string $name): string
+    {
+        return Str::slug($name); // تولید URL-friendly slug از name
     }
 
 
     public function store(Request $request)
+    {
+
+        $data = $this->validateBlog($request);
+        $data['url'] = $this->generateUrl($data['url'] ??$data['title']);
+
+        if (empty($data['canonical'])) {
+            $data['canonical'] = $this->generateCanonical($request['url']);
+        }
+
+        $blog = Blog::create($data);
+
+        return response()->json($blog);
+    }
+
+/*    public function store(Request $request)
     {
 
         $messages = [
@@ -247,9 +274,9 @@ class BlogController extends Controller
             "message" => " بلاگ با موفقیت اضافه شد."
         ], 201);
 
-    }
+    }*/
 
-    public function show($id)
+  /*  public function show($id)
     {
         $blog = Blog::find($id);
         if (!empty($blog)) {
@@ -276,7 +303,21 @@ class BlogController extends Controller
                 "message" => " بلاگ یافت نشد"
             ], 404);
         }
+    }*/
+    public function show($id)
+    {
+        $blog = Blog::with(['comments.replies', 'faqs'])->find($id);
+
+        if (!$blog) {
+            return response()->json([
+                "message" => "بلاگ یافت نشد"
+            ], 404);
+        }
+
+
+        return response()->json($blog);
     }
+
 
     public function client_show($id)
     {
@@ -287,26 +328,27 @@ class BlogController extends Controller
             ], 404);
         }
         $data = array();
-        $image = (new ImagesController)->showByParent('blog', $id);
-        $blog->images = json_decode($image);
-
-
-        $blog->images = json_decode($image);
-        $blog->logos = is_null($blog->logos) ? Null : json_decode($blog->logos);
-
-
-        foreach ($blog->logos as $item) {
-            $logos = (new LogoController)->show($item);
-            array_push($data, $logos->original);
-        }
-
-
-        $blog->logos_image = $data;
 
         return response()->json($blog);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Blog $blog)
+    {
+        $data = $this->validateBlog($request);
+
+        if (empty($data['canonical'])) {
+            $data['canonical'] = $this->generateCanonical($data['name']);
+        }
+
+        $blog->update($data);
+
+        if ($request->hasFile('image')) {
+            $this->saveImage($request, $blog, 'blog');
+        }
+
+        return response()->json($blog->load('image'));
+    }
+   /* public function update(Request $request, $id)
     {
         if (Blog::where('id', $id)->exists()) {
             $blog = Blog::find($id);
@@ -342,7 +384,7 @@ class BlogController extends Controller
                 "message" => "بلاگ یافت نشد."
             ], 404);
         }
-    }
+    }*/
 
     public function updateLogos(Request $request, $id)
     {
@@ -367,68 +409,40 @@ class BlogController extends Controller
 
     public function updateImages(Request $request, $id)
     {
-        if (Blog::where('id', $id)->exists()) {
-            $blog = Blog::find($id);
-            $blog->images = (new ImagesController)->showByParent('blog', $id);
-            $data = [
-                'images' => json_decode($blog->images)->images,
-            ];
-            $image = json_decode(($blog->images), true);
 
-            if ($request->has_images == "true") {
-
-                if ($files = $request->file('images')) {
-                    foreach ($files as $file) {
-
-
-                        $path = (new ImagesController)->store($file, 'images', 'blog', $id);
-                        foreach ($image as $key => $value) {
-                            if ($key == 'images') {
-                                array_push($image['images'], $path->original);
-                            }
-                        }
-                    }
-
-                }
-                $data['images'] = $image['images'];
-            }
-
-
-            $blog->images = $data;
-            $blog->save();
-            return response()->json([
-                "message" => " بلاگ با موفقیت بروز رسانی شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " بلاگ یافت نشد."
-            ], 404);
-        }
     }
 
     public function deleteImage(Request $request, $blog, $id)
     {
 
-        if (Blog::where('id', $blog)->exists()) {
-            $path = (new ImagesController)->show($id);
 
-
-            $img = json_decode($path->original);
-
-
-            (new ImagesController)->destroy($img->id);
-
-            return response()->json([
-                "message" => "تصویر با موفقیت حذف شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " بلاگ یافت نشد."
-            ], 404);
-        }
     }
 
-    public function destroy($id)
+    public function destroy(Blog $blog)
+    {
+        $this->deleteImage($blog);
+        $blog->delete();
+
+        return response()->json(['message' => 'Blog deleted successfully.']);
+    }
+
+    public function restore(Blog $blog)
+    {
+        $blog->status = 'active';
+        $blog->save();
+
+        return response()->json(['message' => 'Blog restored successfully.']);
+    }
+
+    public function archive(Blog $blog)
+    {
+        $blog->status = 'inactive';
+        $blog->save();
+
+        return response()->json(['message' => 'Blog archived successfully.']);
+    }
+
+    /*public function destroy($id)
     {
         if (Blog::where('id', $id)->exists()) {
             $blog = Blog::find($id);
@@ -452,7 +466,7 @@ class BlogController extends Controller
                 "message" => " بلاگ یافت نشد."
             ], 404);
         }
-    }
+    }*/
 
     private function generateUrl($url, $title)
     {

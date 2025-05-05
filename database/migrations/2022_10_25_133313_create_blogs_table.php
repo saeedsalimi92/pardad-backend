@@ -21,8 +21,6 @@ class CreateBlogsTable extends Migration
             $table->string('en_subtitle')->nullable();
             $table->longText('description');
             $table->longText('en_description')->nullable();
-            $table->json('images');
-            $table->json('logos');
             $table->longText('meta_description')->nullable();
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_title')->nullable();

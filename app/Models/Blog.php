@@ -15,7 +15,6 @@ class Blog extends Model
         'en_subtitle',
         'description',
         'en_description',
-        'images',
         'instagram',
         'telegram',
         'author',
@@ -26,9 +25,18 @@ class Blog extends Model
         'meta_title',
         'parent_id',
         'parent_type',
-        'logos',
         'canonical',
         'no_index',
         'url'
     ];
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->whereNull('parent_id')->where('status', 'approved')->with('replies');
+    }
+
+    public function faqs()
+    {
+        return $this->hasMany(BlogFaq::class)->where('is_active', true);
+    }
 }
