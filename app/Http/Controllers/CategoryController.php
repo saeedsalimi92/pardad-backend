@@ -4,13 +4,10 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
-use App\Models\Slider;
+
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
+
 use Validator;
 use function PHPUnit\Framework\isEmpty;
 
@@ -22,11 +19,7 @@ class CategoryController extends Controller
         $perPage = request()->input('per_page', 15);
 
         $category = Category::orderBy('created_at', 'desc')->paginate($perPage);
-        foreach ($category as $item) {
-            $image = (new ImagesController)->showByParent('category', $item->id);
-            $item->images = json_decode($image);
-            $item->type = 'category';
-        }
+
 
         return response()->json($category);
     }
@@ -37,11 +30,6 @@ class CategoryController extends Controller
         $category = Category::where('status', 'active')
             ->orderBy('created_at', 'desc')->paginate($perPage);
 
-        foreach ($category as $item) {
-            $image = (new ImagesController)->showByParent('category', $item->id);
-            $item->images = json_decode($image);
-            $item->type = 'category';
-        }
 
         return response()->json($category);
     }
@@ -156,7 +144,7 @@ class CategoryController extends Controller
         $data = [];
         // تولید URL
         $data['url'] = $this->generateUrl($request->url, $request->title);
-        $image = [];
+
 
         // ایجاد دسته‌بندی جدید
         $category = new Category;
@@ -175,21 +163,9 @@ class CategoryController extends Controller
         $category->meta_keywords = $request->meta_keywords ?? '';
         $category->canonical = $request->canonical ?? '';
         $category->no_index = $request->no_index ?? 'inactive';
-        $category->images = json_encode($image);
-        $category->logos = json_encode($image);
-        $category->save();
-
-        $id = $category->latest()->first()->id;
-        if ($files = $request->file('image')) {
-            foreach ($files as $file) {
-                $path = (new ImagesController)->store($file, 'images', 'category', $id);
-                $image['images'][] = $path->original;
-            }
-        }
-        $category->images = json_encode($image);
-
 
         $category->save();
+
         return response()->json([
             "message" => " دسته بندی با موفقیت اضافه شد."
         ], 201);
@@ -200,24 +176,6 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!empty($category)) {
-            $data = array();
-            $image = (new ImagesController)->showByParent('category', $id);
-            $category->images = json_decode($image);
-
-            $category->images = json_decode($image);
-            $category->logos = is_null($category->logos) ? Null : json_decode($category->logos);
-
-
-            foreach ($category->logos as $item) {
-                $logos = (new LogoController)->show($item);
-                array_push($data, $logos->original);
-            }
-
-
-            $category->logos_image = $data;
-
-
-
             return response()->json($category);
         } else {
             return response()->json([
@@ -234,23 +192,6 @@ class CategoryController extends Controller
                 "message" => "دسته‌بندی یافت نشد یا غیرفعال است"
             ], 404);
         }
-        $data = array();
-        $image = (new ImagesController)->showByParent('category', $id);
-        $category->images = json_decode($image);
-
-        $category->images = json_decode($image);
-        $category->logos = is_null($category->logos) ? Null : json_decode($category->logos);
-
-
-        foreach ($category->logos as $item) {
-            $logos = (new LogoController)->show($item);
-            array_push($data, $logos->original);
-        }
-
-
-        $category->logos_image = $data;
-
-
 
         return response()->json($category);
     }
@@ -320,104 +261,11 @@ class CategoryController extends Controller
         return $url ? str_replace(' ', '-', $url) : str_replace(' ', '-', $title);
     }
 
-    public function updateLogos(Request $request, $id)
-    {
-        if (Category::where('id', $id)->exists()) {
-            $category = Category::find($id);
-
-            Log::info($request->logos);
-
-            $category->Logos = is_null($request->logos) ? '' : $request->logos;
-
-
-            $category->save();
-            return response()->json([
-                "message" => " لوگوی خبر با موفقیت بروزرسانی شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " دسته بندی یافت نشد."
-            ], 404);
-        }
-    }
-
-    public function updateImages(Request $request, $id)
-    {
-        if (Category::where('id', $id)->exists()) {
-            $category = Category::find($id);
-            $category->images = (new ImagesController)->showByParent('category', $id);
-            $data = [
-                'images' => json_decode($category->images)->images,
-            ];
-            $image = json_decode(($category->images), true);
-
-            if ($request->has_images == "true") {
-
-                if ($files = $request->file('images')) {
-                    foreach ($files as $file) {
-
-
-                        $path = (new ImagesController)->store($file, 'images', 'category', $id);
-                        foreach ($image as $key => $value) {
-                            if ($key == 'images') {
-                                array_push($image['images'], $path->original);
-                            }
-                        }
-                    }
-
-                }
-                $data['images'] = $image['images'];
-            }
-
-
-            $category->images = $data;
-            $category->save();
-            return response()->json([
-                "message" => " دسته بندی با موفقیت بروز رسانی شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " دسته بندی یافت نشد."
-            ], 404);
-        }
-    }
-
-    public function deleteImage(Request $request, $category, $id)
-    {
-
-        if (Category::where('id', $category)->exists()) {
-            $path = (new ImagesController)->show($id);
-
-
-            $img = json_decode($path->original);
-
-
-            (new ImagesController)->destroy($img->id);
-
-            return response()->json([
-                "message" => "تصویر با موفقیت حذف شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " دسته بندی یافت نشد."
-            ], 404);
-        }
-    }
-
     public function destroy($id)
     {
         if (Category::where('id', $id)->exists()) {
             $category = Category::find($id);
-            $images = json_decode((new ImagesController)->showByParent('category', $id), true);
-            $ids = array();
-            if (key($images['images']) === 'id') {
-                foreach ($images['images'] as $file) {
-                    array_push($ids, $file['id']);
-                }
-            }
 
-
-            (new ImagesController)->destroyMany($ids);
             $category->delete();
 
             return response()->json([

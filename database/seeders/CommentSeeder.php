@@ -28,6 +28,7 @@ class CommentSeeder extends Seeder
                 'comment' => "This is main comment $i",
                 'status' => 'pending',
                 'parent_id' => null,
+                'blog_id' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -49,6 +50,7 @@ class CommentSeeder extends Seeder
                 'comment' => "This is a reply to comment $j",
                 'status' => 'approved',
                 'parent_id' => $parentIds[$j - 1], // وصل کردن به کامنت اصلی
+                'blog_id' => $parentIds[$j - 1], // وصل کردن به کامنت اصلی
                 'created_at' => $now,
                 'updated_at' => $now,
             ];

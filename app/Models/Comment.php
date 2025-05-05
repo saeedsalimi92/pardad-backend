@@ -8,28 +8,26 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'last_name', 'mobile', 'email', 'comment', 'user_id', 'parent_id', 'is_reply'  ,'status'];
+    protected $fillable = ['name', 'last_name', 'mobile', 'email', 'comment', 'user_id', 'parent_id' , 'blog_id', 'is_reply'  ,'status'];
 
     // رابطه با کامنت‌های پاسخ
     public function replies()
     {
-        return $this->hasMany(Comment::class, 'parent_id')->whereNotNull('parent_id');
+        return $this->hasMany(Comment::class, 'parent_id')->with('user');
     }
 
-// فقط کامنت‌های اصلی
-    public function scopeTopLevel($query)
-    {
-        return $query->whereNull('parent_id');
-    }
-    // رابطه با کاربر (فقط برای کامنت‌های پاسخ)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // رابطه با کامنت والد (اگر کامنت پاسخ باشد)
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
+
     public function parent()
     {
-        return $this->belongsTo(Comment::class, 'parent_id');
+        return $this->belongsTo(Comment::class, 'parent_id'); // اصلاح شده
     }
 }

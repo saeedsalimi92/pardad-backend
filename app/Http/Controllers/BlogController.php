@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 
-use App\Models\Category;
-use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 use Validator;
 
@@ -21,8 +20,8 @@ class BlogController extends Controller
         $query = Blog::query();
 
         // 🔍 فیلتر بر اساس name
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->filled('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
         }
 
         // 🔍 فیلتر بر اساس status
@@ -66,8 +65,8 @@ class BlogController extends Controller
         }
 
         // فیلترهای داینامیک مشابه مرحله قبل
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+        if ($request->filled('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
         }
 
         if ($request->filled('status')) {
@@ -163,7 +162,7 @@ class BlogController extends Controller
     private function validateBlog(Request $request)
     {
         return $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'status' => 'required|string|in:active,inactive',
             'type' => 'nullable|string|max:255',
             'canonical' => 'nullable|string|max:255',
@@ -174,9 +173,9 @@ class BlogController extends Controller
         ]);
     }
 
-    private function generateCanonical(string $name): string
+    private function generateCanonical(string $title): string
     {
-        return Str::slug($name); // تولید URL-friendly slug از name
+        return Str::slug($title); // تولید URL-friendly slug از name
     }
 
 
@@ -184,10 +183,11 @@ class BlogController extends Controller
     {
 
         $data = $this->validateBlog($request);
-        $data['url'] = $this->generateUrl($data['url'] ??$data['title']);
+
+        $data['url'] = $this->generateUrl($data['url'] ?? null, $data['title']);
 
         if (empty($data['canonical'])) {
-            $data['canonical'] = $this->generateCanonical($request['url']);
+            $data['canonical'] = $this->generateCanonical($data['url']);
         }
 
         $blog = Blog::create($data);
@@ -336,8 +336,9 @@ class BlogController extends Controller
     {
         $data = $this->validateBlog($request);
 
+        $data['url'] = $this->generateUrl($data['url'] ?? null, $data['title']);
         if (empty($data['canonical'])) {
-            $data['canonical'] = $this->generateCanonical($data['name']);
+            $data['canonical'] = $this->generateCanonical($data['url']);
         }
 
         $blog->update($data);

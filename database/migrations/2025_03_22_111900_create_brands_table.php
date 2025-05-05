@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('file');
-            $table->string('status')->default('inactive');
-            $table->string('no_index')->default('active');
+            $table->string('pdf_file')->nullable();
+            $table->enum('no_index', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
             $table->string('meta_title')->nullable();
             $table->string('meta_keywords')->nullable();
             $table->text('meta_description')->nullable();

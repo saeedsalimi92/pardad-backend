@@ -13,19 +13,22 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');  // نام کامنت‌دهنده
-            $table->string('last_name');  // نام خانوادگی کامنت‌دهنده
-            $table->string('mobile');  // موبایل کامنت‌دهنده
-            $table->string('email');  // ایمیل کامنت‌دهنده
-            $table->text('comment');  // محتوا
-            $table->unsignedBigInteger('parent_id')->nullable()->index();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');  // شناسه کاربر (فقط برای کامنت‌های پاسخ)// شناسه کامنت والد
-            $table->boolean('is_reply')->default(false);  // آیا پاسخ است یا نه
-            $table->enum('status', ['approved', 'rejected', 'pending'])->default('pending'); // اضافه کردن فیلد status
+            $table->string('name');
+            $table->string('last_name');
+            $table->string('mobile');
+            $table->string('email');
+            $table->text('comment');
 
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->foreignId('blog_id')->nullable()->constrained('blogs')->onDelete('set null');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+
+            $table->boolean('is_reply')->default(false);
+            $table->enum('status', ['approved', 'rejected', 'pending'])->default('pending');
 
             $table->timestamps();
         });
+
     }
 
     /**

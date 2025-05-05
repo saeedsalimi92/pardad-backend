@@ -25,14 +25,16 @@ class CreateBlogsTable extends Migration
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_title')->nullable();
             $table->longText('canonical')->nullable();
-            $table->string('no_index');
             $table->string('url')->nullable();
             $table->integer('parent_id')->nullable();
-            $table->string('status');
+            $table->string('parent_type')->nullable();
+            $table->enum('no_index', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
             $table->string('instagram')->nullable();
             $table->string('telegram')->nullable();
             $table->string('author')->nullable();
             $table->string('whatsapp')->nullable();
+
 
             $table->timestamps();
         });

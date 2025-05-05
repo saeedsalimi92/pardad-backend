@@ -19,6 +19,7 @@ class CommentController extends Controller
             'mobile' => 'required|string',
             'email' => 'required|email',
             'comment' => 'required|string',
+            'blog_id' => 'required|string',
         ]);
 
         $comment = Comment::create([
@@ -29,6 +30,7 @@ class CommentController extends Controller
             'comment' => $request->comment,
             'user_id' => null,
             'parent_id' => null,
+            'blog_id' => $request->blog_id,
             'is_reply' => false,
             'status' => 'pending',
         ]);
@@ -43,13 +45,14 @@ class CommentController extends Controller
             'comment' => 'required|string',
         ]);
 
-        if (!Auth::user() || !Auth::user()->hasRole('admin')) {
+        /*if (!Auth::user() || !Auth::user()->hasRole('admin')) {
             return response()->json(['message' => 'Only admins can reply to comments.'], 403);
-        }
+        }*/
 
         $reply = Comment::create([
             'comment' => $request->comment,
             'user_id' => Auth::id(),
+            'blog_id' => $request->blog_id,
             'parent_id' => $commentId,
             'is_reply' => true,
             'status' => 'approved',
@@ -121,9 +124,9 @@ class CommentController extends Controller
             'status' => 'required|in:approved,rejected,pending',
         ]);
 
-        if (!Auth::user() || !Auth::user()->hasRole('admin')) {
+       /* if (!Auth::user() || !Auth::user()->hasRole('admin')) {
             return response()->json(['message' => 'Only admins can update comment status.'], 403);
-        }
+        }*/
 
         $comment = Comment::findOrFail($id);
         $comment->status = $request->status;
@@ -133,9 +136,9 @@ class CommentController extends Controller
     }
     public function destroy($id)
     {
-        if (!Auth::user() || !Auth::user()->hasRole('admin')) {
+        /*if (!Auth::user() || !Auth::user()->hasRole('admin')) {
             return response()->json(['message' => 'Only admins can delete comments.'], 403);
-        }
+        }*/
 
         $comment = Comment::findOrFail($id);
 

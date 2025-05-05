@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Validator;
 
@@ -17,11 +16,7 @@ class SubCategoryController extends Controller
         $perPage = request()->input('per_page', 15);
 
         $subcategory = SubCategory::orderBy('created_at', 'desc')->paginate($perPage);
-        foreach ($subcategory as $item) {
-            $image = (new ImagesController)->showByParent('subcategory', $item->id);
-            $item->images = json_decode($image);
-            $item->type = 'sub_category';
-        }
+
 
         return response()->json($subcategory);
     }
@@ -33,11 +28,6 @@ class SubCategoryController extends Controller
         $subcategory = SubCategory::where('status', 'active')
             ->orderBy('created_at', 'desc')->paginate($perPage);
 
-        foreach ($subcategory as $item) {
-            $image = (new ImagesController)->showByParent('subcategory', $item->id);
-            $item->images = json_decode($image);
-            $item->type = 'sub_category';
-        }
 
         return response()->json($subcategory);
     }
@@ -186,7 +176,6 @@ class SubCategoryController extends Controller
         $data = [];
         // تولید URL
         $data['url'] = $this->generateUrl($request->url, $request->title);
-        $image = [];
 
         $subCategory = Category::find($request->parent_id);
         if (!empty($subCategory)) {
@@ -207,20 +196,10 @@ class SubCategoryController extends Controller
             $category->meta_keywords = $request->meta_keywords ?? '';
             $category->canonical = $request->canonical ?? '';
             $category->no_index = $request->no_index ?? 'inactive';
-            $category->images = json_encode($image);
-            $category->logos = json_encode($image);
-            $category->save();
-
-            $id = $category->latest()->first()->id;
-            if ($files = $request->file('image')) {
-                foreach ($files as $file) {
-                    $path = (new ImagesController)->store($file, 'images', 'category', $id);
-                    $image['images'][] = $path->original;
-                }
-            }
-            $category->images = json_encode($image);
 
             $category->save();
+
+
             return response()->json([
                 "message" => " زیر شاخه با موفقیت اضافه شد."
             ], 201);
@@ -237,21 +216,6 @@ class SubCategoryController extends Controller
     {
         $subcategory = SubCategory::find($id);
         if (!empty($subcategory)) {
-            $data = array();
-            $image = (new ImagesController)->showByParent('subcategory', $id);
-            $subcategory->images = json_decode($image);
-
-            $subcategory->images = json_decode($image);
-            $subcategory->logos = is_null($subcategory->logos) ? Null : json_decode($subcategory->logos);
-
-            foreach ($subcategory->logos as $item) {
-                $logos = (new LogoController)->show($item);
-                array_push($data, $logos->original);
-            }
-
-
-            $subcategory->logos_image = $data;
-
 
             return response()->json($subcategory);
         } else {
@@ -270,20 +234,6 @@ class SubCategoryController extends Controller
             ], 404);
         }
 
-        $data = array();
-        $image = (new ImagesController)->showByParent('subcategory', $id);
-        $subcategory->images = json_decode($image);
-
-        $subcategory->images = json_decode($image);
-        $subcategory->logos = is_null($subcategory->logos) ? Null : json_decode($subcategory->logos);
-
-        foreach ($subcategory->logos as $item) {
-            $logos = (new LogoController)->show($item);
-            array_push($data, $logos->original);
-        }
-
-
-        $subcategory->logos_image = $data;
 
 
         return response()->json($subcategory);
@@ -348,104 +298,11 @@ class SubCategoryController extends Controller
         }
     }
 
-    public function updateLogos(Request $request, $id)
-    {
-        if (SubCategory::where('id', $id)->exists()) {
-            $subcategory = SubCategory::find($id);
-
-            Log::info($request->logos);
-
-            $subcategory->Logos = is_null($request->logos) ? Null : $request->logos;
-
-
-            $subcategory->save();
-            return response()->json([
-                "message" => " زیر شاخه با موفقیت بروزرسانی شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " زیر شاخه یافت نشد."
-            ], 404);
-        }
-    }
-
-    public function updateImages(Request $request, $id)
-    {
-        if (SubCategory::where('id', $id)->exists()) {
-            $subcategory = SubCategory::find($id);
-            $subcategory->images = (new ImagesController)->showByParent('subcategory', $id);
-            $data = [
-                'images' => json_decode($subcategory->images)->images,
-            ];
-            $image = json_decode(($subcategory->images), true);
-
-            if ($request->has_images == "true") {
-
-                if ($files = $request->file('images')) {
-                    foreach ($files as $file) {
-
-
-                        $path = (new ImagesController)->store($file, 'images', 'subcategory', $id);
-                        foreach ($image as $key => $value) {
-                            if ($key == 'images') {
-                                array_push($image['images'], $path->original);
-                            }
-                        }
-                    }
-
-                }
-                $data['images'] = $image['images'];
-            }
-
-
-            $subcategory->images = $data;
-            $subcategory->save();
-            return response()->json([
-                "message" => " زیر شاخه با موفقیت بروز رسانی شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " زیر شاخه یافت نشد."
-            ], 404);
-        }
-    }
-
-    public function deleteImage(Request $request, $subcategory, $id)
-    {
-
-        if (SubCategory::where('id', $subcategory)->exists()) {
-            $path = (new ImagesController)->show($id);
-
-
-            $img = json_decode($path->original);
-
-
-            (new ImagesController)->destroy($img->id);
-
-            return response()->json([
-                "message" => "تصویر با موفقیت حذف شد"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => " زیر شاخه یافت نشد."
-            ], 404);
-        }
-    }
 
     public function destroy($id)
     {
         if (SubCategory::where('id', $id)->exists()) {
             $subcategory = SubCategory::find($id);
-            $images = json_decode((new ImagesController)->showByParent('subcategory', $id), true);
-            $ids = array();
-            if (key($images['images']) === 'id') {
-                foreach ($images['images'] as $file) {
-                    array_push($ids, $file['id']);
-                }
-            }
-
-
-            (new ImagesController)->destroyMany($ids);
             $subcategory->delete();
 
             return response()->json([

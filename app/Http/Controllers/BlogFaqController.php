@@ -9,8 +9,8 @@ class BlogFaqController extends Controller
     {
         $query = BlogFaq::with('blog');
 
-        if ($request->has('blog_id')) {
-            $query->where('blog_id', $request->blog_id);
+        if ($request->has('parent_id')) {
+            $query->where('parent_id', $request->blog_id);
         }
 
         if ($request->has('is_active')) {
@@ -22,14 +22,14 @@ class BlogFaqController extends Controller
     }
     public function index(Request $request)
     {
-        $faqs = BlogFaq::where('blog_id', $request->blog_id)->where('is_active', true)->get();
+        $faqs = BlogFaq::where('parent_id', $request->parent_id)->where('is_active', true)->get();
         return response()->json($faqs);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'blog_id' => 'required|exists:blogs,id',
+            'parent_id' => 'required|exists:blogs,id',
             'question' => 'required|string',
             'answer' => 'required|string',
             'is_active' => 'boolean',

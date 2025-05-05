@@ -19,14 +19,12 @@ return new class extends Migration
             $table->string('en_subtitle')->nullable();
             $table->longText('description');
             $table->longText('en_description')->nullable();
-            $table->json('images');
-            $table->json('logos');
-            $table->string('status');
             $table->longText('meta_description')->nullable();
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_title')->nullable();
             $table->longText('canonical')->nullable();
-            $table->string('no_index');
+            $table->enum('no_index', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
             $table->string('url')->nullable();
             $table->timestamps();
         });

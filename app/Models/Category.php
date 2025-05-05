@@ -19,12 +19,10 @@ class Category extends Model
         'en_subtitle',
         'description',
         'en_description',
-        'images',
         'status',
         'meta_description',
         'meta_keywords',
         'meta_title',
-        'logos',
         'canonical',
         'no_index',
         'url'

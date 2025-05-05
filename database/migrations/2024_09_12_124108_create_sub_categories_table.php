@@ -20,14 +20,12 @@ return new class extends Migration
             $table->longText('description');
             $table->longText('en_description')->nullable();
             $table->integer('parent_id')->nullable();
-            $table->string('status');
-            $table->json('images');
-            $table->json('logos');
             $table->longText('meta_description')->nullable();
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_title')->nullable();
             $table->longText('canonical')->nullable();
-            $table->string('no_index');
+            $table->enum('no_index', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
             $table->string('url')->nullable();
             $table->timestamps();
         });
