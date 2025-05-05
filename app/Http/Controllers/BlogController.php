@@ -321,15 +321,29 @@ class BlogController extends Controller
 
     public function client_show($id)
     {
-        $blog = Blog::find($id);
-        if (empty($blog) || $blog->status === 'inactive') {
+        // ابتدا بررسی می‌کنیم که بلاگ وجود دارد و فعال است
+        $blog = Blog::where('status', 'active')->find($id);
+
+        if (!$blog) {
             return response()->json([
                 "message" => "بلاگ یافت نشد یا غیرفعال است"
             ], 404);
         }
-        $data = array();
+
+        // سپس بلاگ را با کامنت‌های تایید شده و پاسخ‌های تایید شده بارگذاری می‌کنیم
+        $blog->load([
+            'comments' => function($query) {
+                $query->where('status', 'approved')
+                    ->whereNull('parent_id')
+                    ->with(['replies' => function($q) {
+                        $q->where('status', 'approved');
+                    }]);
+            },
+            'faqs'
+        ]);
 
         return response()->json($blog);
+
     }
 
     public function update(Request $request, Blog $blog)
