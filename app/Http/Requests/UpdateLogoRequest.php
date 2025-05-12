@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property mixed $logos
+ */
 class UpdateLogoRequest extends FormRequest
 {
     /**
@@ -11,7 +14,7 @@ class UpdateLogoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

@@ -26,7 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-
+        $this->bindRepositories();
+        $this->bindServices();
+        $this->loadMigrationDirectories();
     }
 
     /**
@@ -47,5 +49,42 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ImageRepositoryInterface::class, ImageRepository::class);
         $this->app->bind(SubCategoryRepositoryInterface::class, SubCategoryRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+    }
+
+    public function bindServices(): void
+    {
+        //
+    }
+
+    private function loadMigrationDirectories(): void
+    {
+        $paths = $this->getAllSubdirectories("database/migrations");
+        $this->loadMigrationsFrom($paths);
+    }
+
+    private function getAllSubdirectories($dir): array
+    {
+        $subdirectories = [];
+
+        if(!is_dir($dir)) {
+            return $subdirectories;
+        }
+
+        $items = scandir($dir);
+
+        foreach ($items as $item) {
+            if ($item !== '.' && $item !== '..') {
+                $path = $dir . DIRECTORY_SEPARATOR . $item;
+                if (is_dir($path)) {
+                    $subdirectories[] = $path;
+                    $subdirectoriesToAdd = $this->getAllSubdirectories($path);
+                    foreach ($subdirectoriesToAdd as $subDirToAdd) {
+                        $subdirectories[] = $subDirToAdd;
+                    }
+                }
+            }
+        }
+
+        return $subdirectories;
     }
 }

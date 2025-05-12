@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('meta_description')->nullable();
             $table->string('canonical')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -8,14 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class Image extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'name',
-        'src',
-        'isActive',
-        'status',
-        'type',
-        'position',
-        'parent_type',
-        'parent_id',
+
+    const TYPE_FEATURED = 'featured';
+    const TYPE_GALLERY = 'gallery';
+
+    const TYPES = [
+        self::TYPE_FEATURED,
+        self::TYPE_GALLERY,
     ];
+
+    protected $fillable = [
+        "imageable_id",
+        "imageable_type",
+        "path",
+        "disk",
+        "mime_type",
+        "size",
+        "type",
+    ];
+
+    public function imageable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
+    }
 }

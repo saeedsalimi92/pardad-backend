@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('blog_faqs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('parent_id')->constrained()->onDelete('cascade');
-
             $table->string('question');
             $table->text('answer');
             $table->enum('is_active', ['active', 'inactive'])->default('active');
-
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

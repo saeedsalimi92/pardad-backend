@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\V1\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\BlogFaq;
-use Controller;
 use Illuminate\Http\Request;
 
 class BlogFaqController extends Controller
@@ -21,6 +21,7 @@ class BlogFaqController extends Controller
         }
 
         $perPage = $request->input('per_page', 10);
+
         return response()->json($query->paginate($perPage));
     }
 

@@ -18,15 +18,13 @@ return new class extends Migration
             $table->string('mobile');
             $table->string('email');
             $table->text('comment');
-
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreignId('blog_id')->nullable()->constrained('blogs')->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-
             $table->boolean('is_reply')->default(false);
             $table->enum('status', ['approved', 'rejected', 'pending'])->default('pending');
-
             $table->timestamps();
+            $table->softDeletes();
         });
 
     }

@@ -15,14 +15,12 @@ class CreateImagesTable extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->longText('src');
-            $table->boolean('isActive');
-            $table->string('status');
-            $table->string('type');
-            $table->string('position');
-            $table->string('parent_id');
-            $table->string('parent_type');
+            $table->morphs('imageable');
+            $table->enum('type', \App\Models\Image::TYPES)->default(\App\Models\Image::TYPE_FEATURED);
+            $table->string('path');
+            $table->string('disk')->default('public');
+            $table->string('mime_type');
+            $table->integer('size');
             $table->timestamps();
         });
     }
