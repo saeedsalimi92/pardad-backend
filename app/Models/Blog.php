@@ -35,7 +35,7 @@ class Blog extends Model
         return $this->hasMany(Comment::class)->whereNull('parent_id')->with('replies');
     }
 
-    public function faqs()
+    public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(BlogFaq::class)->where('is_active', true);
     }

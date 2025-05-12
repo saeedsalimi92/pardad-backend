@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
-    public function subcategories()
-    {
-        return $this->hasMany(Subcategory::class);
-    }
+
     protected $fillable = [
         'title',
         'en_title',
@@ -27,4 +24,9 @@ class Category extends Model
         'no_index',
         'url'
     ];
+
+    public function subCategories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Subcategory::class);
+    }
 }

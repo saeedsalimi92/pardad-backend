@@ -16,18 +16,18 @@ class Comment extends Model
         return $this->hasMany(Comment::class, 'parent_id')->with('user');
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function blog()
+    public function blog(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Blog::class);
     }
 
-    public function parent()
+    public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Comment::class, 'parent_id'); // اصلاح شده
+        return $this->belongsTo(Comment::class, 'parent_id');
     }
 }

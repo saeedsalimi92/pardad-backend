@@ -12,7 +12,7 @@ class BlogFaq extends Model
         'blog_id', 'question', 'answer', 'is_active'
     ];
 
-    public function blog()
+    public function blog(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Blog::class);
     }
