@@ -12,13 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
 
-            foreach (["client", "admin"] as $name) {
-                Route::middleware('web')
-                    ->middleware('api')
-                    ->prefix('v1')->group(function () use($name) {
-                        require base_path("routes/api/v1/{$name}.php");
-                    });
-            }
+            Route::prefix("admin")
+                ->name("admin.")
+                ->namespace("App\Http\Controllers\Admin\V1")
+                ->group(function () {
+                    return base_path('routes/admin/v1.php');
+                });
+
+            Route::name("client.")
+                ->namespace("App\Http\Controllers\Client\V1")
+                ->group(function () {
+                    return base_path('routes/client/v1.php');
+                });
 
         }
     )
