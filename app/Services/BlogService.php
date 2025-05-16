@@ -32,7 +32,8 @@ readonly class BlogService
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
                 'props' => $data['props'] ?? null,
-                'author_id' => auth()->id()
+                'author_id' => auth()->id(),
+                'code' => uniqid()
             ]);
 
             foreach ($data['contents'] as $locale => $content) {
