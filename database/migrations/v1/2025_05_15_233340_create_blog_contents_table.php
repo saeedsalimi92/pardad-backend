@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('blog_id')->references('id')->on('blogs')->onDelete('cascade');
             $table->enum('locale', ['fa', 'en']);
             $table->string('title');
+            $table->string('slug');
             $table->text('content');
             $table->json('props')->nullable();
             $table->timestamps();

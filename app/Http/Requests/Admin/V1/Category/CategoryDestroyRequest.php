@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin\V1\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoresubCategoryRequest extends FormRequest
+class CategoryDestroyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

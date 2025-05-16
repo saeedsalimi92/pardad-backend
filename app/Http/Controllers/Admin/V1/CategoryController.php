@@ -2,283 +2,528 @@
 
 namespace App\Http\Controllers\Admin\V1;
 
-
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\V1\Category\CategoryDestroyRequest;
+use App\Http\Requests\Admin\V1\Category\CategoryIndexRequest;
+use App\Http\Requests\Admin\V1\Category\CategoryListRequest;
+use App\Http\Requests\Admin\V1\Category\CategoryShowRequest;
+use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
+use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
+use App\Http\Resources\Admin\V1\Blog\BlogIndexResource;
+use App\Http\Resources\Admin\V1\Category\CategoryIndexResource;
 use App\Models\Category;
-use App\Models\SubCategory;
-use Illuminate\Http\Request;
-use Validator;
+use App\Services\CategoryService;
 
-/**
- * @OA\Tag(
- *     name="Admin Blogs",
- *     description="Admin category operations"
- * )
- */
 class CategoryController extends Controller
 {
 
-    public function index()
+    public function __construct(private readonly CategoryService $categoryService)
     {
-        $perPage = request()->input('per_page', 15);
-
-        $category = Category::orderBy('created_at', 'desc')->paginate($perPage);
-
-
-        return response()->json($category);
-    }
-    public function client_Index()
-    {
-        $perPage = request()->input('per_page', 15);
-
-        $category = Category::where('status', 'active')
-            ->orderBy('created_at', 'desc')->paginate($perPage);
-
-
-        return response()->json($category);
-    }
-    public function client_index_parent()
-    {
-
-        $categories = Category::select('id', 'title', 'url')->get();
-
-        $mainItems = [
-
-
-
-        ];
-
-
-        $menu = [];
-        foreach ($categories as $category) {
-            $item = [
-                'title' => $category->title,
-                'id' => (int) $category->id,
-                'type' => 'category',
-                'icon' => null,
-                'children' => [],
-                'isActive' => false,
-                'path' => null,
-                'query' =>  null
-            ];
-
-            // کوئری برای دریافت زیر دسته‌بندی‌ها با parent_id برابر با category.id
-            $subcategories = SubCategory::select('id', 'title', 'url' ,'parent_id')
-                ->where('parent_id', $category->id)
-                ->get();
-            $query = [];
-            foreach ($subcategories as $subcategory) {
-                $item['children'][] = [
-                    'title' => $subcategory->title,
-                    'id' => (int) $subcategory->id,
-                    'type' => 'sub_category',
-                    'icon' => null,
-                    'children' => [],
-                    'isActive' => false,
-                    'parent_id'=>(int) $subcategory->parent_id,
-                ];
-            }
-
-            $menu[] = $item;
-        }
-        $mainItems = $menu;
-        return response()->json($mainItems);
-
     }
 
-    public function list()
+    /**
+     * @OA\Get(
+     *     path="/admin/v1/categories",
+     *     summary="Get paginated list of categories",
+     *     description="Returns a paginated list of categories with filtering options",
+     *     operationId="adminCategoryIndex",
+     *     tags={"Category"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Items per page",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=15
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter by category status",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"DRAFT", "ARCHIVE", "PUBLISH"}
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/CategoryIndexResource")
+     *             ),
+     *         @OA\Property(
+     *                  property="pagination_info",
+     *                  type="array",
+     *                  @OA\Items(ref="#/components/schemas/PaginationResource")
+     *              ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="field_name",
+     *                     type="array",
+     *                     @OA\Items(type="string")
+     *                 )
+     *             )
+     *         ),
+     *         @OA\Response(
+     *          response=500,
+     *          description="Server Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Internal Server Error")
+     *          )
+     *      )
+     *
+     *     )
+     * )
+     */
+    public function index(CategoryIndexRequest $request)
     {
-        $category = Category::all();
-        $data = [];
+        $data = $request->validated();
+        $categories = $this->categoryService->index($data);
 
-        foreach ($category as $item) {
+        $resource = CategoryIndexResource::collection($categories);
 
-            $data[] = (object)[
-                'title' => $item->title,
-                'url' => $item->url,
-                'id' => $item->id,
-                'type'=>'category',
-                'value' => $item->id,
-            ];
-
-        }
-        return response()->json($data);
+        return $this->apiResponse(data: $resource, paginationData: ($categories));
     }
 
-    public function client_list()
+    /**
+     * @OA\Post(
+     *     path="/admin/v1/categories",
+     *     summary="Create a new category post",
+     *     description="Creates a new category post with featured image",
+     *     operationId="adminCategoryStore",
+     *     tags={"Category"},
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Category data and featured image",
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(ref="#/components/schemas/CategoryStoreRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Category created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Category created successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/CategoryShowResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Forbidden")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Server Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Internal Server Error")
+     *          )
+     *      ),
+     * )
+     */
+    public function store(CategoryStoreRequest $request)
     {
-        $category = Category::where('status', 'active');
-        $data = [];
-
-        foreach ($category as $item) {
-
-            $data[] = (object)[
-                'title' => $item->title,
-                'url' => $item->url,
-                'id' => $item->id,
-                'type'=>'category',
-                'value' => $item->id,
-            ];
-
-        }
-        return response()->json($data);
+        //
     }
 
-    public function store(Request $request)
+    /**
+     * @OA\Get(
+     *     path="/admin/v1/categories/{id}",
+     *     summary="Get single category details",
+     *     description="Returns full details of a specific category including multilingual contents",
+     *     operationId="adminCategoryShow",
+     *     tags={"Category"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Category ID",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/CategoryShowResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Unauthenticated."
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Forbidden"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Category not found"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Internal Server Error"
+     *             ),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 example={
+     *                     "error": "Error details"
+     *                 }
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function show(CategoryShowRequest $request, Category $category)
     {
-        // پیام‌های خطا
-        $messages = [
-            'title.required' => 'عنوان الزامی است.',
-            'title.min' => 'عنوان باید حداقل ۴ کاراکتر باشد.',
-            'description.required' => 'توضیحات الزامی است.',
-            'description.min' => 'توضیحات باید حداقل ۴ کاراکتر باشد.',
-        ];
-
-        // اعتبارسنجی فیلدهای الزامی
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|min:4',
-            'description' => 'required|min:4',
-        ], $messages);
-
-        // اگر اعتبارسنجی با خطا مواجه شد
-        if ($validator->fails()) {
-            $error = $validator->errors()->first();
-            return response()->json(['message' => $error], 422);
-        }
-        $data = [];
-        // تولید URL
-        $data['url'] = $this->generateUrl($request->url, $request->title);
-
-
-        // ایجاد دسته‌بندی جدید
-        $category = new Category;
-        $category->title = $request->title;
-        $category->url = $data['url'];
-        $category->description = $request->description;
-
-        // تنظیم مقادیر پیش‌فرض برای فیلدهای اختیاری
-        $category->en_title = $request->en_title ?? '';
-        $category->en_subtitle = $request->en_subtitle ?? '';
-        $category->subtitle = $request->subtitle ?? '';
-        $category->en_description = $request->en_description ?? '';
-        $category->status = $request->status ?? 'inactive';
-        $category->meta_description = $request->meta_description ?? '';
-        $category->meta_title = $request->meta_title ?? '';
-        $category->meta_keywords = $request->meta_keywords ?? '';
-        $category->canonical = $request->canonical ?? '';
-        $category->no_index = $request->no_index ?? 'inactive';
-
-        $category->save();
-
-        return response()->json([
-            "message" => " دسته بندی با موفقیت اضافه شد."
-        ], 201);
+        //
     }
 
-
-    public function show($id)
+    /**
+     * @OA\Put(
+     *     path="/admin/v1/categories/{id}",
+     *     summary="Update a category post",
+     *     description="Updates an existing category with multilingual content",
+     *     operationId="adminCategoryUpdate",
+     *     tags={"Category"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the category to update",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Category update data including multilingual content and optional image",
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(ref="#/components/schemas/CategoryUpdateRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Category updated successfully"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/CategoryShowResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Invalid input data"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Unauthenticated."
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Forbidden"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Category not found"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="The given data was invalid."
+     *             ),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 example={
+     *                     "contents.fa.title": {"The persian title field is required."}
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Internal Server Error"
+     *             ),
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Error details"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
-        $category = Category::find($id);
-        if (!empty($category)) {
-            return response()->json($category);
-        } else {
-            return response()->json([
-                "message" => " دسته بندی یافت نشد"
-            ], 404);
-        }
+        //
     }
-    public function client_show($id)
+
+    /**
+     * @OA\Delete(
+     *     path="/admin/v1/categories/{id}",
+     *     summary="Delete a Category post",
+     *     description="Permanently deletes a category post and its related data",
+     *     operationId="adminCategoryDestroy",
+     *     tags={"Category"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the category to delete",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Category deleted successfully"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Unauthenticated."
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Forbidden"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Category not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Category not found"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Internal Server Error"
+     *             ),
+     *             @OA\Property(
+     *                 property="error",
+     *                 type="string",
+     *                 example="Error details"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function destroy(CategoryDestroyRequest $request, Category $category)
     {
-        $category = Category::find($id);
-
-        if (empty($category) || $category->status === 'inactive') {
-            return response()->json([
-                "message" => "دسته‌بندی یافت نشد یا غیرفعال است"
-            ], 404);
-        }
-
-        return response()->json($category);
+        //
     }
 
-
-    public function update(Request $request, $id)
+    /**
+     * @OA\Get(
+     *     path="/admin/v1/categories/list",
+     *     summary="Get list of categories",
+     *     description="Returns a list of Categorys with pagination",
+     *     operationId="adminCategoryList",
+     *     tags={"Category"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/CategoryListResource")
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Internal Server Error")
+     *         )
+     *     )
+     * )
+     */
+    public function getList(CategoryListRequest $request)
     {
 
-        // پیام‌های خطا
-        $messages = [
-            'title.required' => 'عنوان الزامی است.',
-            'id.required' => 'شناسه دسته بندی الزامی است.',
-            'title.min' => 'عنوان باید حداقل ۴ کاراکتر باشد.',
-            'description.required' => 'توضیحات الزامی است.',
-            'description.min' => 'توضیحات باید حداقل ۴ کاراکتر باشد.',
-        ];
-
-        // اعتبارسنجی فیلدهای الزامی
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|min:4',
-            'description' => 'required|min:4',
-        ], $messages);
-
-        // اگر اعتبارسنجی با خطا مواجه شد
-        if ($validator->fails()) {
-            $error = $validator->errors()->first();
-            return response()->json(['message' => $error], 422);
-        }
-
-
-        if (Category::where('id', $id)->exists()) {
-            $category = Category::find($id);
-
-            $category->title = $request->has('title') ? (!empty($request->title) ? $request->title : '') : ($category->title ?? '');
-            $category->en_title = $request->has('en_title') ? (!empty($request->en_title) ? $request->en_title : '') : ($category->en_title ?? '');
-            $category->en_subtitle = $request->has('en_subtitle') ? (!empty($request->en_subtitle) ? $request->en_subtitle : '') : ($category->en_subtitle ?? '');
-            $category->subtitle = $request->has('subtitle') ? (!empty($request->subtitle) ? $request->subtitle : '') : $category->subtitle;
-            $category->en_description = $request->has('en_description') ? (!empty($request->en_description) ? $request->en_description : '') : $category->en_description;
-            $category->description = $request->has('description') ? (!empty($request->description) ? $request->description : '') : $category->description;
-            $category->meta_description = $request->has('meta_description') ? (!empty($request->meta_description) ? $request->meta_description : '') : $category->meta_description;
-            $category->meta_title = $request->has('meta_title') ? (!empty($request->meta_title) ? $request->meta_title : '') : $category->meta_title;
-            $category->meta_keywords = $request->has('meta_keywords') ? (!empty($request->meta_keywords) ? $request->meta_keywords : '') : $category->meta_keywords;
-            $category->canonical = $request->has('canonical') ? (!empty($request->canonical) ? $request->canonical : '') : $category->canonical;
-            $category->no_index = $request->has('no_index') ? (!empty($request->no_index) ? $request->no_index : 'inactive') : $category->no_index;
-            $category->status = $request->has('status') ? (!empty($request->status) ? $request->status : 'inactive') : $category->status;
-
-            $data = $request->all();
-            $data['url'] = $this->generateUrl($request->url, $request->title);
-            $category->url = $data['url'];
-
-
-
-            $category->save();
-
-            return response()->json([
-                "message" => "دسته بندی با موفقیت بروزرسانی شد."
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => "دسته بندی یافت نشد."
-            ], 404);
-        }
-    }
-
-    private function generateUrl($url, $title)
-    {
-        return $url ? str_replace(' ', '-', $url) : str_replace(' ', '-', $title);
-    }
-
-    public function destroy($id)
-    {
-        if (Category::where('id', $id)->exists()) {
-            $category = Category::find($id);
-
-            $category->delete();
-
-            return response()->json([
-                "message" => " دسته بندی با موفقیت اضافه شد."
-            ], 202);
-        } else {
-            return response()->json([
-                "message" => " دسته بندی یافت نشد."
-            ], 404);
-        }
     }
 }

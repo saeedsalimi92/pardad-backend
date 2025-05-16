@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories');
             $table->enum('locale', ['fa', 'en']);
             $table->string('title')->nullable();
+            $table->string('slug')->nullable();
             $table->text('content')->nullable();
             $table->json('props');
             $table->timestamps();

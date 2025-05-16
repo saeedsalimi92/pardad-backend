@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,6 +33,20 @@ class Category extends Model
         'status',
         'url'
     ];
+
+    public function statusTranslate(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => __("attributes.category.status.{$this->status}"),
+        );
+    }
+
+    public function typeTranslate(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => __("attributes.category.type.{$this->type}"),
+        );
+    }
 
     public function contents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

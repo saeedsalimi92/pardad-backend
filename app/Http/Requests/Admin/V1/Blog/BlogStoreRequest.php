@@ -60,23 +60,16 @@ use Illuminate\Validation\Rule;
  *              type="object",
  *              @OA\Property(property="meta_keyword", type="string", maxLength=255, example="عنوان مقاله"),
  *              @OA\Property(property="meta_description", type="string", example="محتوای مقاله به فارسی"),
- *              @OA\Property(property="canonical", type="string", example="لینک کنونیکال", nullable=true)
+ *              @OA\Property(property="canonical", type="string", example="http://www.blog.pardad.com", nullable=true)
  *          ),
  *          @OA\Property(
  *              property="en",
  *              type="object",
  *              @OA\Property(property="title", type="string", maxLength=255, example="Blog Title"),
  *              @OA\Property(property="content", type="string", example="<p>English blog content</p>"),
- *              @OA\Property(property="description", type="string", example="English meta description", nullable=true)
+ *              @OA\Property(property="description", type="string", example="http://www.blog.pardad.com", nullable=true)
  *          )
  *      ),
- *         @OA\Property(
- *             property="metas",
- *             type="object",
- *             @OA\Property(property="keywords", type="string", example="blog, sample"),
- *             @OA\Property(property="description", type="string", example="Sample blog description")
- *         )
- *     )
  * )
  */
 class BlogStoreRequest extends FormRequest
@@ -110,12 +103,12 @@ class BlogStoreRequest extends FormRequest
             'props.fa' => ['nullable', 'array'],
             'props.fa.meta_keyword' => ['nullable', 'string'],
             'props.fa.meta_description' => ['nullable', 'string'],
-            'props.fa.canonical' => ['nullable', 'string'],
+            'props.fa.canonical' => ['nullable', 'url'],
 
             'props.en' => ['nullable', 'array'],
             'props.en.meta_keyword' => ['nullable', 'string'],
             'props.en.meta_description' => ['nullable', 'string'],
-            'props.en.canonical' => ['nullable', 'string'],
+            'props.en.canonical' => ['nullable', 'url'],
         ];
     }
 
@@ -134,7 +127,6 @@ class BlogStoreRequest extends FormRequest
         $this->merge([
             'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
             'props' => $this->input('props') ? json_decode($this->input('props'), true) : null,
-            'metas' => $this->input('metas') ? json_decode($this->input('metas'), true) : null,
             'related_blog_ids' => (is_string($this->related_blog_ids) ? explode(",", $this->related_blog_ids) : $this->related_blog_ids)
         ]);
     }

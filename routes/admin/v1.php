@@ -29,14 +29,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/upload-file', [UploadController::class , 'uploadFile']);
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
 
-    Route::group(['prefix' => 'blog-faqs'], function () {
-        Route::get('/', [BlogFaqController::class, 'index']);
-        Route::post('/', [BlogFaqController::class, 'store']);
-        Route::get('{id}/', [BlogFaqController::class, 'show']);
-        Route::put('{id}/', [BlogFaqController::class, 'update']);
-        Route::delete('{id}/', [BlogFaqController::class, 'destroy']);
-    });
-
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', [CommentController::class, 'getAllComments']);
         Route::post('/', [CommentController::class, 'store']);
@@ -51,21 +43,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::patch('{blog}/status/change',[BlogController::class, 'changeStatus']);
     });
 
+    Route::apiResource('categories', BlogController::class);
+
     Route::get('/brand', [BrandController::class, 'index']);
     Route::get('/brand/{id}', [BrandController::class, 'show']);
     Route::post('/brand', [BrandController::class, 'store']);
     Route::post('/brand/{id}', [BrandController::class, 'update']);
     Route::delete('/brand/{id}', [BrandController::class, 'destroy']);
-
-    Route::get('/category', [CategoryController::class, 'index']);
-    Route::get('/category/{id}', [CategoryController::class, 'show']);
-    Route::get('/list/category', [CategoryController::class, 'list']);
-    Route::post('/category', [CategoryController::class, 'store']);
-    Route::post('/category/{id}', [CategoryController::class, 'update']);
-    Route::delete('/category/{id}', [CategoryController::class, 'destroy']);
-    Route::post('/category/{id}/images',[CategoryController::class, 'updateImages']);
-    Route::delete('/category/{category}/images/{id}',[CategoryController::class, 'deleteImage']);
-    Route::post('/category/{category}/logos',[CategoryController::class, 'updateLogos']);
 
     Route::group(['prefix' => 'sub-category'], function () {
         Route::get('/', [SubCategoryController::class, 'index']);

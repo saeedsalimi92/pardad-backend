@@ -13,17 +13,3 @@ if(!function_exists('generatePaginateData')) {
         ];
     }
 }
-
-if(!function_exists('generateUrl'))  {
-    function generateUrl($url, $title): array|string
-    {
-        return $url ? str_replace(' ', '-', $url) : str_replace(' ', '-', $title);
-    }
-}
-
-if(!function_exists('generateSlug')) {
-    function generateSlug(string $title): string
-    {
-        return Str::slug($title);
-    }
-}

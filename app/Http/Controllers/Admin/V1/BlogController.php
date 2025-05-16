@@ -57,15 +57,6 @@ class BlogController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="title",
-     *         in="query",
-     *         description="blog title",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
      *         name="status",
      *         in="query",
      *         description="Filter by blog status",
@@ -138,7 +129,7 @@ class BlogController extends Controller
 
         $resource = BlogIndexResource::collection($blogs);
 
-        return $this->apiResponse(data: $resource, paginationData: generatePaginateData($blogs));
+        return $this->apiResponse(data: $resource, paginationData: ($blogs));
     }
 
     /**
@@ -470,13 +461,7 @@ class BlogController extends Controller
      */
     public function update(BlogUpdateRequest $request, Blog $blog): \Illuminate\Http\JsonResponse
     {
-        $data = $request->validated();
-
-        $this->blogService->update($blog->id, $data);
-
-        if($request->hasFile('image')) {
-            $blog->storeFeaturedImage($request->file('image'), 'blogs');
-        }
+        $this->blogService->update($blog, $request);
 
         $resource = BlogShowResource::make($blog);
 

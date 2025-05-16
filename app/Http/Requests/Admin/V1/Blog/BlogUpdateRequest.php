@@ -61,14 +61,14 @@ use Illuminate\Validation\Rule;
  *             type="object",
  *             @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
  *             @OA\Property(property="meta_description", type="string", example="توضیحات متا فارسی"),
- *             @OA\Property(property="canonical", type="string", example="لینک کنونیکال", nullable=true)
+ *             @OA\Property(property="canonical", type="string", example="http://www.blog.pardad.com", nullable=true)
  *         ),
  *         @OA\Property(
  *             property="en",
  *             type="object",
  *             @OA\Property(property="meta_keyword", type="string", maxLength=255, example="Keywords"),
  *             @OA\Property(property="meta_description", type="string", example="English meta description"),
- *             @OA\Property(property="canonical", type="string", example="Canonical link", nullable=true)
+ *             @OA\Property(property="canonical", type="string", example="http://www.blog.pardad.com", nullable=true)
  *         ),
  *         nullable=true
  *     )
@@ -106,12 +106,12 @@ class BlogUpdateRequest extends FormRequest
             'props.fa' => ['nullable', 'array'],
             'props.fa.meta_keyword' => ['nullable', 'string'],
             'props.fa.meta_description' => ['nullable', 'string'],
-            'props.fa.canonical' => ['nullable', 'string'],
+            'props.fa.canonical' => ['nullable', 'url'],
 
             'props.en' => ['nullable', 'array'],
             'props.en.meta_keyword' => ['nullable', 'string'],
             'props.en.meta_description' => ['nullable', 'string'],
-            'props.en.canonical' => ['nullable', 'string'],
+            'props.en.canonical' => ['nullable', 'url'],
         ];
     }
 
@@ -130,7 +130,6 @@ class BlogUpdateRequest extends FormRequest
         $this->merge([
             'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
             'props' => $this->input('props') ? json_decode($this->input('props'), true) : null,
-            'metas' => $this->input('metas') ? json_decode($this->input('metas'), true) : null,
             'related_blog_ids' => $this->input('related_blog_ids') ? json_decode($this->input('related_blog_ids'), true) : [],
         ]);
     }
