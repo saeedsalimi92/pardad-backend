@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasFaq;
 use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,24 +12,25 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 /**
  * @property string $status
  * @property int $id
+ * @property string $status_translate
  */
 class Blog extends Model
 {
-    use HasFactory, HasImage, SoftDeletes;
+    use HasFactory, HasImage, HasFaq, SoftDeletes;
 
-    const STATUS_ACTIVE = "active";
-    const STATUS_INACTIVE = "inactive";
+    const STATUS_DRAFT = "DRAFT";
+    const STATUS_ARCHIVE = "ARCHIVE";
+    const STATUS_PUBLISH = "PUBLISH";
 
     const STATUSES = [
-        self::STATUS_ACTIVE,
-        self::STATUS_INACTIVE,
+        self::STATUS_DRAFT,
+        self::STATUS_ARCHIVE,
+        self::STATUS_PUBLISH,
     ];
 
     protected $fillable = [
-        'title',
-        'en_title',
-        'description',
-        'en_description',
+        'id',
+        'code',
         'status',
         'props',
         'published_at'
@@ -46,14 +48,14 @@ class Blog extends Model
         );
     }
 
+    public function contents(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BlogContent::class);
+    }
+
     public function comments()
     {
         return $this->hasMany(Comment::class)->whereNull('parent_id')->with('replies');
-    }
-
-    public function faqs(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(BlogFaq::class)->where('is_active', true);
     }
 
     public function relatedBlogs(): \Illuminate\Database\Eloquent\Relations\BelongsToMany

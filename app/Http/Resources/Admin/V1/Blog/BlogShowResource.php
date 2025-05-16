@@ -16,6 +16,33 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string $updated_at
  * @property array $props
  * @property mixed $relatedBlogs
+ * @OA\Schema(
+ *      schema="BlogShowResource",
+ *      type="object",
+ *      @OA\Property(property="id", type="integer", example=1),
+ *      @OA\Property(property="title", type="string", example="Sample Blog Title"),
+ *      @OA\Property(property="en_title", type="string", example="Sample English Title"),
+ *      @OA\Property(property="content", type="string", example="<p>Blog content</p>"),
+ *      @OA\Property(property="status", type="string", enum={"draft", "published", "archived"}),
+ *      @OA\Property(property="published_at", type="string", format="date-time"),
+ *      @OA\Property(property="image_url", type="string", format="url"),
+ *      @OA\Property(
+ *          property="props",
+ *          type="object",
+ *          @OA\Property(
+ *              property="socials",
+ *              type="object",
+ *              @OA\Property(property="instagram", type="string"),
+ *              @OA\Property(property="telegram", type="string")
+ *          ),
+ *          @OA\Property(
+ *              property="metas",
+ *              type="object",
+ *              @OA\Property(property="keywords", type="string"),
+ *              @OA\Property(property="description", type="string")
+ *          )
+ *      )
+ *  )
  */
 class BlogShowResource extends JsonResource
 {

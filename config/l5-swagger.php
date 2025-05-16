@@ -24,6 +24,8 @@ return [
                     base_path('app/Http/Swagger/Admin.php'),
                     base_path('app/Http/Controllers/Admin/V1'),
                     base_path('app/Http/Resources/Admin/V1'),
+                    base_path('app/Http/Requests/Admin/V1'),
+                    base_path('app/Http/Resources/'),
                 ],
             ],
         ],

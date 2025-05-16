@@ -10,24 +10,31 @@ class Category extends Model
 {
     use HasFactory, SoftDeletes;
 
+    const TYPE_NORMAL = "NORMAL";
+    const TYPE_EXPERT = "EXPERT";
+
+    const TYPES = [
+        self::TYPE_NORMAL,
+        self::TYPE_EXPERT,
+    ];
+
+    const STATUS_ACTIVE = 'ACTIVE';
+    const STATUS_INACTIVE = 'INACTIVE';
+
+    const STATUSES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_INACTIVE,
+    ];
+
     protected $fillable = [
-        'title',
-        'en_title',
-        'subtitle',
-        'en_subtitle',
-        'description',
-        'en_description',
+        'id',
+        'code',
         'status',
-        'meta_description',
-        'meta_keywords',
-        'meta_title',
-        'canonical',
-        'no_index',
         'url'
     ];
 
-    public function subCategories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function contents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Subcategory::class);
+        return $this->hasMany(CategoryContent::class);
     }
 }

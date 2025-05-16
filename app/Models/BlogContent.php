@@ -4,13 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BlogFaq extends Model
+class BlogContent extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
     protected $fillable = [
-        'blog_id', 'question', 'answer', 'is_active'
+        'id',
+        'blog_id',
+        'title',
+        'locale',
+        'content',
+        'props'
+    ];
+
+    protected $casts = [
+        'props' => 'array',
     ];
 
     public function blog(): \Illuminate\Database\Eloquent\Relations\BelongsTo

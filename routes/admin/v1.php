@@ -48,12 +48,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'admin'], function () 
 
     Route::apiResource('blog', BlogController::class);
     Route::group(['prefix' => 'blog'], function () {
-        Route::get('list/', [BlogController::class, 'list']);
-        Route::get('list/{parent_id}/', [BlogController::class, 'listByParent']);
-        Route::get('list/{parent_id}/', [BlogController::class, 'indexByParent']);
-        Route::post('{id}/images/',[BlogController::class, 'updateImages']);
-        Route::delete('{blog}/images/{id}/',[BlogController::class, 'deleteImage']);
-        Route::put('{blog}/status/change',[BlogController::class, 'changeStatus']);
+        Route::patch('{blog}/status/change',[BlogController::class, 'changeStatus']);
     });
 
     Route::get('/brand', [BrandController::class, 'index']);

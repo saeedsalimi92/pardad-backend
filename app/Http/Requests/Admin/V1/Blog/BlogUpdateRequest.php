@@ -7,11 +7,75 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * @property Blog $blog
+ * @OA\Schema(
+ *     schema="BlogUpdateRequest",
+ *     required={"contents"},
+ *     @OA\Property(
+ *         property="contents",
+ *         type="object",
+ *         @OA\Property(
+ *             property="fa",
+ *             type="object",
+ *             @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
+ *             @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
+ *         ),
+ *         @OA\Property(
+ *             property="en",
+ *             type="object",
+ *             @OA\Property(property="title", type="string", maxLength=255, example="Blog Title"),
+ *             @OA\Property(property="content", type="string", example="<p>English blog content</p>"),
+ *         )
+ *     ),
+ *     @OA\Property(
+ *         property="status",
+ *         type="string",
+ *         enum={"DRAFT", "PUBLISH", "ARCHIVE"},
+ *         example="PUBLISH"
+ *     ),
+ *     @OA\Property(
+ *         property="published_at",
+ *         type="string",
+ *         format="date-time",
+ *         example="2023-01-01 12:00:00",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="image",
+ *         type="string",
+ *         format="binary",
+ *         description="Featured image file (max: 500kb)",
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="related_blog_ids",
+ *         type="array",
+ *         @OA\Items(type="integer"),
+ *         example={1, 2, 3},
+ *         nullable=true
+ *     ),
+ *     @OA\Property(
+ *         property="props",
+ *         type="object",
+ *         @OA\Property(
+ *             property="fa",
+ *             type="object",
+ *             @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
+ *             @OA\Property(property="meta_description", type="string", example="توضیحات متا فارسی"),
+ *             @OA\Property(property="canonical", type="string", example="لینک کنونیکال", nullable=true)
+ *         ),
+ *         @OA\Property(
+ *             property="en",
+ *             type="object",
+ *             @OA\Property(property="meta_keyword", type="string", maxLength=255, example="Keywords"),
+ *             @OA\Property(property="meta_description", type="string", example="English meta description"),
+ *             @OA\Property(property="canonical", type="string", example="Canonical link", nullable=true)
+ *         ),
+ *         nullable=true
+ *     )
+ * )
  */
 class BlogUpdateRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -19,17 +83,64 @@ class BlogUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $blogId = $this->route('blog');
+
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:blogs,title,'.$this->blog],
-            'status' => ['required', 'string', Rule::in(Blog::STATUSES)],
-            'type' => ['nullable', 'string', 'max:255'],
-            'canonical' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'content' => ['nullable', 'string'],
-            'parent_type' => ['nullable', 'string', 'max:255'],
-            'parent_id' => ['nullable', 'integer'],
+            'contents' => ['sometimes', 'array'],
+            'contents.fa' => ['sometimes', 'array'],
+            'contents.fa.title' => ['sometimes', 'string', 'max:255'],
+            'contents.fa.content' => ['sometimes', 'string'],
+
+            'contents.en' => ['sometimes', 'array'],
+            'contents.en.title' => ['sometimes', 'string', 'max:255'],
+            'contents.en.content' => ['sometimes', 'string'],
+
+            'image' => ['sometimes'],
+            'status' => ['sometimes', 'string', Rule::in(Blog::STATUSES)],
+            'published_at' => ['sometimes', 'date_format:Y-m-d H:i:s'],
+
             'related_blog_ids' => ['nullable', 'array'],
-            'published_at' => ['required', 'date_format:Y-m-d H:i:s'],
+            'related_blog_ids.*' => ['exists:blogs,id'],
+
+            'props' => ['nullable', 'array'],
+            'props.fa' => ['nullable', 'array'],
+            'props.fa.meta_keyword' => ['nullable', 'string'],
+            'props.fa.meta_description' => ['nullable', 'string'],
+            'props.fa.canonical' => ['nullable', 'string'],
+
+            'props.en' => ['nullable', 'array'],
+            'props.en.meta_keyword' => ['nullable', 'string'],
+            'props.en.meta_description' => ['nullable', 'string'],
+            'props.en.canonical' => ['nullable', 'string'],
         ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'contents.fa.title' => 'عنوان فارسی',
+            'contents.fa.content' => 'محتوای فارسی',
+            'contents.en.title' => 'عنوان انگلیسی',
+            'contents.en.content' => 'محتوای انگلیسی',
+        ];
+    }
+
+    public function prepareForValidation()
+    {
+        if ($this->has('props.fa.canonical') && empty($this->props['fa']['canonical'])) {
+            $this->merge([
+                'props' => array_merge($this->props, [
+                    'fa' => array_merge($this->props['fa'], ['canonical' => null])
+                ])
+            ]);
+        }
+
+        if ($this->has('props.en.canonical') && empty($this->props['en']['canonical'])) {
+            $this->merge([
+                'props' => array_merge($this->props, [
+                    'en' => array_merge($this->props['en'], ['canonical' => null])
+                ])
+            ]);
+        }
     }
 }

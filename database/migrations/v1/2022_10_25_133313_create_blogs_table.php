@@ -16,11 +16,9 @@ class CreateBlogsTable extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('en_title')->nullable();
-            $table->longText('description');
-            $table->longText('en_description')->nullable();
-            $table->enum('status', Blog::STATUSES)->default(Blog::STATUS_INACTIVE);
+            $table->string("code")->unique();
+            $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->enum('status', Blog::STATUSES)->default(Blog::STATUS_DRAFT);
             $table->json("props")->nullable();
             $table->string("published_at")->nullable()->index();
             $table->timestamps();

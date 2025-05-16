@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,12 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blog_faqs', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->constrained()->onDelete('cascade');
-            $table->string('question');
-            $table->text('answer');
-            $table->enum('is_active', ['active', 'inactive'])->default('active');
+            $table->string('code')->unique();
+            $table->enum('type', Category::TYPES)->default(Category::TYPE_NORMAL);
+            $table->integer('parent_id')->nullable();
+            $table->enum('status', Category::STATUSES)->default(Category::STATUS_INACTIVE);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blog_faqs');
+        Schema::dropIfExists('categories');
     }
 };
