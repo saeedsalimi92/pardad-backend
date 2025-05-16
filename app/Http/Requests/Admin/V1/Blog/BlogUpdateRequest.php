@@ -125,22 +125,13 @@ class BlogUpdateRequest extends FormRequest
         ];
     }
 
-    public function prepareForValidation()
+    protected function prepareForValidation(): void
     {
-        if ($this->has('props.fa.canonical') && empty($this->props['fa']['canonical'])) {
-            $this->merge([
-                'props' => array_merge($this->props, [
-                    'fa' => array_merge($this->props['fa'], ['canonical' => null])
-                ])
-            ]);
-        }
-
-        if ($this->has('props.en.canonical') && empty($this->props['en']['canonical'])) {
-            $this->merge([
-                'props' => array_merge($this->props, [
-                    'en' => array_merge($this->props['en'], ['canonical' => null])
-                ])
-            ]);
-        }
+        $this->merge([
+            'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
+            'props' => $this->input('props') ? json_decode($this->input('props'), true) : null,
+            'metas' => $this->input('metas') ? json_decode($this->input('metas'), true) : null,
+            'related_blog_ids' => $this->input('related_blog_ids') ? json_decode($this->input('related_blog_ids'), true) : [],
+        ]);
     }
 }

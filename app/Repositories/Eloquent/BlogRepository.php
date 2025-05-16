@@ -16,6 +16,7 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
+            ->with(['contents'])
             ->when(isset($data['title']), function ($query) use ($data) {
                 $query->where('title', 'like', '%' . $data['title'] . '%');
             })

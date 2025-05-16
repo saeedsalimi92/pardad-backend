@@ -30,7 +30,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/v1/admin/blog",
+     *     path="/admin/v1/blog",
      *     summary="Get paginated list of blogs",
      *     description="Returns a paginated list of blogs with filtering options",
      *     operationId="adminBlogIndex",
@@ -72,7 +72,7 @@ class BlogController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             enum={"active", "inactive"}
+     *             enum={"DRAFT", "ARCHIVE", "PUBLISH"}
      *         )
      *     ),
      *     @OA\Response(
@@ -143,7 +143,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/v1/admin/blog/list",
+     *     path="/admin/v1/blog/list",
      *     summary="Get list of blogs",
      *     description="Returns a list of blogs with pagination",
      *     operationId="adminBlogList",
@@ -195,7 +195,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/v1/admin/blogs",
+     *     path="/admin/v1/blog",
      *     summary="Create a new blog post",
      *     description="Creates a new blog post with featured image",
      *     operationId="adminBlogStore",
@@ -257,7 +257,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/v1/admin/blog/{id}",
+     *     path="/admin/v1/blog/{id}",
      *     summary="Get single blog details",
      *     description="Returns full details of a specific blog including multilingual contents",
      *     operationId="adminBlogShow",
@@ -348,7 +348,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/v1/admin/blogs/{id}",
+     *     path="/admin/v1/blog/{id}",
      *     summary="Update a blog post",
      *     description="Updates an existing blog post with multilingual content, images, and related data",
      *     operationId="adminBlogUpdate",
@@ -485,7 +485,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/v1/admin/blogs/{id}",
+     *     path="/admin/v1/blog/{id}",
      *     summary="Delete a blog post",
      *     description="Permanently deletes a blog post and its related data",
      *     operationId="adminBlogDestroy",
@@ -573,7 +573,7 @@ class BlogController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/v1/admin/blogs/{id}/change-status",
+     *     path="/admin/v1/blog/{id}/change-status",
      *     summary="Change blog status",
      *     description="Updates the status of a blog post using form data",
      *     operationId="adminBlogChangeStatus",
@@ -659,7 +659,7 @@ class BlogController extends Controller
      */
     public function changeStatus(BlogChangeStatusRequest $request, Blog $blog): \Illuminate\Http\JsonResponse
     {
-        $this->blogService->update($blog->id, ['status' => $request->status]);
+        $this->blogService->changeStatus($blog->id, $request->status);
 
         return $this->apiResponse(message: __("response.blog.change_status", ['status' => $blog->status_translate]));
     }

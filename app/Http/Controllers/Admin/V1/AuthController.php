@@ -18,19 +18,19 @@ class AuthController extends Controller
 {
     /**
      * @OA\Post(
-     *     path="/v1/admin/register",
-     *     summary="register",
-     *     description="register",
+     *     path="/admin/v1/register",
+     *     summary="Register",
+     *     description="Admin Register",
      *     operationId="register",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
-     *         description="اطلاعات مورد نیاز برای ثبت نام",
+     *         description="Register",
      *         @OA\JsonContent(
      *             required={"name", "email", "password"},
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123", minLength=8),
+     *             @OA\Property(property="name", type="string", example="Example"),
+     *             @OA\Property(property="email", type="string", format="email", example="example@gmail.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password", minLength=8),
      *         ),
      *     ),
      *     @OA\Response(
@@ -77,18 +77,18 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/v1/admin/login",
-     *     summary="ورود کاربر",
-     *     description="با استفاده از این endpoint کاربر می‌تواند با ایمیل و رمز عبور وارد حساب خود شود و یک توکن احراز هویت دریافت کند.",
+     *     path="/admin/v1/login",
+     *     summary="Admin Login",
+     *     description="Admin Login",
      *     operationId="login",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
-     *         description="اطلاعات مورد نیاز برای ورود",
+     *         description="User information for login",
      *         @OA\JsonContent(
      *             required={"email", "password"},
-     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123"),
+     *             @OA\Property(property="email", type="string", format="email", example="example@gmail.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password"),
      *         ),
      *     ),
      *     @OA\Response(
@@ -138,9 +138,9 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/v1/admin/logout",
-     *     summary="خروج کاربر",
-     *     description="با استفاده از این endpoint کاربر می‌تواند از حساب خود خارج شود و توکن‌های احراز هویت او حذف می‌شوند.",
+     *     path="/admin/v1/logout",
+     *     summary="Admin Logout",
+     *     description="Admin can logout from here",
      *     operationId="logout",
      *     tags={"Authentication"},
      *     security={{"bearerAuth": {}}},

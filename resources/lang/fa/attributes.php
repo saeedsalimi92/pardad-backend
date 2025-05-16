@@ -3,8 +3,9 @@
 return [
     'blog' => [
         'status' => [
-            \App\Models\Blog::STATUS_ACTIVE => 'فعال',
-            \App\Models\Blog::STATUS_INACTIVE => 'غیر فعال',
+            \App\Models\Blog::STATUS_DRAFT => 'پیش نویس',
+            \App\Models\Blog::STATUS_ARCHIVE => 'آرشیو',
+            \App\Models\Blog::STATUS_PUBLISH => 'منتشر شده',
         ]
     ]
 ];

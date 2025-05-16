@@ -44,8 +44,7 @@ class BlogListResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            "end_title" => $this->en_title
+            "contents" => BlogContentIndexResource::collection($this->contents)
         ];
     }
 }

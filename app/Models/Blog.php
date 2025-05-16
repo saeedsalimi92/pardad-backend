@@ -62,7 +62,7 @@ class Blog extends Model
     {
         return $this->belongsToMany(
             Blog::class,
-            'related_blogs',
+            'blog_relations',
             'blog_id',
             'related_blog_id'
         );

@@ -129,4 +129,14 @@ class BlogStoreRequest extends FormRequest
         ];
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
+            'props' => $this->input('props') ? json_decode($this->input('props'), true) : null,
+            'metas' => $this->input('metas') ? json_decode($this->input('metas'), true) : null,
+            'related_blog_ids' => (is_string($this->related_blog_ids) ? explode(",", $this->related_blog_ids) : $this->related_blog_ids)
+        ]);
+    }
+
 }

@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Http\Requests\Admin\V1\Blog\BlogStoreRequest;
+use App\Http\Requests\Admin\V1\Blog\BlogUpdateRequest;
+use App\Models\Blog;
 use App\Repositories\BlogRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 readonly class BlogService
 {
@@ -42,40 +45,68 @@ readonly class BlogService
                     'title' => $content['title'],
                     'content' => $content['content'],
                 ]);
-
             }
 
-            if (isset($data['related_blogs'])) {
-                $blog->relatedBlogs()->sync($data['related_blogs']);
+            if (isset($data['related_blog_ids'])) {
+                $blog->relatedBlogs()->sync($data['related_blog_ids']);
             }
 
-            $blog->storeFeaturedImage($request->file('image'), 'blogs');
+            $blog->storeFeaturedImage($request->file('image'), 'blog');
 
             DB::commit();
 
             return $blog;
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error($e);
 
             return null;
         }
     }
 
-    public function update($blog, $data): int
+    public function changeStatus($id, $status): int
     {
-        $data['url'] = generateUrl($data['url'] ?? null, $data['title']);
+        return $this->blogRepository->update($id, ["status" => $status]);
+    }
 
-        if (empty($data['canonical'])) {
-            $data['canonical'] = generateSlug($data['url']);
+    public function update(Blog $blog, BlogUpdateRequest $request): int
+    {
+        $data = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $this->blogRepository->update($blog->id, [
+                'status' => $data['status'],
+                'published_at' => $data['published_at'],
+                'props' => $data['props'] ?? null,
+                'author_id' => auth()->id(),
+                'code' => uniqid()
+            ]);
+
+            foreach ($data['contents'] as $locale => $content) {
+                $blog->contents()->where("locale", $locale)->update([
+                    'title' => $content['title'],
+                    'content' => $content['content'],
+                ]);
+            }
+
+            if (isset($data['related_blog_ids'])) {
+                $blog->relatedBlogs()->sync($data['related_blog_ids']);
+            }
+
+            if($request->hasFile('image')) {
+                $blog->storeFeaturedImage($request->file('image'), 'blog');
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+
+            return false;
         }
-
-        $this->blogRepository->update($blog->id, $data);
-
-        if($data["related_blog_ids"]) {
-            $blog->relatedBlogs()->sync($data["related_blog_ids"]);
-        }
-
-        return $blog;
     }
 
     public function destroy($blog)

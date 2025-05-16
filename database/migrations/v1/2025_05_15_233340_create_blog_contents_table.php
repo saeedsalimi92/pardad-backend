@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('blog_contents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('blog_id')->references('id')->on('blogs')->onDelete('cascade');
-            $table->enum('local', ['fa', 'en']);
+            $table->enum('locale', ['fa', 'en']);
             $table->string('title');
             $table->text('content');
-            $table->json('props');
+            $table->json('props')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

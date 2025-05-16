@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\V1\Blog;
 
+use App\Models\BlogContent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string $created_at
  * @property string $updated_at
  * @property array $props
+ * @property BlogContent $contents
  * @OA\Schema(
  *     schema="BlogIndexResource",
  *     title="Blog Index Resource",
@@ -94,10 +96,8 @@ class BlogIndexResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title" => $this->title,
-            "end_title" => $this->en_title,
+            'contents' => BlogContentIndexResource::collection($this->contents),
             "status" => $this->status,
-            "props" => $this->props,
             "status_translate" => $this->status_translate,
             "published_at" => $this->published_at,
             "created_at" => $this->created_at,
