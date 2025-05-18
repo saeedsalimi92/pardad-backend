@@ -9,7 +9,6 @@ use App\Http\Requests\Admin\V1\Category\CategoryListRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryShowRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
-use App\Http\Resources\Admin\V1\Blog\BlogIndexResource;
 use App\Http\Resources\Admin\V1\Category\CategoryIndexResource;
 use App\Models\Category;
 use App\Services\CategoryService;
@@ -56,7 +55,7 @@ class CategoryController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             enum={"DRAFT", "ARCHIVE", "PUBLISH"}
+     *             enum={"ACTIVE", "INACTIVE"}
      *         )
      *     ),
      *     @OA\Response(

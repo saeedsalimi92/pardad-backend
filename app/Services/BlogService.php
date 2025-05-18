@@ -34,16 +34,16 @@ readonly class BlogService
             $blog = $this->blogRepository->create([
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
-                'props' => $data['props'] ?? null,
                 'author_id' => auth()->id(),
                 'code' => uniqid()
             ]);
 
-            foreach ($data['contents'] as $locale => $content) {
+            foreach ($data['contents'] as $content) {
                 $blog->contents()->create([
-                    'locale' => $locale,
+                    'locale' => $content["locale"],
                     'title' => $content['title'],
                     'content' => $content['content'],
+                    'props' => $content['props'] ?? [],
                 ]);
             }
 

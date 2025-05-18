@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\V1\Blog;
 
+use App\Enums\LocalEnum;
 use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -12,21 +13,45 @@ use Illuminate\Validation\Rule;
  *     required={"contents", "image", "status", "published_at"},
  *     @OA\Property(
  *         property="contents",
- *         type="object",
- *         @OA\Property(
- *             property="fa",
+ *         type="array",
+ *         minItems=2,
+ *         maxItems=2,
+ *         @OA\Items(
  *             type="object",
- *             required={"title", "content"},
+ *             required={"locale", "title", "content"},
+ *             @OA\Property(property="locale", type="string", enum={"fa", "en"}, example="fa"),
  *             @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
  *             @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
+ *             @OA\Property(
+ *                 property="props",
+ *                 type="object",
+ *                 @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
+ *                 @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
+ *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true)
+ *             )
  *         ),
- *         @OA\Property(
- *             property="en",
- *             type="object",
- *             required={"title", "content"},
- *             @OA\Property(property="title", type="string", maxLength=255, example="Blog Title"),
- *             @OA\Property(property="content", type="string", example="<p>English blog content</p>"),
- *         )
+ *         example={
+ *             {
+ *                 "locale": "fa",
+ *                 "title": "عنوان مقاله",
+ *                 "content": "<p>محتوای فارسی</p>",
+ *                 "props": {
+ *                     "meta_keyword": "کلمات کلیدی",
+ *                     "meta_description": "توضیحات متا",
+ *                     "canonical": "http://fa.blog.pardad.com"
+ *                 }
+ *             },
+ *             {
+ *                 "locale": "en",
+ *                 "title": "Blog Title",
+ *                 "content": "<p>English content</p>",
+ *                 "props": {
+ *                     "meta_keyword": "keywords",
+ *                     "meta_description": "meta description",
+ *                     "canonical": "http://en.blog.pardad.com"
+ *                 }
+ *             }
+ *         }
  *     ),
  *     @OA\Property(
  *         property="status",
@@ -51,25 +76,7 @@ use Illuminate\Validation\Rule;
  *         type="array",
  *         @OA\Items(type="integer"),
  *         example={1, 2, 3}
- *     ),
- *    @OA\Property(
- *          property="props",
- *          type="object",
- *          @OA\Property(
- *              property="fa",
- *              type="object",
- *              @OA\Property(property="meta_keyword", type="string", maxLength=255, example="عنوان مقاله"),
- *              @OA\Property(property="meta_description", type="string", example="محتوای مقاله به فارسی"),
- *              @OA\Property(property="canonical", type="string", example="http://www.blog.pardad.com", nullable=true)
- *          ),
- *          @OA\Property(
- *              property="en",
- *              type="object",
- *              @OA\Property(property="title", type="string", maxLength=255, example="Blog Title"),
- *              @OA\Property(property="content", type="string", example="<p>English blog content</p>"),
- *              @OA\Property(property="description", type="string", example="http://www.blog.pardad.com", nullable=true)
- *          )
- *      ),
+ *     )
  * )
  */
 class BlogStoreRequest extends FormRequest
@@ -83,42 +90,34 @@ class BlogStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'contents' => ['required', 'array'],
-            'contents.fa' => ['required', 'array'],
-            'contents.fa.title' => ['required', 'string', 'max:255'],
-            'contents.fa.content' => ['required', 'string'],
+            'contents' => ['required', 'array', 'min:1'],
+            'contents.*' => ['required', 'array'],
+            'contents.*.locale' => ['required', Rule::in(LocalEnum::allLocale())],
+            'contents.*.title' => ['required', 'string', 'max:255'],
+            'contents.*.content' => ['required', 'string'],
 
-            'contents.en' => ['required', 'array'],
-            'contents.en.title' => ['required', 'string', 'max:255'],
-            'contents.en.content' => ['required', 'string'],
+            // props as part of each content item
+            'contents.*.props' => ['required', 'array'],
+            'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
+            'contents.*.props.meta_description' => ['required', 'string'],
+            'contents.*.props.canonical' => ['required', 'url'],
 
-            'image' => ['required'],
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png', 'max:500'],
             'status' => ['required', 'string', Rule::in(Blog::STATUSES)],
             'published_at' => ['required', 'date_format:Y-m-d H:i:s'],
             'related_blog_ids' => ['nullable', 'array'],
-            'related_blog_ids.*' => ['exists:blogs,id'],
-
-            'props' => ['nullable', 'array'],
-
-            'props.fa' => ['nullable', 'array'],
-            'props.fa.meta_keyword' => ['nullable', 'string'],
-            'props.fa.meta_description' => ['nullable', 'string'],
-            'props.fa.canonical' => ['nullable', 'url'],
-
-            'props.en' => ['nullable', 'array'],
-            'props.en.meta_keyword' => ['nullable', 'string'],
-            'props.en.meta_description' => ['nullable', 'string'],
-            'props.en.canonical' => ['nullable', 'url'],
+            'related_blog_ids.*' => ['integer', 'exists:blogs,id'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'contents.fa.title' => 'عنوان فارسی',
-            'contents.fa.content' => 'محتوای فارسی',
-            'contents.en.title' => 'عنوان انگلیسی',
-            'contents.en.content' => 'محتوای انگلیسی',
+            'contents.*.title' => 'عنوان',
+            'contents.*.content' => 'محتوای',
+            'contents.*.props.meta_keyword' => 'کلمات کلیدی متا',
+            'contents.*.props.meta_description' => 'توضیحات متا',
+            'contents.*.props.canonical' => 'لینک کنونیکال',
         ];
     }
 

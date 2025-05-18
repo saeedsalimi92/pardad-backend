@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
 
 if(!function_exists('generatePaginateData')) {
     function generatePaginateData($paginationData): array
