@@ -32,6 +32,7 @@ readonly class BlogService
         DB::beginTransaction();
         try {
             $blog = $this->blogRepository->create([
+                'category_id' => $data['category_id'],
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
                 'author_id' => auth()->id(),
@@ -76,17 +77,17 @@ readonly class BlogService
         DB::beginTransaction();
         try {
             $this->blogRepository->update($blog->id, [
+                'category_id' => $data['category_id'],
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
-                'props' => $data['props'] ?? null,
-                'author_id' => auth()->id(),
-                'code' => uniqid()
+                'author_id' => auth()->id()
             ]);
 
-            foreach ($data['contents'] as $locale => $content) {
-                $blog->contents()->where("locale", $locale)->update([
+            foreach ($data['contents'] as $content) {
+                $blog->contents()->where("locale", $content["locale"])->update([
                     'title' => $content['title'],
                     'content' => $content['content'],
+                    'props' => $content['props'] ?? [],
                 ]);
             }
 

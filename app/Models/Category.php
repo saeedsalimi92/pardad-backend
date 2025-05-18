@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasImage, SoftDeletes;
 
     const TYPE_NORMAL = "NORMAL";
     const TYPE_EXPERT = "EXPERT";
@@ -29,6 +30,7 @@ class Category extends Model
 
     protected $fillable = [
         'id',
+        'author_id',
         'code',
         'status',
         'url'

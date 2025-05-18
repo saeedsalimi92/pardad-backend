@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->morphs("commentable");
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('first_name');
             $table->string('last_name');
-            $table->string('mobile');
-            $table->string('email');
+            $table->string('mobile')->nullable();
+            $table->string('email')->nullable();
             $table->text('comment');
             $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreignId('blog_id')->nullable()->constrained('blogs')->onDelete('set null');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->boolean('is_reply')->default(false);
             $table->enum('status', ['approved', 'rejected', 'pending'])->default('pending');
             $table->timestamps();

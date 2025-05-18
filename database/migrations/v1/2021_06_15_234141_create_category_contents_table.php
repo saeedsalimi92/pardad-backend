@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->json('props');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

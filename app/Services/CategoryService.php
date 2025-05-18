@@ -2,7 +2,12 @@
 
 namespace App\Services;
 
+use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
+use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
+use App\Models\Category;
 use App\Repositories\CategoryRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 readonly class CategoryService
 {
@@ -15,8 +20,89 @@ readonly class CategoryService
         return $this->categoryRepository->index($data, $perPage);
     }
 
+    public function create(CategoryStoreRequest $request)
+    {
+        $data = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $category = $this->categoryRepository->create([
+                'status' => $data['status'],
+                'author_id' => auth()->id(),
+                'code' => uniqid()
+            ]);
+
+            foreach ($data['contents'] as $content) {
+                $category->contents()->create([
+                    'locale' => $content["locale"],
+                    'title' => $content['title'],
+                    'content' => $content['content'],
+                    'props' => $content['props'] ?? [],
+                ]);
+            }
+
+            $category->storeFeaturedImage($request->file('image'), 'category');
+
+            DB::commit();
+
+            return $category;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+
+            return null;
+        }
+    }
+
+    public function changeStatus($id, $status): int
+    {
+        return $this->categoryRepository->update($id, ["status" => $status]);
+    }
+
+    public function update(Category $category, CategoryUpdateRequest $request): int
+    {
+        $data = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $this->categoryRepository->update($category->id, [
+                'status' => $data['status'],
+                'author_id' => auth()->id()
+            ]);
+
+            foreach ($data['contents'] as $content) {
+                $category->contents()->where("locale", $content["locale"])->update([
+                    'title' => $content['title'],
+                    'content' => $content['content'],
+                    'props' => $content['props'] ?? [],
+                ]);
+            }
+            if($request->hasFile('image')) {
+                $category->storeFeaturedImage($request->file('image'), 'category');
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+
+            return false;
+        }
+    }
+
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
         return $this->categoryRepository->getList($data);
+    }
+
+    public function destroy($category)
+    {
+        foreach ($category->images as $image) {
+            $category->deleteImage($image->id);
+        }
+
+        return $category->delete();
     }
 }

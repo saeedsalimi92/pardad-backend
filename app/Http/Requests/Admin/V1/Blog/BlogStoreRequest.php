@@ -12,6 +12,11 @@ use Illuminate\Validation\Rule;
  *     schema="BlogStoreRequest",
  *     required={"contents", "image", "status", "published_at"},
  *     @OA\Property(
+ *          property="cagtegory_id",
+ *          type="integer",
+ *          example="1"
+ *      ),
+ *     @OA\Property(
  *         property="contents",
  *         type="array",
  *         minItems=2,
@@ -90,6 +95,8 @@ class BlogStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'category_id' => ['required', 'exists:categories,id'],
+
             'contents' => ['required', 'array', 'min:1'],
             'contents.*' => ['required', 'array'],
             'contents.*.locale' => ['required', Rule::in(LocalEnum::allLocale())],
@@ -102,7 +109,15 @@ class BlogStoreRequest extends FormRequest
             'contents.*.props.meta_description' => ['required', 'string'],
             'contents.*.props.canonical' => ['required', 'url'],
 
-            'image' => ['required', 'image', 'mimes:jpeg,jpg,png', 'max:500'],
+            'image' => [
+                'required',
+                'file',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'mimetypes:image/jpeg,image/png,image/webp',
+                'max:500',
+            ],
+
             'status' => ['required', 'string', Rule::in(Blog::STATUSES)],
             'published_at' => ['required', 'date_format:Y-m-d H:i:s'],
             'related_blog_ids' => ['nullable', 'array'],
@@ -125,7 +140,6 @@ class BlogStoreRequest extends FormRequest
     {
         $this->merge([
             'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
-            'props' => $this->input('props') ? json_decode($this->input('props'), true) : null,
             'related_blog_ids' => (is_string($this->related_blog_ids) ? explode(",", $this->related_blog_ids) : $this->related_blog_ids)
         ]);
     }

@@ -17,5 +17,12 @@ return [
             \App\Models\Category::TYPE_NORMAL => "عادی",
             \App\Models\Category::TYPE_EXPERT => "حرفه ای",
         ]
-    ]
+    ],
+    'comment' => [
+        'status' => [
+            \App\Models\Comment::STATUS_PENDING => 'در انتظار',
+            \App\Models\Comment::STATUS_REJECT => 'رد شده',
+            \App\Models\Comment::STATUS_APPROVED => 'تایید شده',
+        ]
+    ],
 ];

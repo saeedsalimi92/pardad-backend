@@ -18,6 +18,7 @@ class CreateBlogsTable extends Migration
             $table->id();
             $table->string("code")->unique();
             $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade');
             $table->enum('status', Blog::STATUSES)->default(Blog::STATUS_DRAFT);
             $table->json("props")->nullable();
             $table->string("published_at")->nullable()->index();

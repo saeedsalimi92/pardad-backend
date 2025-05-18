@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->string('code')->unique();
             $table->enum('type', Category::TYPES)->default(Category::TYPE_NORMAL);
             $table->integer('parent_id')->nullable();

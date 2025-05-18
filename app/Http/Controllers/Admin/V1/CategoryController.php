@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\V1\Category\CategoryShowRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
 use App\Http\Resources\Admin\V1\Category\CategoryIndexResource;
+use App\Http\Resources\Admin\V1\Category\CategoryShowResource;
 use App\Models\Category;
 use App\Services\CategoryService;
 
@@ -176,7 +177,14 @@ class CategoryController extends Controller
      */
     public function store(CategoryStoreRequest $request)
     {
-        //
+        $category = $this->categoryService->create($request);
+        if(!$category) {
+            return $this->apiResponse(success: false, message: "response.category.error", httpStatusCode: 500);
+        }
+
+        $resource = CategoryShowResource::make($category);
+
+        return $this->apiResponse(message: __("response.category.created"), data: $resource);
     }
 
     /**
@@ -263,7 +271,11 @@ class CategoryController extends Controller
      */
     public function show(CategoryShowRequest $request, Category $category)
     {
-        //
+        $category->loadMissing(['contents']);
+
+        $resource = CategoryShowResource::make($category);
+
+        return $this->apiResponse(data: $resource);
     }
 
     /**
@@ -390,7 +402,11 @@ class CategoryController extends Controller
      */
     public function update(CategoryUpdateRequest $request, Category $category)
     {
-        //
+        $this->categoryService->update($category, $request);
+
+        $resource = CategoryShowResource::make($category);
+
+        return $this->apiResponse(data: $resource);
     }
 
     /**
@@ -476,7 +492,9 @@ class CategoryController extends Controller
      */
     public function destroy(CategoryDestroyRequest $request, Category $category)
     {
-        //
+        $this->categoryService->destroy($category);
+
+        return $this->apiResponse(message: __("response.blog.destroyed"));
     }
 
     /**

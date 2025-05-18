@@ -51,19 +51,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/brand/{id}', [BrandController::class, 'update']);
     Route::delete('/brand/{id}', [BrandController::class, 'destroy']);
 
-    Route::group(['prefix' => 'sub-category'], function () {
-        Route::get('/', [SubCategoryController::class, 'index']);
-        Route::get('{id}/', [SubCategoryController::class, 'show']);
-        Route::get('list/{parent_id}/', [SubCategoryController::class, 'indexByParent']);
-        Route::post('/', [SubCategoryController::class, 'store']);
-        Route::post('{id}/', [SubCategoryController::class, 'update']);
-        Route::delete('{id}/', [SubCategoryController::class, 'destroy']);
-        Route::post('{id}/images/',[SubCategoryController::class, 'updateImages']);
-        Route::delete('{sub-category}/images/{id}/',[SubCategoryController::class, 'deleteImage']);
-        Route::post('{sub-category}/logos/',[SubCategoryController::class, 'updateLogos']);
-    });
-
-    Route::get('/list/sub-category', [SubCategoryController::class, 'list']);
     Route::get('/list', [CategoryController::class, 'allList']);
-    Route::get('/list/sub-category/{parent_id}', [SubCategoryController::class, 'listByParent']);
 });
