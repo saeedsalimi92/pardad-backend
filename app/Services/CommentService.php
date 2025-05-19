@@ -10,9 +10,9 @@ readonly class CommentService
     {
     }
 
-    public function index()
+    public function index($data, $perPage=15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->commentRepository->index();
+        return $this->commentRepository->index($data, $perPage);
     }
 
     public function update($id, $data)

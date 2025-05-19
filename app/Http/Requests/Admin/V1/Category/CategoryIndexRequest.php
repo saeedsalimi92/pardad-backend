@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\Admin\V1\Category;
 
+use App\Enums\CategoryScope;
+use App\Enums\Locale;
+use App\Enums\Status;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CategoryIndexRequest extends FormRequest
 {
@@ -22,7 +26,9 @@ class CategoryIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "status" => ["nullable", Rule::in(Status::statuses())],
+            "scope" => ["nullable", Rule::in(CategoryScope::scopes())],
+            "locale" => ["nullable", Rule::in(Locale::allLocale())],
         ];
     }
 }

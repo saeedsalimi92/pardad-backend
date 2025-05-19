@@ -20,6 +20,11 @@ readonly class CategoryService
         return $this->categoryRepository->index($data, $perPage);
     }
 
+    public function findById($id, $with=[])
+    {
+        return $this->categoryRepository->findById($id, $with);
+    }
+
     public function create(CategoryStoreRequest $request)
     {
         $data = $request->validated();
@@ -29,6 +34,7 @@ readonly class CategoryService
             $category = $this->categoryRepository->create([
                 'status' => $data['status'],
                 'author_id' => auth()->id(),
+                'parent_id' => $data["parent_id"],
                 'code' => uniqid()
             ]);
 
@@ -41,7 +47,9 @@ readonly class CategoryService
                 ]);
             }
 
-            $category->storeFeaturedImage($request->file('image'), 'category');
+            if($request->hasFile('image')) {
+                $category->storeFeaturedImage($request->file('image'), 'category');
+            }
 
             DB::commit();
 
@@ -67,7 +75,7 @@ readonly class CategoryService
         try {
             $this->categoryRepository->update($category->id, [
                 'status' => $data['status'],
-                'author_id' => auth()->id()
+                'parent_id' => $data["parent_id"],
             ]);
 
             foreach ($data['contents'] as $content) {
@@ -77,6 +85,7 @@ readonly class CategoryService
                     'props' => $content['props'] ?? [],
                 ]);
             }
+
             if($request->hasFile('image')) {
                 $category->storeFeaturedImage($request->file('image'), 'category');
             }

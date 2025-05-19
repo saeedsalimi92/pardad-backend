@@ -17,8 +17,9 @@ return new class extends Migration
             $table->text('answer');
             $table->morphs('faqable');
             $table->integer('priority')->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', \App\Enums\Status::statuses())->default(\App\Enums\Status::Active->value)->index();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

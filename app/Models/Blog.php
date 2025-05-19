@@ -18,16 +18,6 @@ class Blog extends Model
 {
     use HasFactory, HasImage, HasFaq, SoftDeletes;
 
-    const STATUS_DRAFT = "DRAFT";
-    const STATUS_ARCHIVE = "ARCHIVE";
-    const STATUS_PUBLISH = "PUBLISH";
-
-    const STATUSES = [
-        self::STATUS_DRAFT,
-        self::STATUS_ARCHIVE,
-        self::STATUS_PUBLISH,
-    ];
-
     protected $fillable = [
         'id',
         'code',

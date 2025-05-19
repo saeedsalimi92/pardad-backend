@@ -41,9 +41,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('blog', BlogController::class);
     Route::group(['prefix' => 'blog'], function () {
         Route::patch('{blog}/status/change',[BlogController::class, 'changeStatus']);
+
+        Route::group(['prefix' => '{blog}/faq'], function () {
+            Route::get("/", [BlogController::class, 'faqIndex']);
+            Route::post("/", [BlogController::class, 'faqStore']);
+            Route::put("{faq}/", [BlogController::class, 'faqUpdate']);
+            Route::delete("{faq}/", [BlogController::class, 'faqDestroy']);
+        });
     });
 
-    Route::apiResource('categories', BlogController::class);
+    Route::apiResource('categories', CategoryController::class)->except(['update']);
+    Route::post('categories/{category}/update', [CategoryController::class, 'update']);
 
     Route::get('/brand', [BrandController::class, 'index']);
     Route::get('/brand/{id}', [BrandController::class, 'show']);

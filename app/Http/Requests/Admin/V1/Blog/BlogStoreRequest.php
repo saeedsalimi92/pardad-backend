@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests\Admin\V1\Blog;
 
-use App\Enums\LocalEnum;
-use App\Models\Blog;
+use App\Enums\BlogStatus;
+use App\Enums\Locale;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
  *     schema="BlogStoreRequest",
- *     required={"contents", "image", "status", "published_at"},
+ *     required={"contents", "status", "published_at"},
  *     @OA\Property(
  *          property="cagtegory_id",
  *          type="integer",
@@ -61,8 +61,8 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(
  *         property="status",
  *         type="string",
- *         enum={"DRAFT", "PUBLISH", "ARCHIVE"},
- *         example="DRAFT"
+ *         enum={"draft", "published", "archived"},
+ *         example="draft"
  *     ),
  *     @OA\Property(
  *         property="published_at",
@@ -99,7 +99,7 @@ class BlogStoreRequest extends FormRequest
 
             'contents' => ['required', 'array', 'min:1'],
             'contents.*' => ['required', 'array'],
-            'contents.*.locale' => ['required', Rule::in(LocalEnum::allLocale())],
+            'contents.*.locale' => ['required', Rule::in(Locale::allLocale())],
             'contents.*.title' => ['required', 'string', 'max:255'],
             'contents.*.content' => ['required', 'string'],
 
@@ -110,7 +110,7 @@ class BlogStoreRequest extends FormRequest
             'contents.*.props.canonical' => ['required', 'url'],
 
             'image' => [
-                'required',
+                'nullable',
                 'file',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
@@ -118,7 +118,7 @@ class BlogStoreRequest extends FormRequest
                 'max:500',
             ],
 
-            'status' => ['required', 'string', Rule::in(Blog::STATUSES)],
+            'status' => ['required', 'string', Rule::in(BlogStatus::statuses())],
             'published_at' => ['required', 'date_format:Y-m-d H:i:s'],
             'related_blog_ids' => ['nullable', 'array'],
             'related_blog_ids.*' => ['integer', 'exists:blogs,id'],

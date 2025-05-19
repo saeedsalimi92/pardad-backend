@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use App\Repositories\BlogRepositoryInterface;
 use App\Repositories\BrandRepositoryInterface;
 use App\Repositories\CategoryRepositoryInterface;
@@ -16,6 +17,7 @@ use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\ImageRepositoryInterface;
 use App\Repositories\SubCategoryRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -47,8 +49,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
         $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
         $this->app->bind(ImageRepositoryInterface::class, ImageRepository::class);
-        $this->app->bind(SubCategoryRepositoryInterface::class, SubCategoryRepository::class);
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     public function bindServices(): void

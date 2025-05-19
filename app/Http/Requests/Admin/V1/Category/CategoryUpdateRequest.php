@@ -2,15 +2,16 @@
 
 namespace App\Http\Requests\Admin\V1\Category;
 
-use App\Enums\LocalEnum;
-use App\Models\Category;
+use App\Enums\CategoryType;
+use App\Enums\Locale;
+use App\Enums\Status;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
  *     schema="CategoryUpdateRequest",
- *     required={"contents", "image", "status"},
+ *     required={"contents", "status", "type"},
  *     @OA\Property(
  *         property="contents",
  *         type="array",
@@ -54,11 +55,22 @@ use Illuminate\Validation\Rule;
  *         }
  *     ),
  *     @OA\Property(
+ *          property="parent_id",
+ *          type="integer",
+ *          example="1"
+ *      ),
+ *     @OA\Property(
  *         property="status",
  *         type="string",
- *         enum={"ACTIVE", "INACTIVE"},
- *         example="DRAFT"
+ *         enum={"active", "inactive"},
+ *         example="active"
  *     ),
+ *    @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          enum={"normal", "expert"},
+ *          example="normal"
+ *      ),
  *     @OA\Property(
  *         property="image",
  *         type="string",
@@ -69,9 +81,7 @@ use Illuminate\Validation\Rule;
  */
 class CategoryUpdateRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
@@ -82,7 +92,7 @@ class CategoryUpdateRequest extends FormRequest
         return [
             'contents' => ['required', 'array', 'min:1'],
             'contents.*' => ['required', 'array'],
-            'contents.*.locale' => ['required', Rule::in(LocalEnum::allLocale())],
+            'contents.*.locale' => ['required', Rule::in(Locale::allLocale())],
             'contents.*.title' => ['required', 'string', 'max:255'],
             'contents.*.content' => ['required', 'string'],
 
@@ -101,7 +111,10 @@ class CategoryUpdateRequest extends FormRequest
                 'max:500',
             ],
 
-            'status' => ['required', 'string', Rule::in(Category::STATUSES)],
+            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+
+            'status' => ['required', 'string', Rule::in(Status::statuses())],
+            'type' => ['required', 'string', Rule::in(CategoryType::types())],
         ];
     }
 

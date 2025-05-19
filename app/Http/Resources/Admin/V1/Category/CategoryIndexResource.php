@@ -15,11 +15,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         type="integer",
  *         example=1
  *     ),
+ *    @OA\Property(
+ *          property="parent_id",
+ *          type="integer",
+ *          example=1
+ *      ),
  *     @OA\Property(
- *         property="contents",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/CategoryContentIndexResource")
- *     ),
+ *           property="parent_name",
+ *           type="string",
+ *           example="Main category title"
+ *       ),
+ *     @OA\Property(
+ *            property="title",
+ *            type="string",
+ *            example="category title"
+ *       ),
  *     @OA\Property(
  *         property="status",
  *         type="string",
@@ -36,7 +46,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         property="type",
  *         type="string",
  *         description="Category type code",
- *         example="EXPERT"
+ *         example="expert"
  *     ),
  *     @OA\Property(
  *         property="type_translate",
@@ -64,7 +74,9 @@ class CategoryIndexResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            'contents' => CategoryContentIndexResource::collection($this->contents),
+            "parent_id" => $this->parent_id,
+            "parent_name" => $this->parent?->contents->first()->title,
+            "title" => $this->contents->first()->title ?? "",
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "type" => $this->type,

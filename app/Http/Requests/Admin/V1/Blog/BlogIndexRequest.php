@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Admin\V1\Blog;
 
-use App\Models\Blog;
+use App\Enums\BlogStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +18,8 @@ class BlogIndexRequest extends FormRequest
     {
         return [
             'title' => ['nullable', 'string'],
-            'status' => ['nullable', 'string', Rule::in(Blog::STATUSES)],
+            'category_id' => ['bail', 'nullable', 'integer', 'exists:categories,id'],
+            'status' => ['nullable', 'string', Rule::in(BlogStatus::statuses())],
             'per_page' => ['nullable', 'integer'],
         ];
     }

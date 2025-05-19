@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Admin\V1\Category;
 
+use App\Models\CategoryContent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * @property CategoryContent $contents
  * @OA\Schema(
  *     schema="CategoryListResource",
  *     title="Category Resource",
@@ -24,7 +26,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         property="type",
  *         type="string",
  *         description="Category type code",
- *         example="EXPERT"
+ *         example="expert"
  *     ),
  *     @OA\Property(
  *         property="type_translate",
@@ -45,7 +47,7 @@ class CategoryListResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            'contents' => CategoryContentIndexResource::collection($this->contents),
+            "title" => $this->contents?->first()->title ?? "",
             "type" => $this->type,
             "type_translate" => $this->type_translate,
         ];

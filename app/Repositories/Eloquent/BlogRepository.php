@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Enums\BlogStatus;
 use App\Models\Blog;
 use App\Repositories\BaseRepository;
 use App\Repositories\BlogRepositoryInterface;
@@ -16,9 +17,23 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
-            ->with(['contents'])
+            ->with(['contents' => function($query) use ($data) {
+                $query
+                    ->when(isset($data['locale']), function ($query) use ($data) {
+                        $query->where('locale', $data["locale"]);
+                    })
+                    ->when(isset($data['title']), function ($query) use ($data) {
+                        $query->where('title', "LIKE", "%".$data["title"]."%");
+                    });
+            }])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
+            })
+            ->when(isset($data['category_id']), function ($query) use ($data) {
+                $query->where('category_id', $data["category_id"]);
+            })
+            ->when(isset($data['title']), function ($query) use ($data) {
+                $query->where('title', "LIKE", "%".$data["title"]."%");
             })
             ->orderByDesc('created_at')
             ->paginate($perPage);
@@ -27,8 +42,21 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
         return $this->query()
+            ->with(['contents' => function($query) use ($data) {
+                $query
+                    ->select('id', 'blog_id' ,'title')
+                    ->when(isset($data['locale']), function ($query) use ($data) {
+                        $query->where('locale', $data["locale"]);
+                    })
+                    ->when(isset($data['title']), function ($query) use ($data) {
+                        $query->where('title', "LIKE", "%".$data["title"]."%");
+                    });
+            }])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
+            })
+            ->when(isset($data['category_id']), function ($query) use ($data) {
+                $query->where('category_id', $data["category_id"]);
             })
             ->orderByDesc('created_at')
             ->get();

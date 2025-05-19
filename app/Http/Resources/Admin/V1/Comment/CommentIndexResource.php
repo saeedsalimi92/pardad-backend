@@ -5,6 +5,59 @@ namespace App\Http\Resources\Admin\V1\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *      schema="CommentIndexResource",
+ *      type="object",
+ *      description="Comment resource representation for index listing",
+ *      title="Comment Index Resource",
+ *      @OA\Property(
+ *          property="full_name",
+ *          type="string",
+ *          example="John snow",
+ *          description="Full name of the comment author"
+ *      ),
+ *      @OA\Property(
+ *          property="mobile",
+ *          type="string",
+ *          example="09123456789",
+ *          description="Mobile number of the comment writer"
+ *      ),
+ *      @OA\Property(
+ *          property="status",
+ *          type="string",
+ *          example="approved",
+ *          enum={"pending", "approved", "rejected"},
+ *          description="Current status of the comment"
+ *      ),
+ *      @OA\Property(
+ *          property="status_translate",
+ *          type="string",
+ *          example="تایید شده",
+ *          description="Translated status for display purposes"
+ *      ),
+ *      @OA\Property(
+ *          property="created_at",
+ *          type="string",
+ *          format="date-time",
+ *          example="2023-01-01T12:00:00Z",
+ *          description="Creation timestamp of the comment"
+ *      ),
+ *      @OA\Property(
+ *          property="updated_at",
+ *          type="string",
+ *          format="date-time",
+ *          example="2023-01-02T15:30:00Z",
+ *          description="Last update timestamp of the comment"
+ *      )
+ *  )
+ * @property mixed $full_name
+ * @property mixed $mobile
+ * @property mixed $status
+ * @property mixed $status_translate
+ * @property mixed $created_at
+ * @property mixed $updated_at
+ */
 class CommentIndexResource extends JsonResource
 {
     /**
@@ -14,6 +67,13 @@ class CommentIndexResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "full_name" => $this->full_name,
+            "mobile" => $this->mobile,
+            "status" => $this->status,
+            "status_translate" => $this->status_translate,
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at
+        ];
     }
 }

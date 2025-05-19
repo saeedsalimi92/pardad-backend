@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests\Admin\V1\Category;
 
-use App\Enums\LocalEnum;
-use App\Models\Blog;
-use App\Models\Category;
+use App\Enums\CategoryType;
+use App\Enums\Locale;
+use App\Enums\Status;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
  *     schema="CategoryStoreRequest",
- *     required={"contents", "image", "status"},
+ *     required={"contents", "status", "type"},
  *     @OA\Property(
  *         property="contents",
  *         type="array",
@@ -55,11 +55,22 @@ use Illuminate\Validation\Rule;
  *         }
  *     ),
  *     @OA\Property(
+ *          property="parent_id",
+ *          type="integer",
+ *          example="1"
+ *      ),
+ *     @OA\Property(
  *         property="status",
  *         type="string",
- *         enum={"ACTIVE", "INACTIVE"},
- *         example="DRAFT"
+ *         enum={"active", "inactive"},
+ *         example="active"
  *     ),
+ *    @OA\Property(
+ *          property="type",
+ *          type="string",
+ *          enum={"normal", "expert"},
+ *          example="normal"
+ *      ),
  *     @OA\Property(
  *         property="image",
  *         type="string",
@@ -81,7 +92,7 @@ class CategoryStoreRequest extends FormRequest
         return [
             'contents' => ['required', 'array', 'min:1'],
             'contents.*' => ['required', 'array'],
-            'contents.*.locale' => ['required', Rule::in(LocalEnum::allLocale())],
+            'contents.*.locale' => ['required', Rule::in(Locale::allLocale())],
             'contents.*.title' => ['required', 'string', 'max:255'],
             'contents.*.content' => ['required', 'string'],
 
@@ -92,7 +103,7 @@ class CategoryStoreRequest extends FormRequest
             'contents.*.props.canonical' => ['required', 'url'],
 
             'image' => [
-                'required',
+                'nullable',
                 'file',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
@@ -100,7 +111,10 @@ class CategoryStoreRequest extends FormRequest
                 'max:500',
             ],
 
-            'status' => ['required', 'string', Rule::in(Category::STATUSES)],
+            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+
+            'status' => ['required', 'string', Rule::in(Status::statuses())],
+            'type' => ['required', 'string', Rule::in(CategoryType::types())],
         ];
     }
 

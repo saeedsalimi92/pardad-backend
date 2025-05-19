@@ -16,9 +16,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->string('code')->unique();
-            $table->enum('type', Category::TYPES)->default(Category::TYPE_NORMAL);
+            $table->enum('type', \App\Enums\CategoryType::types())->default(\App\Enums\CategoryType::Normal->value);
             $table->integer('parent_id')->nullable();
-            $table->enum('status', Category::STATUSES)->default(Category::STATUS_INACTIVE);
+            $table->enum('status', \App\Enums\Status::statuses())->default(\App\Enums\Status::InActive->value);
             $table->timestamps();
             $table->softDeletes();
         });

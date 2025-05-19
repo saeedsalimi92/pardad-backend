@@ -14,16 +14,6 @@ class Comment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    const STATUS_PENDING = "PENDING";
-    const STATUS_APPROVED = "APPROVED";
-    const STATUS_REJECT = "REJECT";
-
-    const STATUSES = [
-        self::STATUS_PENDING,
-        self::STATUS_APPROVED,
-        self::STATUS_REJECT,
-    ];
-
     protected $fillable = ['name', 'last_name', 'mobile', 'email', 'comment', 'user_id', 'parent_id' , 'blog_id', 'is_reply'  ,'status'];
 
     public function statusTranslate(): Attribute
@@ -32,6 +22,14 @@ class Comment extends Model
             get: fn () => __("attributes.comment.status.{$this->status}"),
         );
     }
+
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->first_name. " ". $this->last_name,
+        );
+    }
+
     public function replies()
     {
         return $this->hasMany(Comment::class, 'parent_id')->with('user');

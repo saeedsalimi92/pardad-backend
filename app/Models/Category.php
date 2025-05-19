@@ -12,25 +12,10 @@ class Category extends Model
 {
     use HasFactory, HasImage, SoftDeletes;
 
-    const TYPE_NORMAL = "NORMAL";
-    const TYPE_EXPERT = "EXPERT";
-
-    const TYPES = [
-        self::TYPE_NORMAL,
-        self::TYPE_EXPERT,
-    ];
-
-    const STATUS_ACTIVE = 'ACTIVE';
-    const STATUS_INACTIVE = 'INACTIVE';
-
-    const STATUSES = [
-        self::STATUS_ACTIVE,
-        self::STATUS_INACTIVE,
-    ];
-
     protected $fillable = [
         'id',
         'author_id',
+        'parent_id',
         'code',
         'status',
         'url'
@@ -53,5 +38,15 @@ class Category extends Model
     public function contents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CategoryContent::class);
+    }
+
+    public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Category::class, "parent_id", "id");
+    }
+
+    public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Category::class, "parent_id", "id");
     }
 }

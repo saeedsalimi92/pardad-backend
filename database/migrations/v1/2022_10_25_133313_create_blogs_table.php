@@ -19,7 +19,7 @@ class CreateBlogsTable extends Migration
             $table->string("code")->unique();
             $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade');
-            $table->enum('status', Blog::STATUSES)->default(Blog::STATUS_DRAFT);
+            $table->enum('status', \App\Enums\BlogStatus::statuses())->default(\App\Enums\BlogStatus::Draft->value)->index();
             $table->json("props")->nullable();
             $table->string("published_at")->nullable()->index();
             $table->timestamps();

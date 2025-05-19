@@ -11,6 +11,7 @@ use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
 use App\Http\Resources\Admin\V1\Category\CategoryIndexResource;
 use App\Http\Resources\Admin\V1\Category\CategoryShowResource;
+use App\Http\Resources\PaginationResource;
 use App\Models\Category;
 use App\Services\CategoryService;
 
@@ -56,9 +57,48 @@ class CategoryController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             enum={"ACTIVE", "INACTIVE"}
+     *             enum={"active", "inactive"}
      *         )
      *     ),
+     *     @OA\Parameter(
+     *          name="parent_id",
+     *          in="query",
+     *          description="Filter by parent id",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="integer",
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *          name="type",
+     *          in="query",
+     *          description="Filter by category type",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="string",
+     *              enum={"normal", "expert"}
+     *          )
+     *      ),
+     *     @OA\Parameter(
+     *           name="scope",
+     *           in="query",
+     *           description="Filter by category scope",
+     *           required=false,
+     *           @OA\Schema(
+     *               type="string",
+     *               enum={"all", "main", "children"}
+     *           )
+     *       ),
+     *       @OA\Parameter(
+     *            name="locale",
+     *            in="query",
+     *            description="Filter by locale",
+     *            required=false,
+     *            @OA\Schema(
+     *                type="string",
+     *                enum={"fa", "en", "ar"}
+     *            )
+     *        ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -122,7 +162,7 @@ class CategoryController extends Controller
 
         $resource = CategoryIndexResource::collection($categories);
 
-        return $this->apiResponse(data: $resource, paginationData: ($categories));
+        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($categories));
     }
 
     /**
@@ -269,9 +309,12 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function show(CategoryShowRequest $request, Category $category)
+    public function show($id, CategoryShowRequest $request)
     {
-        $category->loadMissing(['contents']);
+        $category = $this->categoryService->findById($id, ["contents"]);
+        if(is_null($category)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
 
         $resource = CategoryShowResource::make($category);
 
@@ -279,41 +322,37 @@ class CategoryController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/admin/v1/categories/{id}",
-     *     summary="Update a category post",
-     *     description="Updates an existing category with multilingual content",
+     * @OA\Post(
+     *     path="/admin/v1/categories/{id}/update",
+     *     summary="Create a new category post",
+     *     description="Creates a new category post with featured image",
      *     operationId="adminCategoryUpdate",
      *     tags={"Category"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of the category to update",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *             format="int64",
-     *             example=1
-     *         )
-     *     ),
+     *          name="id",
+     *          in="path",
+     *          description="Category ID",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int64",
+     *              example=1
+     *          )
+     *      ),
      *     @OA\RequestBody(
      *         required=true,
-     *         description="Category update data including multilingual content and optional image",
+     *         description="Category data and featured image",
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
-     *             @OA\Schema(ref="#/components/schemas/CategoryUpdateRequest")
+     *             @OA\Schema(ref="#/components/schemas/CategoryStoreRequest")
      *         )
      *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Category updated successfully",
+     *         response=201,
+     *         description="Category created successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Category updated successfully"
-     *             ),
+     *             @OA\Property(property="message", type="string", example="Category created successfully"),
      *             @OA\Property(
      *                 property="data",
      *                 ref="#/components/schemas/CategoryShowResource"
@@ -321,87 +360,34 @@ class CategoryController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="Bad Request",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Invalid input data"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unauthenticated."
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Forbidden"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Category not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Category not found"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="The given data was invalid."
-     *             ),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 example={
-     *                     "contents.fa.title": {"The persian title field is required."}
-     *                 }
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal Server Error",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Internal Server Error"
-     *             ),
-     *             @OA\Property(
-     *                 property="error",
-     *                 type="string",
-     *                 example="Error details"
-     *             )
-     *         )
-     *     )
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Forbidden")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Server Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Internal Server Error")
+     *          )
+     *      ),
      * )
      */
-    public function update(CategoryUpdateRequest $request, Category $category)
+    public function update($id, CategoryUpdateRequest $request)
     {
+        $category = $this->categoryService->findById($id, ["contents"]);
+        if(is_null($category)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
         $this->categoryService->update($category, $request);
 
         $resource = CategoryShowResource::make($category);

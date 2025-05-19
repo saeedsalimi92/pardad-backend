@@ -52,7 +52,9 @@ readonly class BlogService
                 $blog->relatedBlogs()->sync($data['related_blog_ids']);
             }
 
-            $blog->storeFeaturedImage($request->file('image'), 'blog');
+            if($request->hasFile('image')) {
+                $blog->storeFeaturedImage($request->file('image'), 'blog');
+            }
 
             DB::commit();
 
