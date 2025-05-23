@@ -38,14 +38,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::delete('{id}/', [CommentController::class, 'destroy']);
     });
 
-    Route::apiResource('blog', BlogController::class);
+    Route::apiResource('blog', BlogController::class)->except(['update']);
+    Route::post('blog/{blog}/update', [BlogController::class, 'update']);
     Route::group(['prefix' => 'blog'], function () {
-        Route::patch('{blog}/status/change',[BlogController::class, 'changeStatus']);
+        Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);
 
         Route::group(['prefix' => '{blog}/faq'], function () {
             Route::get("/", [BlogController::class, 'faqIndex']);
             Route::post("/", [BlogController::class, 'faqStore']);
-            Route::put("{faq}/", [BlogController::class, 'faqUpdate']);
+            Route::post("{faq}/update", [BlogController::class, 'faqUpdate']);
             Route::delete("{faq}/", [BlogController::class, 'faqDestroy']);
         });
     });

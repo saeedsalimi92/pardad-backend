@@ -8,7 +8,7 @@ trait HasFaq
 {
     public function faqs(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
-        return $this->morphMany(Faq::class, 'imageable');
+        return $this->morphMany(Faq::class, 'faqable');
     }
 
     public function storeFaq($data)

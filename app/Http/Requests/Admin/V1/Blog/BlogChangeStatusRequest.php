@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\V1\Blog;
 
+use App\Enums\BlogStatus;
 use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -28,7 +29,7 @@ class BlogChangeStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'string', Rule::in(Blog::STATUSES)],
+            'status' => ['required', 'string', Rule::in(BlogStatus::statuses())],
         ];
     }
 }

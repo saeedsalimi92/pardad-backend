@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
  *     schema="BlogUpdateRequest",
  *     required={"contents", "status", "published_at"},
  *     @OA\Property(
- *           property="cagtegory_id",
+ *           property="category_id",
  *           type="integer",
  *           example="1"
  *       ),
@@ -140,8 +140,8 @@ class BlogUpdateRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
-            'related_blog_ids' => $this->input('related_blog_ids') ? json_decode($this->input('related_blog_ids'), true) : [],
+            'contents' => $this->input('contents') && is_string($this->input('contents')) ? json_decode($this->input('contents'), true) : null,
+            'related_blog_ids' => $this->input('related_blog_ids') && is_string($this->input('related_blog_ids')) ? json_decode($this->input('related_blog_ids'), true) : [],
         ]);
     }
 }

@@ -28,6 +28,11 @@ class FaqService
         return $faq->update($data);
     }
 
+    public function findById($model, $faqId)
+    {
+        return $model->faqs()->find($faqId);
+    }
+
     public function destroy($model, $id)
     {
         $faq = $model->faqs()->find($id);

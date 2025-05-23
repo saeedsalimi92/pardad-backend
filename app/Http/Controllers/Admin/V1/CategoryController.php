@@ -324,8 +324,8 @@ class CategoryController extends Controller
     /**
      * @OA\Post(
      *     path="/admin/v1/categories/{id}/update",
-     *     summary="Create a new category post",
-     *     description="Creates a new category post with featured image",
+     *     summary="Update category",
+     *     description="Update category",
      *     operationId="adminCategoryUpdate",
      *     tags={"Category"},
      *     security={{"sanctum": {}}},
@@ -336,8 +336,6 @@ class CategoryController extends Controller
      *          required=true,
      *          @OA\Schema(
      *              type="integer",
-     *              format="int64",
-     *              example=1
      *          )
      *      ),
      *     @OA\RequestBody(
@@ -346,13 +344,17 @@ class CategoryController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(ref="#/components/schemas/CategoryStoreRequest")
-     *         )
+     *         ),
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/CategoryStoreRequest")
+     *          ),
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Category created successfully",
+     *         description="Category updated successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Category created successfully"),
+     *             @OA\Property(property="message", type="string", example="Category updated successfully"),
      *             @OA\Property(
      *                 property="data",
      *                 ref="#/components/schemas/CategoryShowResource"

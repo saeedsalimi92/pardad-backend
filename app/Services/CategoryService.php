@@ -67,7 +67,7 @@ readonly class CategoryService
         return $this->categoryRepository->update($id, ["status" => $status]);
     }
 
-    public function update(Category $category, CategoryUpdateRequest $request): int
+    public function update(Category $category, CategoryUpdateRequest $request): bool
     {
         $data = $request->validated();
 

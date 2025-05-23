@@ -55,7 +55,7 @@ class BlogShowResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "image" => url($this->featuredImage->path),
+            "image" => url($this?->featuredImage?->path),
             "contents" => BlogContentShowResource::collection($this->contents),
             "status" => $this->status,
             "status_translate" => $this->status_translate,

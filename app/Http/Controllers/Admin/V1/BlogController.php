@@ -358,8 +358,8 @@ class BlogController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/admin/v1/blog/{id}",
+     * @OA\Post(
+     *     path="/admin/v1/blog/{id}/update",
      *     summary="Update a blog post",
      *     description="Updates an existing blog post with multilingual content, images, and related data",
      *     operationId="adminBlogUpdate",
@@ -382,6 +382,10 @@ class BlogController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(ref="#/components/schemas/BlogUpdateRequest")
+     *         ),
+     *         @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(ref="#/components/schemas/BlogUpdateRequest")
      *         )
      *     ),
      *     @OA\Response(
@@ -479,8 +483,13 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function update(BlogUpdateRequest $request, Blog $blog): \Illuminate\Http\JsonResponse
+    public function update($id, BlogUpdateRequest $request): \Illuminate\Http\JsonResponse
     {
+        $blog = $this->blogService->findById($id, ["contents"]);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $this->blogService->update($blog, $request);
 
         $resource = BlogShowResource::make($blog);
@@ -577,8 +586,8 @@ class BlogController extends Controller
     }
 
     /**
-     * @OA\Patch(
-     *     path="/admin/v1/blog/{id}/change-status",
+     * @OA\Post(
+     *     path="/admin/v1/blog/{id}/status/change",
      *     summary="Change blog status",
      *     description="Updates the status of a blog post using form data",
      *     operationId="adminBlogChangeStatus",
@@ -662,8 +671,13 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function changeStatus(BlogChangeStatusRequest $request, Blog $blog): \Illuminate\Http\JsonResponse
+    public function changeStatus($id, BlogChangeStatusRequest $request): \Illuminate\Http\JsonResponse
     {
+        $blog = $this->blogService->findById($id);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $this->blogService->changeStatus($blog->id, $request->status);
 
         return $this->apiResponse(message: __("response.blog.change_status", ['status' => $blog->status_translate]));
@@ -773,9 +787,15 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function faqIndex(BlogFaqIndexRequest $request, Blog $blog)
+    public function faqIndex($id, BlogFaqIndexRequest $request)
     {
         $data = $request->validated();
+
+        $blog = $this->blogService->findById($id);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $items = $this->faqService->index($blog, $data);
 
         $resource = FaqIndexResource::collection($items);
@@ -843,9 +863,14 @@ class BlogController extends Controller
      *      ),
      * )
      */
-    public function faqStore(BlogFaqStoreRequest $request, Blog $blog)
+    public function faqStore($id, BlogFaqStoreRequest $request)
     {
         $data = $request->validated();
+        $blog = $this->blogService->findById($id);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $faq = $this->faqService->store($blog, $data);
 
         $resource = FaqShowResource::make($faq);
@@ -854,8 +879,8 @@ class BlogController extends Controller
     }
 
     /**
-     * @OA\Put(
-     *     path="/admin/v1/blog/{blog_id}/faq/{faq_id}",
+     * @OA\Post(
+     *     path="/admin/v1/blog/{blog_id}/faq/{faq_id}/update",
      *     summary="Update a blog post",
      *     description="Updates an existing blog post with multilingual content, images, and related data",
      *     operationId="adminBlogFaqUpdate",
@@ -986,10 +1011,18 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function faqUpdate(BlogFaqUpdateRequest $request,Blog $blog, Faq $faq)
+    public function faqUpdate($blogId, $faqId, BlogFaqUpdateRequest $request)
     {
         $data = $request->validated();
-        $faq = $this->faqService->update($blog, $faq->id, $data);
+
+        $blog = $this->blogService->findById($blogId);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        $this->faqService->update($blog, $faqId, $data);
+
+        $faq = $this->faqService->findById($blog, $faqId);
 
         $resource = FaqShowResource::make($faq);
 
@@ -1005,9 +1038,9 @@ class BlogController extends Controller
      *     tags={"Blog"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="blog_id",
      *         in="path",
-     *         description="ID of the blog post to delete",
+     *         description="ID of the blog",
      *         required=true,
      *         @OA\Schema(
      *             type="integer",
@@ -1015,6 +1048,17 @@ class BlogController extends Controller
      *             example=1
      *         )
      *     ),
+     *    @OA\Parameter(
+     *          name="faq_id",
+     *          in="path",
+     *          description="ID of the faq to delete",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int64",
+     *              example=1
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="Blog deleted successfully",
@@ -1077,9 +1121,14 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function faqDestroy(BlogFaqDestroyRequest $request, Blog $blog, Faq $faq)
+    public function faqDestroy($blogId, $faqId, BlogFaqDestroyRequest $request)
     {
-        $this->faqService->destroy($blog, $faq->id);
+        $blog = $this->blogService->findById($blogId);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        $this->faqService->destroy($blog, $faqId);
 
         return $this->apiResponse();
     }

@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
  *     schema="BlogStoreRequest",
  *     required={"contents", "status", "published_at"},
  *     @OA\Property(
- *          property="cagtegory_id",
+ *          property="category_id",
  *          type="integer",
  *          example="1"
  *      ),

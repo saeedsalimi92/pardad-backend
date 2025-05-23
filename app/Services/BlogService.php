@@ -20,6 +20,11 @@ readonly class BlogService
         return $this->blogRepository->index($data, $perPage);
     }
 
+    public function findById($id, $with = [])
+    {
+        return $this->blogRepository->findById($id, $with);
+    }
+
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
         return $this->blogRepository->getList($data);
