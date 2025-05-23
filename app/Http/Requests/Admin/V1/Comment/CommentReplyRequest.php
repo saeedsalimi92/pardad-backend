@@ -4,6 +4,16 @@ namespace App\Http\Requests\Admin\V1\Comment;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="CommentReplyRequest",
+ *     required={"content"},
+ *     @OA\Property(
+ *         property="content",
+ *         type="string"
+ *     )
+ * )
+ */
 class CommentReplyRequest extends FormRequest
 {
     /**
@@ -22,7 +32,7 @@ class CommentReplyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "content" => ['required', 'string'],
         ];
     }
 }

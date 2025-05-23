@@ -21,7 +21,6 @@ use App\Http\Resources\Admin\V1\Faq\FaqIndexResource;
 use App\Http\Resources\Admin\V1\Faq\FaqShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Models\Blog;
-use App\Models\Faq;
 use App\Services\BlogService;
 use App\Services\FaqService;
 

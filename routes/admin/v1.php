@@ -2,12 +2,10 @@
 
 use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BlogController;
-use App\Http\Controllers\Admin\V1\BlogFaqController;
 use App\Http\Controllers\Admin\V1\BrandController;
 use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\CommentController;
 use App\Http\Controllers\Admin\V1\MenuController;
-use App\Http\Controllers\Admin\V1\SubCategoryController;
 use App\Http\Controllers\Admin\V1\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,12 +28,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
 
     Route::group(['prefix' => 'comments'], function () {
-        Route::get('/', [CommentController::class, 'getAllComments']);
-        Route::post('/', [CommentController::class, 'store']);
-        Route::post('reply/{id}/', [CommentController::class, 'reply']);
-        Route::get('replies/{id}/', [CommentController::class, 'showReplies']);
-        Route::patch('status/{id}/', [CommentController::class, 'updateStatus']);
-        Route::delete('{id}/', [CommentController::class, 'destroy']);
+        Route::get('/', [CommentController::class, 'index']);
+        Route::get('{id}/', [CommentController::class, 'show']);
+        Route::post('{id}/reply', [CommentController::class, 'reply']);
+        Route::post('{id}/status/change', [CommentController::class, 'changeStatus']);
     });
 
     Route::apiResource('blog', BlogController::class)->except(['update']);

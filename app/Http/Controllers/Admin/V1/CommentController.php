@@ -10,7 +10,6 @@ use App\Http\Requests\Admin\V1\Comment\CommentShowRequest;
 use App\Http\Resources\Admin\V1\Comment\CommentIndexResource;
 use App\Http\Resources\Admin\V1\Comment\CommentShowResource;
 use App\Http\Resources\PaginationResource;
-use App\Models\Comment;
 use App\Services\CommentService;
 
 /**
@@ -213,20 +212,184 @@ class CommentController extends Controller
      *     )
      * )
      */
-    public function show(CommentShowRequest $request, Comment $comment)
+    public function show($id, CommentShowRequest $request)
     {
+        $comment = $this->commentService->findById($id);
+        if(is_null($comment)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $resource = CommentShowResource::make($comment);
 
         return $this->apiResponse(data: $resource);
     }
 
-    public function reply(CommentReplyRequest $request, Comment $comment)
+    /**
+     * @OA\Post(
+     *     path="/admin/v1/comments/{id}/reply",
+     *     summary="Reply comment by admin",
+     *     description="Reply comment by admin",
+     *     operationId="adminCommentReply",
+     *     tags={"Comment"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *           name="id",
+     *           in="path",
+     *           description="ID of the comment",
+     *           required=true,
+     *           @OA\Schema(
+     *               type="integer",
+     *               format="int64",
+     *               example=1
+     *           )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Blog data and featured image",
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(ref="#/components/schemas/CommentReplyRequest")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Blog created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Blog created successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/CommentShowResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Forbidden")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Server Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Internal Server Error")
+     *          )
+     *      ),
+     * )
+     */
+    public function reply($id, CommentReplyRequest $request)
     {
+        $comment = $this->commentService->findById($id);
+        if(is_null($comment)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
 
+        $comment = $this->commentService->replyByAdmin($comment, $request->get('content'));
+
+        $resource = CommentShowResource::make($comment);
+
+        return $this->apiResponse(data: $resource);
     }
 
-    public function changeStatus(CommentChangeStatusRequest $request, Comment $comment)
+    /**
+     * @OA\Post(
+     *     path="/admin/v1/comments/{id}/status/change",
+     *     summary="Change user comment status",
+     *     description="Change user comment status",
+     *     operationId="adminCommentChangeStatus",
+     *     tags={"Comment"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="ID of the comment",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int64",
+     *              example=1
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="Status update form data",
+     *          @OA\MediaType(
+     *              mediaType="multipart/form-data",
+     *              @OA\Schema(
+     *                  required={"status"},
+     *                  @OA\Property(
+     *                      property="status",
+     *                      type="string",
+     *                      enum={"active", "inactive"},
+     *                      example="active",
+     *                      description="Select status from dropdown"
+     *                  )
+     *              )
+     *          )
+     *      ),
+     *     @OA\Response(
+     *          response=200,
+     *          description="Status changed successfully",
+     *          @OA\JsonContent(
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example="Blog status changed to Published"
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  @OA\Property(
+     *                      property="status",
+     *                      type="string",
+     *                      example="published"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="status_translated",
+     *                      type="string",
+     *                      example="Published"
+     *                  )
+     *              )
+     *          )
+     *      ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Forbidden")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Server Error",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Internal Server Error")
+     *          )
+     *      ),
+     * )
+     */
+    public function changeStatus($id, CommentChangeStatusRequest $request)
     {
+        $comment = $this->commentService->findById($id);
+        if(is_null($comment)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $this->commentService->changeStatus($comment->id, $request->status);
 
         return $this->apiResponse(message: __("response.comment.change_status", ['status' => $comment->status_translate]));

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasComment;
 use App\Traits\HasFaq;
 use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  */
 class Blog extends Model
 {
-    use HasFactory, HasImage, HasFaq, SoftDeletes;
+    use HasFactory, HasImage, HasFaq, HasComment, SoftDeletes;
 
     protected $fillable = [
         'id',

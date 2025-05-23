@@ -14,7 +14,16 @@ class Comment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'last_name', 'mobile', 'email', 'comment', 'user_id', 'parent_id' , 'blog_id', 'is_reply'  ,'status'];
+    protected $fillable = [
+        'parent_id',
+        'is_admin',
+        'first_name',
+        'last_name',
+        'mobile',
+        'email',
+        'content',
+        'status'
+    ];
 
     public function statusTranslate(): Attribute
     {
@@ -28,6 +37,11 @@ class Comment extends Model
         return Attribute::make(
             get: fn () => $this->first_name. " ". $this->last_name,
         );
+    }
+
+    public function commentable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
     }
 
     public function replies()

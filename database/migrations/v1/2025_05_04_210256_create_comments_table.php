@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->morphs("commentable");
-            $table->foreignId('admin_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('set null');
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('mobile')->nullable();
+            $table->boolean('is_admin')->default(false);
             $table->string('email')->nullable();
-            $table->text('comment');
+            $table->text('content');
             $table->enum("status", \App\Enums\CommentStatus::statuses())->default(\App\Enums\CommentStatus::Pending->value)->index();
             $table->timestamps();
             $table->softDeletes();

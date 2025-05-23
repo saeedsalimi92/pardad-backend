@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\V1\Comment;
 
+use App\Enums\Status;
 use App\Models\Comment;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,7 +25,7 @@ class CommentChangeStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "status" => ["required", "string", Rule::in(Comment::STATUSES)]
+            "status" => ["required", "string", Rule::in(Status::statuses())]
         ];
     }
 }
