@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Client\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Client\V1\Category\CategoryIndexRequest;
+use App\Http\Requests\Client\V1\Category\CategoryShowRequest;
 use App\Services\CategoryService;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -12,13 +13,12 @@ class CategoryController extends Controller
     {
     }
 
-    public function index()
+    public function index(CategoryIndexRequest $request)
     {
 
     }
 
-    public function show()
+    public function show(CategoryShowRequest $request)
     {
-
     }
 }

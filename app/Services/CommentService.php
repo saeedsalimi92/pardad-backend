@@ -10,19 +10,27 @@ readonly class CommentService
     {
     }
 
-    public function create($data)
+    public function create($model, $data)
     {
-        return $this->commentRepository->create($data);
+        return $model->comments()->create($data);
     }
 
-    public function index($data, $perPage=15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function index($model, $data, $perPage=15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->commentRepository->index($data, $perPage);
+        return $model->comments()
+            ->when(isset($data['status']), function ($query) use ($data) {
+                $query->where('status', $data["status"]);
+            })
+            ->when(isset($data['mobile']), function ($query) use ($data) {
+                $query->where('title', "LIKE", "%".$data["mobile"]."%");
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
     }
 
-    public function findById($id, $with=[])
+    public function findById($model, $id, $with=[])
     {
-        return $this->commentRepository->findById($id, $with);
+        return $model->comments()->with($with)->where("id", $id)->first();
     }
 
     public function update($id, $data)
@@ -30,13 +38,11 @@ readonly class CommentService
         return $this->commentRepository->update($id, $data);
     }
 
-    public function replyByAdmin($comment, $content)
+    public function replyByAdmin($model, $comment, $content)
     {
-        return $this->create([
+        return $model->comments()->create([
             "is_admin" => true,
             "parent_id" => $comment->id,
-            "commentable_id" => $comment->commentable_id,
-            "commentable_type" => $comment->commentable_type,
             "content" => $content
         ]);
     }

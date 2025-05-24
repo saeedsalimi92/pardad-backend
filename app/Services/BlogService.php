@@ -125,4 +125,9 @@ readonly class BlogService
 
         return $blog->delete();
     }
+
+    public function getPublishedBlogsPaginated($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->blogRepository->getPublishedBlogsPaginated($data, $perPage);
+    }
 }

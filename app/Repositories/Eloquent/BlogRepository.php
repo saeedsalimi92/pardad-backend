@@ -39,6 +39,26 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
             ->paginate($perPage);
     }
 
+    public function getPublishedBlogsPaginated($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->query()
+            ->with(['contents' => function($query) use ($data) {
+                $query
+                    ->when(isset($data['locale']), function ($query) use ($data) {
+                        $query->where('locale', $data["locale"]);
+                    })
+                    ->when(isset($data['title']), function ($query) use ($data) {
+                        $query->where('title', "LIKE", "%".$data["title"]."%");
+                    });
+            }])
+            ->when(isset($data['category_id']), function ($query) use ($data) {
+                $query->where('category_id', $data["category_id"]);
+            })
+            ->where("published_at", ">=", now())
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+    }
+
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
         return $this->query()
