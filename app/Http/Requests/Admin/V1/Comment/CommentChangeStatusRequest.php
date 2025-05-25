@@ -15,6 +15,10 @@ class CommentChangeStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        if (auth()->user()->can('changeStatus', Comment::class)) {
+            return true;
+        }
+
         return true;
     }
 

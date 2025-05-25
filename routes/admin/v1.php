@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\V1\BrandController;
 use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\CommentController;
 use App\Http\Controllers\Admin\V1\MenuController;
+use App\Http\Controllers\Admin\V1\RolePermissionController;
 use App\Http\Controllers\Admin\V1\UploadController;
+use App\Http\Controllers\Admin\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/upload-image', [UploadController::class , 'uploadImage']);
     Route::post('/upload-file', [UploadController::class , 'uploadFile']);
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
+
+
+    Route::group(["prefix" => "roles"], function () {
+        Route::get("/", [RolePermissionController::class, "roles"]);
+        Route::post("/assign", [RolePermissionController::class, "assignRole"]);
+    });
+    Route::get("/permissions", [RolePermissionController::class, "permissions"]);
+
+    Route::get("users/", [UserController::class, "index"]);
 
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', [CommentController::class, 'index']);
