@@ -131,7 +131,7 @@ class CommentController extends Controller
     public function index(CommentIndexRequest $request)
     {
         $data = $request->validated();
-        $comments = $this->commentService->index($data);
+        $comments = $this->commentService->getAll($data);
 
         $resource = CommentIndexResource::collection($comments);
 
@@ -328,8 +328,8 @@ class CommentController extends Controller
      *                  @OA\Property(
      *                      property="status",
      *                      type="string",
-     *                      enum={"active", "inactive"},
-     *                      example="active",
+     *                      enum={"pending", "approved", "rejected"},
+     *                      example="pending",
      *                      description="Select status from dropdown"
      *                  )
      *              )

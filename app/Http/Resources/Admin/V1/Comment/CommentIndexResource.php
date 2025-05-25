@@ -68,6 +68,8 @@ class CommentIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "entity_id" => $this->commentable->id,
+            "entity_title" => $this->commentable->contents?->first()->title,
             "full_name" => $this->full_name,
             "mobile" => $this->mobile,
             "status" => $this->status,

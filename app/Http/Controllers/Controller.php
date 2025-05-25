@@ -10,6 +10,10 @@ abstract class Controller
                                 $paginationData = [],
                                 int $httpStatusCode = 200): \Illuminate\Http\JsonResponse
     {
+        if($httpStatusCode != 200) {
+            $success = false;
+        }
+
         return response()->json([
             'success' => $success,
             'message' => $message,

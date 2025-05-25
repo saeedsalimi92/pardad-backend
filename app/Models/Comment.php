@@ -16,6 +16,8 @@ class Comment extends Model
 
     protected $fillable = [
         'parent_id',
+        'commentable_id',
+        'commentable_type',
         'is_admin',
         'first_name',
         'last_name',

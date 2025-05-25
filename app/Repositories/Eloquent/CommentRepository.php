@@ -17,6 +17,7 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
+            ->with(['commentable.contents'])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })

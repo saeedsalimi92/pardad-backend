@@ -16,6 +16,11 @@ readonly class CommentService
         return $model->comments()->create($data);
     }
 
+    public function getAll($data)
+    {
+        return $this->commentRepository->index($data);
+    }
+
     public function index($model, $data, $perPage=15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $model->comments()
@@ -37,7 +42,12 @@ readonly class CommentService
             ->paginate($perPage);
     }
 
-    public function findById($model, $id, $with=[])
+    public function findById($id, $with=[])
+    {
+        return $this->commentRepository->findById($id, $with);
+    }
+
+    public function findByModelAndId($model, $id, $with=[])
     {
         return $model->comments()->with($with)->where("id", $id)->first();
     }
@@ -47,11 +57,14 @@ readonly class CommentService
         return $this->commentRepository->update($id, $data);
     }
 
-    public function replyByAdmin($model, $comment, $content)
+    public function replyByAdmin($comment, $content)
     {
-        return $model->comments()->create([
+        return $this->commentRepository->create([
             "is_admin" => true,
             "parent_id" => $comment->id,
+            "commentable_id" => $comment->commentable_id,
+            "commentable_type" => $comment->commentable_type,
+            "status" => CommentStatus::Approved->value,
             "content" => $content
         ]);
     }

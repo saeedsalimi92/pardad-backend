@@ -71,6 +71,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $updated_at
  * @property mixed $comment
  * @property mixed $email
+ * @property mixed $commentable
  */
 class CommentShowResource extends JsonResource
 {
@@ -82,12 +83,14 @@ class CommentShowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
+            "entity_id" => $this->commentable->id,
+            "entity_title" => $this->commentable->contents?->first()->title,
             "full_name" => $this->full_name,
             "mobile" => $this->mobile,
             "email" => $this->email,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
-            "comment" => $this->comment,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];

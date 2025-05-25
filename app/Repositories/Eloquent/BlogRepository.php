@@ -48,6 +48,12 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                     ->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
                     });
+            }, 'relatedBlogs' => function ($query) use ($data) {
+                $query
+                    ->where('status', BlogStatus::Published->value)
+                    ->where("published_at", "<=", now());
+            }, 'faqs' => function ($query) use ($data) {
+                $query->select(["id", "question", "answer"]);
             }])
             ->first();
     }

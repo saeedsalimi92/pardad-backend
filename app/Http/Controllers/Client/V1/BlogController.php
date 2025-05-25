@@ -144,7 +144,7 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function show($id, BlogShowRequest $request): \Illuminate\Http\JsonResponse
+    public function show($id, BlogShowRequest $request)
     {
         $data = $request->validated();
 
@@ -156,6 +156,7 @@ class BlogController extends Controller
         if($blog->status !== BlogStatus::Published->value) {
             return $this->apiResponse(httpStatusCode: 404);
         }
+
         if(Carbon::parse($blog->published_at)->isFuture()) {
             return $this->apiResponse(httpStatusCode: 404);
         }

@@ -89,7 +89,6 @@ class BlogIndexResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->contents?->first()->title ?? "",
-            "faqs" => FaqIndexResource::collection($this->whenLoaded('faqs')),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "published_at" => $this->published_at,
