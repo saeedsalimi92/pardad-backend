@@ -44,11 +44,6 @@ class Blog extends Model
         return $this->hasMany(BlogContent::class);
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class)->whereNull('parent_id')->with('replies');
-    }
-
     public function relatedBlogs(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(

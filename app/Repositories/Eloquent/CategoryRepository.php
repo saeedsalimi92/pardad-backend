@@ -83,4 +83,17 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function findByLocale($id, $data)
+    {
+        return $this->query()
+            ->where("id", $id)
+            ->with(['contents' => function($query) use ($data) {
+                $query
+                    ->when(isset($data['locale']), function ($query) use ($data) {
+                        $query->where('locale', $data["locale"]);
+                    });
+            }, "children"])
+            ->first();
+    }
 }

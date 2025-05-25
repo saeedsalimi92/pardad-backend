@@ -25,6 +25,11 @@ readonly class BlogService
         return $this->blogRepository->findById($id, $with);
     }
 
+    public function findByLocale($id, $data)
+    {
+        return $this->blogRepository->findByLocale($id, $data);
+    }
+
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
         return $this->blogRepository->getList($data);

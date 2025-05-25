@@ -86,15 +86,12 @@ class BlogShowResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "image" => $this->when($this->featuredImage, function () {
-                return url($this->featuredImage->path);
-            }),
-            "contents" => BlogContentShowResource::collection($this->whenLoaded('contents')),
+            "image" => url($this?->featuredImage?->path),
+            "contents" => BlogContentShowResource::collection($this->contents),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
-            "props" => $this->props,
-            "related_blogs" => BlogListResource::collection($this->whenLoaded('relatedBlogs')),
-            "faq" => FaqIndexResource::collection($this->whenLoaded('faqs')),
+            "related_blogs" => BlogListResource::collection($this->relatedBlogs),
+            "faq" => FaqIndexResource::collection($this->faqs),
             "published_at" => $this->published_at,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

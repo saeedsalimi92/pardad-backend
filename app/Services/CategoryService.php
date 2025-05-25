@@ -115,4 +115,9 @@ readonly class CategoryService
 
         return $category->delete();
     }
+
+    public function findByLocale($id, $data)
+    {
+        return $this->categoryRepository->findByLocale($id, $data);
+    }
 }

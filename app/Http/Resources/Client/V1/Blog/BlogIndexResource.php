@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Client\V1\Blog;
 
+use App\Http\Resources\Client\V1\Faq\FaqIndexResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $published_at
  * @property mixed $created_at
  * @property mixed $updated_at
+ * @property mixed $contents
  * @OA\Schema(
  *     schema="ApiV1BlogIndexResource",
  *     title="Blog Index Resource",
@@ -86,12 +88,10 @@ class BlogIndexResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title" => $this->title,
-            "en_title" => $this->en_title,
-            "contents" => BlogContentIndexResource::collection($this->whenLoaded('contents')),
+            "title" => $this->contents?->first()->title ?? "",
+            "faqs" => FaqIndexResource::collection($this->whenLoaded('faqs')),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
-            "props" => $this->props ?? [],
             "published_at" => $this->published_at,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

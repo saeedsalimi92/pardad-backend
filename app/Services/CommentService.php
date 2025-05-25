@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\CommentStatus;
 use App\Repositories\CommentRepositoryInterface;
 
 readonly class CommentService
@@ -25,6 +26,14 @@ readonly class CommentService
                 $query->where('title', "LIKE", "%".$data["mobile"]."%");
             })
             ->orderByDesc('created_at')
+            ->paginate($perPage);
+    }
+
+    public function approvedComment($model, $perPage=15)
+    {
+        return $model->comments()
+            ->where("status", CommentStatus::Approved->value)
+            ->where("parent_id", null)
             ->paginate($perPage);
     }
 

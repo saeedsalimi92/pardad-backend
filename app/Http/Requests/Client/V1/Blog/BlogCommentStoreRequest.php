@@ -18,7 +18,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *         property="last_name",
  *         type="string",
  *         description="User's last name",
- *         example="Doe"
+ *         example="Snow"
  *     ),
  *     @OA\Property(
  *         property="mobile",

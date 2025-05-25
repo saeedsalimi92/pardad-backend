@@ -11,6 +11,12 @@ use App\Http\Resources\Client\V1\Category\CategoryShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Services\CategoryService;
 
+/**
+ * @OA\Tag(
+ *     name="Client Categories",
+ *     description="Client category operations"
+ * )
+ */
 class CategoryController extends Controller
 {
     public function __construct(private readonly CategoryService $categoryService)
@@ -24,7 +30,6 @@ class CategoryController extends Controller
      *     description="Returns a paginated list of categories with filtering options",
      *     operationId="adminCategoryIndex",
      *     tags={"Category"},
-     *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -101,20 +106,6 @@ class CategoryController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Forbidden")
-     *         )
-     *     ),
-     *     @OA\Response(
      *         response=422,
      *         description="Validation error",
      *         @OA\JsonContent(
@@ -140,14 +131,14 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function index(CategoryIndexRequest $request): \Illuminate\Http\JsonResponse
+    public function index(CategoryIndexRequest $request)
     {
         $data = $request->validated();
         $data["status"] = Status::Active->value;
 
         $categories = $this->categoryService->index($data);
 
-        $resource = CategoryIndexResource::make($categories);
+        $resource = CategoryIndexResource::collection($categories);
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($resource));
     }
@@ -155,7 +146,7 @@ class CategoryController extends Controller
     /**
      * @OA\Get(
      *     path="/api/v1/categories/{id}",
-     *     tags={"Categories"},
+     *     tags={"Category"},
      *     summary="Get detailed information about a specific category",
      *     description="Returns full details of a category including its parent, children, and contents",
      *     operationId="getCategoryById",
@@ -170,6 +161,16 @@ class CategoryController extends Controller
      *             example=1
      *         )
      *     ),
+     *     @OA\Parameter(
+     *            name="locale",
+     *            in="query",
+     *            description="Filter by locale",
+     *            required=false,
+     *             @OA\Schema(
+     *                type="string",
+     *                enum={"fa", "en", "ar"}
+     *             )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -198,7 +199,8 @@ class CategoryController extends Controller
      */
     public function show($id, CategoryShowRequest $request): \Illuminate\Http\JsonResponse
     {
-        $category = $this->categoryService->findById($id, ["parent", "children"]);
+        $data = $request->validated();
+        $category = $this->categoryService->findByLocale($id, $data);
         if(is_null($category)) {
             return $this->apiResponse(httpStatusCode: 404);
         }

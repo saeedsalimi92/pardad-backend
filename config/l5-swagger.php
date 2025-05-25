@@ -48,6 +48,9 @@ return [
                 'annotations' => [
                     base_path('app/Http/Swagger/Client.php'),
                     base_path('app/Http/Controllers/Client/V1'),
+                    base_path('app/Http/Resources/Client/V1'),
+                    base_path('app/Http/Requests/Client/V1'),
+                    base_path('app/Http/Resources/'),
                 ],
             ],
         ],

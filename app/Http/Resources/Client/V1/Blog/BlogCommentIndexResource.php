@@ -30,7 +30,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="last_name",
  *         type="string",
- *         example="Doe"
+ *         example="Snow"
  *     ),
  *     @OA\Property(
  *         property="content",
@@ -40,7 +40,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="replies",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/ApiV1BlogCommentIndexResource")
+ *         @OA\Items(ref="#/components/schemas/ApiV1BlogCommentReplyResource")
  *     ),
  *     @OA\Property(
  *         property="created_at",
@@ -66,9 +66,7 @@ class BlogCommentIndexResource extends JsonResource
             "first_name" => $this->first_name,
             "last_name" => $this->last_name,
             "content" => $this->content,
-            "replies" => $this->whenLoaded('replies', function () {
-                return BlogCommentIndexResource::collection($this->replies);
-            }),
+            "replies" => BlogCommentReplyResource::collection($this->replies),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];

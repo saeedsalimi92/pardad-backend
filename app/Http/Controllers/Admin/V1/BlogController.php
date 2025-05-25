@@ -72,7 +72,6 @@ class BlogController extends Controller
      *          required=false,
      *          @OA\Schema(
      *              type="integer",
-     *              default=15
      *          )
      *      ),
      *     @OA\Parameter(

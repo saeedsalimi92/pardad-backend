@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Client\V1\Category;
 
+use App\Enums\Locale;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CategoryShowRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class CategoryShowRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,7 @@ class CategoryShowRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "locale" => ["required", Rule::in(Locale::allLocale())],
         ];
     }
 }

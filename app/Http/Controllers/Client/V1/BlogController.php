@@ -18,6 +18,12 @@ use App\Services\BlogService;
 use App\Services\CommentService;
 use Carbon\Carbon;
 
+/**
+ * @OA\Tag(
+ *     name="Client Blogs",
+ *     description="Client blog operations"
+ * )
+ */
 class BlogController extends Controller
 {
     public function __construct(private readonly BlogService $blogService,
@@ -33,19 +39,44 @@ class BlogController extends Controller
      *     description="Returns paginated list of published blogs with filters",
      *     operationId="blogIndex",
      *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *         required=false,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="per_page",
-     *         in="query",
-     *         description="Items per page",
-     *         required=false,
-     *         @OA\Schema(type="integer")
-     *     ),
+     *          name="page",
+     *          in="query",
+     *          description="Page number",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="integer",
+     *              default=1
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="per_page",
+     *          in="query",
+     *          description="Items per page",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="integer",
+     *              default=15
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *           name="category_id",
+     *           in="query",
+     *           description="Blog Category",
+     *           required=false,
+     *           @OA\Schema(
+     *               type="integer",
+     *           )
+     *       ),
+     *      @OA\Parameter(
+     *               name="locale",
+     *               in="query",
+     *               description="Filter by locale",
+     *               required=false,
+     *               @OA\Schema(
+     *                   type="string",
+     *                   enum={"fa", "en", "ar"}
+     *               )
+     *       ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -87,13 +118,16 @@ class BlogController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Parameter(
-     *          name="category_id",
-     *          in="query",
-     *          description="Category Id",
-     *          required=true,
-     *          @OA\Schema(type="integer")
-     *      ),
+     *      @OA\Parameter(
+     *                name="locale",
+     *                in="query",
+     *                description="Filter by locale",
+     *                required=false,
+     *                @OA\Schema(
+     *                    type="string",
+     *                    enum={"fa", "en", "ar"}
+     *                )
+     *       ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -112,15 +146,16 @@ class BlogController extends Controller
      */
     public function show($id, BlogShowRequest $request): \Illuminate\Http\JsonResponse
     {
-        $blog = $this->blogService->findById($id);
+        $data = $request->validated();
+
+        $blog = $this->blogService->findByLocale($id, $data);
         if(is_null($blog)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
 
-        if($blog->status !== BlogStatus::Published) {
+        if($blog->status !== BlogStatus::Published->value) {
             return $this->apiResponse(httpStatusCode: 404);
         }
-
         if(Carbon::parse($blog->published_at)->isFuture()) {
             return $this->apiResponse(httpStatusCode: 404);
         }
@@ -165,7 +200,7 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function comments($id, BlogCommentIndexRequest $request): \Illuminate\Http\JsonResponse
+    public function comments($id, BlogCommentIndexRequest $request)
     {
         $blog = $this->blogService->findById($id);
         if(is_null($blog)) {
@@ -175,8 +210,9 @@ class BlogController extends Controller
         $data = $request->validated();
         $data["success"] = CommentStatus::Approved->value;
 
-        $comments = $this->commentService->index($blog, $data);
-        $resource = BlogCommentIndexResource::make($comments);
+        $comments = $this->commentService->approvedComment($blog);
+
+        $resource = BlogCommentIndexResource::collection($comments);
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($comments));
     }
@@ -221,7 +257,7 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function commentStore($id, BlogCommentStoreRequest $request): \Illuminate\Http\JsonResponse
+    public function commentStore($id, BlogCommentStoreRequest $request)
     {
         $data = $request->validated();
         $blog = $this->blogService->findById($id);
