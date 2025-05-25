@@ -19,7 +19,7 @@ class CommentChangeStatusRequest extends FormRequest
             return true;
         }
 
-        return true;
+        return false;
     }
 
     /**

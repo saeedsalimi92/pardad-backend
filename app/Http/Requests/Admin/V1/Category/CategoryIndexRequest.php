@@ -6,6 +6,7 @@ use App\Enums\CategoryScope;
 use App\Enums\CategoryType;
 use App\Enums\Locale;
 use App\Enums\Status;
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,7 +17,11 @@ class CategoryIndexRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        if (auth()->user()->can('index', Category::class)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

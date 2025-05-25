@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\V1\Comment;
 
+use App\Models\Comment;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CommentShowRequest extends FormRequest
@@ -11,7 +12,11 @@ class CommentShowRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        if (auth()->user()->can('show', Comment::class)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

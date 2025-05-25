@@ -18,11 +18,27 @@ class PermissionSyncCommand extends Command
             'super admin',
             'seo manager',
             'marketing manager',
+            'author',
         ];
 
         $permissions = [
+
+            // role
+            'admin.role.index',
+            'admin.role.assign',
+
+            // permission
+            'admin.permission.index',
+
+            // blog faq
+            'admin.blog.faq_index',
+            'admin.blog.faq_store',
+            'admin.blog.faq_update',
+            'admin.blog.faq_destroy',
+
             // blog crud
             'admin.blog.index',
+            'admin.blog.list',
             'admin.blog.store',
             'admin.blog.show',
             'admin.blog.update',
@@ -30,49 +46,39 @@ class PermissionSyncCommand extends Command
 
             // category crud
             'admin.category.index',
+            'admin.category.list',
             'admin.category.store',
             'admin.category.show',
             'admin.category.update',
             'admin.category.destroy',
 
-            // comment (change status, index)
+            // comment
             'admin.comment.index',
+            'admin.comment.show',
             'admin.comment.change_status',
             'admin.comment.reply',
         ];
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        Permission::query()->whereIn('name', $permissions)->delete();
-        Role::query()->whereIn('name', $roles)->delete();
-
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::query()->firstOrCreate(
+                ['name' => $permission],
+                ['name' => $permission]
+            );
         }
 
-        $superAdmin = Role::create(['name' => 'super admin']);
-        $seoManager = Role::create(['name' => 'seo manager']);
-        $author = Role::create(['name' => 'author']);
-        $marketingManager = Role::create(['name' => 'marketing manager']);
+        foreach ($roles as $roleName) {
+            $role = Role::query()->firstOrCreate(
+                ['name' => $roleName],
+                ['name' => $roleName]
+            );
 
-        $superAdmin->givePermissionTo(Permission::all());
+            if($roleName == 'super admin') {
+                $role->givePermissionTo(Permission::all());
+            }
 
-        $seoPermissions = array_filter($permissions, function($perm) {
-            return str_starts_with($perm, 'blog.') || str_starts_with($perm, 'category.');
-        });
-
-        $authorPermissions = array_filter($permissions, function($perm) {
-            return str_starts_with($perm, 'blog.') || str_starts_with($perm, 'category.');
-        });
-
-        $seoManager->givePermissionTo($seoPermissions);
-        $author->givePermissionTo($authorPermissions);
-
-        $marketingPermissions = array_filter($permissions, function($perm) {
-            return str_starts_with($perm, 'blog.');
-        });
-
-        $marketingManager->givePermissionTo($marketingPermissions);
+        }
 
         $this->info('Roles and permissions created and assigned successfully.');
     }

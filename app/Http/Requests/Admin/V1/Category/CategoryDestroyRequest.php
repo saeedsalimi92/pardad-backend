@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\V1\Category;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryDestroyRequest extends FormRequest
@@ -11,7 +12,11 @@ class CategoryDestroyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        if (auth()->user()->can('destroy', Category::class)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
