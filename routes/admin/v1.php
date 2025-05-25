@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\V1\BrandController;
 use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\CommentController;
 use App\Http\Controllers\Admin\V1\MenuController;
-use App\Http\Controllers\Admin\V1\RolePermissionController;
+use App\Http\Controllers\Admin\V1\PermissionController;
+use App\Http\Controllers\Admin\V1\RoleController;
 use App\Http\Controllers\Admin\V1\UploadController;
 use App\Http\Controllers\Admin\V1\UserController;
 use Illuminate\Http\Request;
@@ -31,12 +32,22 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::group(["prefix" => "roles"], function () {
-        Route::get("/", [RolePermissionController::class, "roles"]);
-        Route::post("/assign", [RolePermissionController::class, "assignRole"]);
+        Route::get("/", [RoleController::class, "index"]);
+        Route::post("/", [RoleController::class, "store"]);
+        Route::post("/assign/users", [RoleController::class, "assignUser"]);
+        Route::post("/assign/permissions", [RoleController::class, "givePermissionToRole"]);
     });
-    Route::get("/permissions", [RolePermissionController::class, "permissions"]);
 
-    Route::get("users/", [UserController::class, "index"]);
+    Route::group(["prefix" => "permissions"], function () {
+        Route::get("/", [PermissionController::class, "index"]);
+    });
+
+    Route::group(["prefix" => "users"], function () {
+        Route::get("/", [UserController::class, "index"]);
+        Route::get("permissions/", [UserController::class, "permissions"]);
+    });
+
+
 
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', [CommentController::class, 'index']);

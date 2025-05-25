@@ -276,7 +276,7 @@ class BlogController extends Controller
     {
         $blog = $this->blogService->create($request);
         if(!$blog) {
-            return $this->apiResponse(success: false, message: "response.blog.error", httpStatusCode: 404);
+            return $this->apiResponse(success: false, message: __("response.blog.error"), httpStatusCode: 404);
         }
         $resource = BlogShowResource::make($blog);
 

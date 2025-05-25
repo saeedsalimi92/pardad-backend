@@ -27,7 +27,11 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                 $query->when(isset($data['locale']), function ($query) use ($data) {
                     $query->where('locale', $data["locale"]);
                 });
-            }, 'children'])
+            }, 'children', 'children.contents' => function($query) use ($data) {
+                $query->when(isset($data['locale']), function ($query) use ($data) {
+                    $query->where('locale', $data["locale"]);
+                });
+            }])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
@@ -63,7 +67,11 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                 $query->when(isset($data['locale']), function ($query) use ($data) {
                     $query->where('locale', $data["locale"]);
                 });
-            }, 'children'])
+            }, 'children', 'children.contents' => function($query) use ($data) {
+                $query->when(isset($data['locale']), function ($query) use ($data) {
+                    $query->where('locale', $data["locale"]);
+                });
+            }])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
@@ -93,7 +101,11 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                     ->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
                     });
-            }, "children"])
+            }, 'children', 'children.contents' => function($query) use ($data) {
+                    $query->when(isset($data['locale']), function ($query) use ($data) {
+                        $query->where('locale', $data["locale"]);
+                    });
+            }])
             ->first();
     }
 }

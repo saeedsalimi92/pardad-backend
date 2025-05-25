@@ -17,6 +17,9 @@ return [
     'comment' => [
         'created' => 'کامنت با موفقیت ذخیره شد'
     ],
+    'role' => [
+        'permissions_assigned' => 'دسترسی ها به نقش اعطا شد'
+    ],
     'category' => [
         'created' => 'دسته بندی با موفقیت ایجاد شد',
         'updated' => 'دسته بندی با موفقیت آپدیت شد',
