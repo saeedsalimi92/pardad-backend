@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *     schema="CategoryIndexResource",
+ *     schema="AdminV1CategoryIndexResource",
  *     title="Category Resource",
  *     description="Category resource representation",
  *     @OA\Property(
@@ -75,7 +75,7 @@ class CategoryIndexResource extends JsonResource
         return [
             "id" => $this->id,
             "parent_id" => $this->parent_id,
-            "parent_name" => $this->parent?->contents->first()->title,
+            "parent_name" => $this->parent?->contents->first()?->title,
             "title" => $this->contents->first()->title ?? "",
             "status" => $this->status,
             "status_translate" => $this->status_translate,

@@ -14,6 +14,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $status_translate
  * @property mixed $created_at
  * @property mixed $updated_at
+ * @property mixed $question
+ * @property mixed $id
  * @OA\Schema(
  *      schema="FaqShowResource",
  *      type="object",

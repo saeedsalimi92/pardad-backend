@@ -6,49 +6,112 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int $id
- * @property string $title
- * @property string $en_title
- * @property string $status
- * @property string $status_translate
- * @property string $published_at
- * @property string $created_at
- * @property string $updated_at
- * @property array $props
- * @property mixed $relatedBlogs
  * @OA\Schema(
- *      schema="BlogShowResource",
- *      type="object",
- *      @OA\Property(property="id", type="integer", example=1),
- *      @OA\Property(property="title", type="string", example="Sample Blog Title"),
- *      @OA\Property(property="en_title", type="string", example="Sample English Title"),
- *      @OA\Property(property="content", type="string", example="<p>Blog content</p>"),
- *      @OA\Property(property="status", type="string", enum={"draft", "published", "archived"}),
- *      @OA\Property(property="published_at", type="string", format="date-time"),
- *      @OA\Property(property="image_url", type="string", format="url"),
- *      @OA\Property(
- *          property="props",
- *          type="object",
- *          @OA\Property(
- *              property="socials",
- *              type="object",
- *              @OA\Property(property="instagram", type="string"),
- *              @OA\Property(property="telegram", type="string")
- *          ),
- *          @OA\Property(
- *              property="metas",
- *              type="object",
- *              @OA\Property(property="keywords", type="string"),
- *              @OA\Property(property="description", type="string")
- *          )
- *      )
- *  )
+ *     schema="AdminV1BlogShowResource",
+ *     title="Admin Blog Show Resource",
+ *     description="Detailed blog resource for admin panel with all related data",
+ *     type="object",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         format="int64",
+ *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="image",
+ *         type="string",
+ *         format="url",
+ *         example="https://example.com/storage/blog/images/featured.jpg"
+ *     ),
+ *     @OA\Property(
+ *         property="title",
+ *         type="string",
+ *         example="Sample Blog Title"
+ *     ),
+ *     @OA\Property(
+ *         property="en_title",
+ *         type="string",
+ *         example="Sample English Title"
+ *     ),
+ *     @OA\Property(
+ *         property="contents",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/AdminV1BlogContentShowResource")
+ *     ),
+ *     @OA\Property(
+ *         property="status",
+ *         type="string",
+ *         enum={"draft", "published", "archived"},
+ *         example="published"
+ *     ),
+ *     @OA\Property(
+ *         property="status_translate",
+ *         type="string",
+ *         example="Published"
+ *     ),
+ *     @OA\Property(
+ *         property="props",
+ *         type="object",
+ *         @OA\Property(
+ *             property="socials",
+ *             type="object",
+ *             @OA\Property(
+ *                 property="instagram",
+ *                 type="string",
+ *                 example="https://instagram.com"
+ *             ),
+ *             @OA\Property(
+ *                 property="telegram",
+ *                 type="string",
+ *                 example="https://telegram.org"
+ *             )
+ *         ),
+ *         @OA\Property(
+ *             property="metas",
+ *             type="object",
+ *             @OA\Property(
+ *                 property="keywords",
+ *                 type="string",
+ *                 example="blog, sample"
+ *             ),
+ *             @OA\Property(
+ *                 property="description",
+ *                 type="string",
+ *                 example="Sample blog description"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Property(
+ *         property="related_blogs",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/AdminV1BlogListResource")
+ *     ),
+ *     @OA\Property(
+ *         property="published_at",
+ *         type="string",
+ *         format="date-time",
+ *         example="2023-01-01T12:00:00Z"
+ *     ),
+ *     @OA\Property(
+ *         property="created_at",
+ *         type="string",
+ *         format="date-time",
+ *         example="2023-01-01T12:00:00Z"
+ *     ),
+ *     @OA\Property(
+ *         property="updated_at",
+ *         type="string",
+ *         format="date-time",
+ *         example="2023-01-01T12:00:00Z"
+ *     )
+ * )
  */
 class BlogShowResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
+     * @param Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

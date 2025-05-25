@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property CategoryContent $contents
  * @OA\Schema(
- *     schema="CategoryListResource",
+ *     schema="AdminV1CategoryListResource",
  *     title="Category Resource",
  *     description="Category resource representation",
  *     @OA\Property(
@@ -18,38 +18,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         example=1
  *     ),
  *     @OA\Property(
- *         property="contents",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/CategoryContentIndexResource")
- *     ),
- *     @OA\Property(
- *         property="type",
- *         type="string",
- *         description="Category type code",
- *         example="expert"
- *     ),
- *     @OA\Property(
- *         property="type_translate",
- *         type="string",
- *         description="Translated type of category",
- *         example="حرفه ای"
- *     ),
+ *          property="title",
+ *          type="string",
+ *          example="Sample Title"
+ *      ),
  * )
  */
 class CategoryListResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+
     public function toArray(Request $request): array
     {
         return [
             "id" => $this->id,
             "title" => $this->contents?->first()->title ?? "",
-            "type" => $this->type,
-            "type_translate" => $this->type_translate,
         ];
     }
 }

@@ -27,9 +27,12 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                 $query->when(isset($data['locale']), function ($query) use ($data) {
                     $query->where('locale', $data["locale"]);
                 });
-            }])
+            }, 'children'])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
+            })
+            ->when(isset($data['type']), function ($query) use ($data) {
+                $query->where('type', $data["type"]);
             })
             ->when(isset($data['parent_id']), function ($query) use ($data) {
                 $query->where('parent_id', $data["parent_id"]);
@@ -50,16 +53,22 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
         return $this->query()
             ->with(['contents' => function($query) use ($data) {
                 $query
-                    ->select(["id", "category_id", "title"])
                     ->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
                     })
                     ->when(isset($data['title']), function ($query) use ($data) {
                         $query->where('title', "LIKE", "%".$data["title"]."%");
                     });
-            }])
+            }, 'parent', 'parent.contents' => function($query) use ($data) {
+                $query->when(isset($data['locale']), function ($query) use ($data) {
+                    $query->where('locale', $data["locale"]);
+                });
+            }, 'children'])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
+            })
+            ->when(isset($data['type']), function ($query) use ($data) {
+                $query->where('type', $data["type"]);
             })
             ->when(isset($data['parent_id']), function ($query) use ($data) {
                 $query->where('parent_id', $data["parent_id"]);

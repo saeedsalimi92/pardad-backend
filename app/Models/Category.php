@@ -18,6 +18,7 @@ class Category extends Model
         'parent_id',
         'code',
         'status',
+        'type',
         'url'
     ];
 

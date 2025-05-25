@@ -13,7 +13,7 @@ trait HasSlug
     protected function slug(): Attribute
     {
         return Attribute::make(
-            set: fn () => Str::slug($this->title),
+            set: fn ($value) => Str::slug($value, "-", null),
         );
     }
 }

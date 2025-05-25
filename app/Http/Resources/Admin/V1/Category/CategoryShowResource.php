@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property Category $children
  * @property CategoryContent $contents
  * @OA\Schema(
- *     schema="CategoryShowResource",
+ *     schema="AdminV1CategoryShowResource",
  *     title="Category Resource",
  *     description="Category resource representation",
  *     @OA\Property(

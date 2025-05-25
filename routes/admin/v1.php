@@ -34,11 +34,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('{id}/status/change', [CommentController::class, 'changeStatus']);
     });
 
-    Route::apiResource('blog', BlogController::class)->except(['update']);
-    Route::post('blog/{blog}/update', [BlogController::class, 'update']);
     Route::group(['prefix' => 'blog'], function () {
-        Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);
+        Route::get("list", [BlogController::class, 'list']);
+        Route::post('{blog}/update', [BlogController::class, 'update']);
 
+        Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);
         Route::group(['prefix' => '{blog}/faq'], function () {
             Route::get("/", [BlogController::class, 'faqIndex']);
             Route::post("/", [BlogController::class, 'faqStore']);
@@ -46,9 +46,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::delete("{faq}/", [BlogController::class, 'faqDestroy']);
         });
     });
+    Route::apiResource('blog', BlogController::class)->except(['update']);
 
+
+    Route::group(["prefix" => "categories"], function () {
+        Route::post('{category}/update', [CategoryController::class, 'update']);
+        Route::get('list', [CategoryController::class, 'getList']);
+    });
     Route::apiResource('categories', CategoryController::class)->except(['update']);
-    Route::post('categories/{category}/update', [CategoryController::class, 'update']);
+
 
     Route::get('/brand', [BrandController::class, 'index']);
     Route::get('/brand/{id}', [BrandController::class, 'show']);

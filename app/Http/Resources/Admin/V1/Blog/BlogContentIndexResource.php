@@ -6,17 +6,34 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int $id
- * @property string $title
- * @property string $locale
+ * @OA\Schema(
+ *     schema="AdminV1BlogContentIndexResource",
+ *     title="Blog Content Index Resource",
+ *     description="Basic blog content information",
+ *     type="object",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         format="int64",
+ *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="title",
+ *         type="string",
+ *         example="Sample Blog Title"
+ *     ),
+ *     @OA\Property(
+ *         property="locale",
+ *         type="string",
+ *         minLength=2,
+ *         maxLength=5,
+ *         example="en"
+ *     )
+ * )
  */
 class BlogContentIndexResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+
     public function toArray(Request $request): array
     {
         return [

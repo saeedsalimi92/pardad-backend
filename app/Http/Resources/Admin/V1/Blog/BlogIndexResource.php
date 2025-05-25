@@ -2,29 +2,19 @@
 
 namespace App\Http\Resources\Admin\V1\Blog;
 
-use App\Models\BlogContent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int $id
- * @property string $title
- * @property string $en_title
- * @property string $status
- * @property string $status_translate
- * @property string $published_at
- * @property string $created_at
- * @property string $updated_at
- * @property array $props
- * @property BlogContent $contents
  * @OA\Schema(
- *     schema="BlogIndexResource",
- *     title="Blog Index Resource",
- *     description="Blog resource representation",
+ *     schema="AdminV1BlogIndexResource",
+ *     title="Admin Blog Index Resource",
+ *     description="Blog listing resource for admin panel",
  *     type="object",
  *     @OA\Property(
  *         property="id",
  *         type="integer",
+ *         format="int64",
  *         example=1
  *     ),
  *     @OA\Property(
@@ -33,9 +23,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         example="Sample Blog Title"
  *     ),
  *     @OA\Property(
- *         property="end_title",
+ *         property="en_title",
  *         type="string",
  *         example="Sample English Title"
+ *     ),
+ *     @OA\Property(
+ *         property="contents",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/AdminV1BlogContentIndexResource")
  *     ),
  *     @OA\Property(
  *         property="status",
@@ -46,7 +41,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="status_translate",
  *         type="string",
- *         example="منتشر شده"
+ *         example="Published"
  *     ),
  *     @OA\Property(
  *         property="published_at",
@@ -69,39 +64,38 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="props",
  *         type="object",
- *         description="Dynamic properties object",
- *         @OA\Property(
- *             property="socials",
- *             type="object",
- *             example={
- *                 "instagram": "www.instagram.com",
- *                 "telegram": "www.telegram.com"
+ *         additionalProperties=true,
+ *         example={
+ *             "socials": {
+ *                 "instagram": "https://instagram.com",
+ *                 "telegram": "https://telegram.org"
+ *             },
+ *             "metas": {
+ *                 "keywords": "blog, sample",
+ *                 "description": "Sample blog description"
  *             }
- *         ),
- *         @OA\Property(
- *             property="metas",
- *             type="object",
- *             example={
- *                 "keyword": "sample keyword",
- *                 "canonical": "www.canonical.com"
- *             }
- *         )
+ *         }
  *     )
  * )
  */
 class BlogIndexResource extends JsonResource
 {
-
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
             "id" => $this->id,
-            'contents' => BlogContentIndexResource::collection($this->contents),
+            "title" => $this->contents?->first()->title ?? "",
             "status" => $this->status,
             "status_translate" => $this->status_translate,
-            "published_at" => $this->published_at,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
+            "published_at" => $this->published_at?->toIso8601String(),
+            "created_at" => $this->created_at?->toIso8601String(),
+            "updated_at" => $this->updated_at?->toIso8601String(),
         ];
     }
 }

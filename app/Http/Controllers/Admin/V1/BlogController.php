@@ -85,6 +85,16 @@ class BlogController extends Controller
      *             enum={"draft", "archived", "published"}
      *         )
      *     ),
+     *     @OA\Parameter(
+     *              name="locale",
+     *              in="query",
+     *              description="Filter by locale",
+     *              required=false,
+     *              @OA\Schema(
+     *                  type="string",
+     *                  enum={"fa", "en", "ar"}
+     *              )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -92,7 +102,7 @@ class BlogController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/BlogIndexResource")
+     *                 @OA\Items(ref="#/components/schemas/AdminV1BlogIndexResource")
      *             ),
      *         @OA\Property(
      *                  property="pagination_info",
@@ -159,6 +169,16 @@ class BlogController extends Controller
      *     operationId="adminBlogList",
      *     tags={"Blog"},
      *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *               name="locale",
+     *               in="query",
+     *               description="Filter by locale",
+     *               required=true,
+     *               @OA\Schema(
+     *                   type="string",
+     *                   enum={"fa", "en", "ar"}
+     *               )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -166,7 +186,7 @@ class BlogController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/BlogListResource")
+     *                 @OA\Items(ref="#/components/schemas/AdminV1BlogListResource")
      *             ),
      *         )
      *     ),
@@ -226,7 +246,7 @@ class BlogController extends Controller
      *             @OA\Property(property="message", type="string", example="Blog created successfully"),
      *             @OA\Property(
      *                 property="data",
-     *                 ref="#/components/schemas/BlogShowResource"
+     *                 ref="#/components/schemas/AdminV1BlogShowResource"
      *             )
      *         )
      *     ),
@@ -253,13 +273,12 @@ class BlogController extends Controller
      *      ),
      * )
      */
-    public function store(BlogStoreRequest $request): \Illuminate\Http\JsonResponse
+    public function store(BlogStoreRequest $request)
     {
         $blog = $this->blogService->create($request);
         if(!$blog) {
             return $this->apiResponse(success: false, message: "response.blog.error", httpStatusCode: 404);
         }
-
         $resource = BlogShowResource::make($blog);
 
         return $this->apiResponse(message: __("response.blog.created"), data: $resource);
@@ -290,7 +309,7 @@ class BlogController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(
      *                 property="data",
-     *                 ref="#/components/schemas/BlogShowResource"
+     *                 ref="#/components/schemas/AdminV1BlogShowResource"
      *             )
      *         )
      *     ),
@@ -347,9 +366,12 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function show(BlogShowRequest $request, Blog $blog): \Illuminate\Http\JsonResponse
+    public function show($id, BlogShowRequest $request)
     {
-        $blog->loadMissing(['contents', 'relationBlogs']);
+        $blog = $this->blogService->findById($id, ["contents", "relatedBlogs"]);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
 
         $resource = BlogShowResource::make($blog);
 
@@ -398,7 +420,7 @@ class BlogController extends Controller
      *             ),
      *             @OA\Property(
      *                 property="data",
-     *                 ref="#/components/schemas/BlogShowResource"
+     *                 ref="#/components/schemas/AdminV1BlogShowResource"
      *             )
      *         )
      *     ),
@@ -491,6 +513,8 @@ class BlogController extends Controller
 
         $this->blogService->update($blog, $request);
 
+        $blog->refresh();
+
         $resource = BlogShowResource::make($blog);
 
         return $this->apiResponse(data: $resource);
@@ -577,8 +601,13 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function destroy(BlogDestroyRequest $request, Blog $blog): \Illuminate\Http\JsonResponse
+    public function destroy($id, BlogDestroyRequest $request): \Illuminate\Http\JsonResponse
     {
+        $blog = $this->blogService->findById($id, ["contents"]);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
         $this->blogService->destroy($blog);
 
         return $this->apiResponse(message: __("response.blog.destroyed"));
@@ -835,7 +864,7 @@ class BlogController extends Controller
      *             @OA\Property(property="message", type="string", example="Blog created successfully"),
      *             @OA\Property(
      *                 property="data",
-     *                 ref="#/components/schemas/BlogShowResource"
+     *                 ref="#/components/schemas/AdminV1BlogShowResource"
      *             )
      *         )
      *     ),

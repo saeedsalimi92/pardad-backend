@@ -6,23 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int $id
- * @property string $title
- * @property string $en_title
- * @property string $status
- * @property string $status_translate
- * @property string $published_at
- * @property string $created_at
- * @property string $updated_at
- * @property array $props
+ * @property mixed $contents
+ * @property mixed $id
  * @OA\Schema(
- *     schema="BlogListResource",
+ *     schema="AdminV1BlogListResource",
  *     title="Blog List Resource",
- *     description="Blog resource representation",
+ *     description="Minimal blog representation for listing purposes",
  *     type="object",
  *     @OA\Property(
  *         property="id",
  *         type="integer",
+ *         format="int64",
  *         example=1
  *     ),
  *     @OA\Property(
@@ -30,21 +24,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         type="string",
  *         example="Sample Blog Title"
  *     ),
- *     @OA\Property(
- *         property="end_title",
- *         type="string",
- *         example="Sample English Title"
- *     ),
  * )
  */
 class BlogListResource extends JsonResource
 {
-
+    /**
+     * Transform the resource into an array.
+     *
+     * @param Request $request
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            "contents" => BlogContentIndexResource::collection($this->contents)
+            "id" => $this->id,
+            "title" => $this->contents?->first()->title ?? "",
         ];
     }
 }

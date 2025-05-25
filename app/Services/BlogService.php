@@ -48,6 +48,7 @@ readonly class BlogService
                 $blog->contents()->create([
                     'locale' => $content["locale"],
                     'title' => $content['title'],
+                    'slug' => $content['title'],
                     'content' => $content['content'],
                     'props' => $content['props'] ?? [],
                 ]);

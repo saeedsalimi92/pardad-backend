@@ -76,6 +76,7 @@ readonly class CategoryService
             $this->categoryRepository->update($category->id, [
                 'status' => $data['status'],
                 'parent_id' => $data["parent_id"],
+                'type' => $data["type"],
             ]);
 
             foreach ($data['contents'] as $content) {

@@ -4,33 +4,112 @@ namespace App\Http\Controllers\Client\V1;
 
 
 use App\Enums\BlogStatus;
+use App\Enums\CommentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\V1\Blog\BlogCommentIndexRequest;
 use App\Http\Requests\Client\V1\Blog\BlogCommentStoreRequest;
 use App\Http\Requests\Client\V1\Blog\BlogIndexRequest;
 use App\Http\Requests\Client\V1\Blog\BlogShowRequest;
-use App\Http\Resources\Admin\V1\Blog\BlogIndexResource;
+use App\Http\Resources\Client\V1\Blog\BlogCommentIndexResource;
+use App\Http\Resources\Client\V1\Blog\BlogIndexResource;
 use App\Http\Resources\Client\V1\Blog\BlogShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Services\BlogService;
+use App\Services\CommentService;
 use Carbon\Carbon;
 
 class BlogController extends Controller
 {
-    public function __construct(private readonly BlogService $blogService)
+    public function __construct(private readonly BlogService $blogService,
+                                private readonly CommentService $commentService)
     {
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/blog",
+     *     tags={"Blog"},
+     *     summary="Get paginated list of published blogs",
+     *     description="Returns paginated list of published blogs with filters",
+     *     operationId="blogIndex",
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Items per page",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/ApiV1BlogIndexResource")
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 ref="#/components/schemas/PaginationResource"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function index(BlogIndexRequest $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
 
         $blogs = $this->blogService->getPublishedBlogsPaginated($data);
-        $resource = BlogIndexResource::make($blogs);
+        $resource = BlogIndexResource::collection($blogs);
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($blogs));
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/blog/{id}",
+     *     tags={"Blog"},
+     *     summary="Get specific published blog",
+     *     description="Returns a single published blog if exists and is publicly available",
+     *     operationId="blogShow",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of blog to return",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *          name="category_id",
+     *          in="query",
+     *          description="Category Id",
+     *          required=true,
+     *          @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/ApiV1BlogShowResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Blog not found or not published"
+     *     )
+     * )
+     */
     public function show($id, BlogShowRequest $request): \Illuminate\Http\JsonResponse
     {
         $blog = $this->blogService->findById($id);
@@ -51,14 +130,108 @@ class BlogController extends Controller
         return $this->apiResponse(data: $resource);
     }
 
-    public function comments(BlogCommentIndexRequest $request): \Illuminate\Http\JsonResponse
+    /**
+     * @OA\Get(
+     *     path="/api/v1/blog/{id}/comments",
+     *     tags={"Blog"},
+     *     summary="Get comments for a blog",
+     *     description="Returns paginated list of comments for a specific blog",
+     *     operationId="blogComments",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of blog to get comments for",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/ApiV1BlogCommentIndexResource")
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 ref="#/components/schemas/PaginationResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Blog not found"
+     *     )
+     * )
+     */
+    public function comments($id, BlogCommentIndexRequest $request): \Illuminate\Http\JsonResponse
     {
+        $blog = $this->blogService->findById($id);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
 
+        $data = $request->validated();
+        $data["success"] = CommentStatus::Approved->value;
+
+        $comments = $this->commentService->index($blog, $data);
+        $resource = BlogCommentIndexResource::make($comments);
+
+        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($comments));
     }
 
-    public function commentStore(BlogCommentStoreRequest $request): \Illuminate\Http\JsonResponse
+    /**
+     * @OA\Post(
+     *     path="/api/v1/blog/{id}/comments",
+     *     tags={"Blog"},
+     *     summary="Create a new comment for a blog",
+     *     description="Stores a new comment for the specified blog",
+     *     operationId="blogCommentStore",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of blog to comment on",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Comment data",
+     *         @OA\JsonContent(ref="#/components/schemas/ApiV1CommentStoreRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comment created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Comment created successfully"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Blog not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function commentStore($id, BlogCommentStoreRequest $request): \Illuminate\Http\JsonResponse
     {
+        $data = $request->validated();
+        $blog = $this->blogService->findById($id);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
 
+        $this->commentService->create($blog, $data);
+
+        return $this->apiResponse(message: __("responses.comment.created"));
     }
 
 }
