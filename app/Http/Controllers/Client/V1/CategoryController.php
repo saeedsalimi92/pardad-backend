@@ -197,7 +197,7 @@ class CategoryController extends Controller
      *     }
      * )
      */
-    public function show($id, CategoryShowRequest $request): \Illuminate\Http\JsonResponse
+    public function show(CategoryShowRequest $request, $id, $slug=null): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
         $category = $this->categoryService->findByLocale($id, $data);
