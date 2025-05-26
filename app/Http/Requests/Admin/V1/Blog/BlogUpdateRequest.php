@@ -144,9 +144,16 @@ class BlogUpdateRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $contents = $this->input('contents');
+        $contents = is_array($contents) ? $contents : ($contents ? json_decode($contents, true) : null);
+
+        $relatedBlogIds = is_string($this->input('related_blog_ids'))
+            ? explode(",", $this->input('related_blog_ids'))
+            : $this->input('related_blog_ids');
+
         $this->merge([
-            'contents' => $this->input('contents') && is_string($this->input('contents')) ? json_decode($this->input('contents'), true) : null,
-            'related_blog_ids' => $this->input('related_blog_ids') && is_string($this->input('related_blog_ids')) ? json_decode($this->input('related_blog_ids'), true) : [],
+            'contents' => $contents,
+            'related_blog_ids' => $relatedBlogIds
         ]);
     }
 }

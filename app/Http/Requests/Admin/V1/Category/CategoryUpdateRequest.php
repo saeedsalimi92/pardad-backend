@@ -136,8 +136,11 @@ class CategoryUpdateRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $contents = $this->input('contents');
+        $contents = is_array($contents) ? $contents : ($contents ? json_decode($contents, true) : null);
+
         $this->merge([
-            'contents' => $this->input('contents') ? json_decode($this->input('contents'), true) : null,
+            'contents' => $contents,
         ]);
     }
 }
