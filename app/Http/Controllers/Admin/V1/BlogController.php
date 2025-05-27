@@ -14,6 +14,7 @@ use App\Http\Requests\Admin\V1\Blog\BlogListRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogShowRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogStoreRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogUpdateRequest;
+use App\Http\Requests\BlogFaqShowRequest;
 use App\Http\Resources\Admin\V1\Blog\BlogIndexResource;
 use App\Http\Resources\Admin\V1\Blog\BlogListResource;
 use App\Http\Resources\Admin\V1\Blog\BlogShowResource;
@@ -906,10 +907,82 @@ class BlogController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/admin/v1/blog/{blogId}/faq/{faqId}",
+     *     tags={"Blog"},
+     *     summary="Display specific FAQ of a blog",
+     *     description="Returns a single FAQ item from specified blog",
+     *     operationId="adminBlogFaqShow",
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="blogId",
+     *         in="path",
+     *         description="ID of the blog",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="faqId",
+     *         in="path",
+     *         description="ID of the FAQ item",
+     *         required=true,
+     *         @OA\Schema(type="integer", format="int64", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/FaqShowResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Resource not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 example={"field_name": {"Error message"}}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated")
+     *         )
+     *     )
+     * )
+     */
+    public function faqShow($blogId, $faqId, BlogFaqShowRequest $request)
+    {
+        $blog = $this->blogService->findById($blogId);
+        if(is_null($blog)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        $faq = $this->faqService->findById($blog, $faqId);
+        if(is_null($faq)) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        $resource = FaqShowResource::make($faq);
+
+        return $this->apiResponse(data: $resource);
+    }
+
+    /**
      * @OA\Post(
      *     path="/admin/v1/blog/{blog_id}/faq/{faq_id}/update",
      *     summary="Update a blog post",
-     *     description="Updates an existing blog post with multilingual content, images, and related data",
+     *     description="Updates an existing faq with multilingual content, images, and related data",
      *     operationId="adminBlogFaqUpdate",
      *     tags={"Blog"},
      *     security={{"sanctum": {}}},

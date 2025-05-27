@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::group(['prefix' => '{blog}/faq'], function () {
             Route::get("/", [BlogController::class, 'faqIndex']);
             Route::post("/", [BlogController::class, 'faqStore']);
+            Route::get("/{faq}/", [BlogController::class, 'faqShow']);
             Route::post("{faq}/update", [BlogController::class, 'faqUpdate']);
             Route::delete("{faq}/", [BlogController::class, 'faqDestroy']);
         });

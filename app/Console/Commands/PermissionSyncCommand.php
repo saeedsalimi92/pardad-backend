@@ -49,6 +49,7 @@ class PermissionSyncCommand extends Command
             // blog faq
             'admin.blog.faq_index',
             'admin.blog.faq_store',
+            'admin.blog.faq_show',
             'admin.blog.faq_update',
             'admin.blog.faq_destroy',
 

@@ -83,6 +83,15 @@ class BlogPolicy
         return false;
     }
 
+    public function faqShow(User $user): bool
+    {
+        if ($user->can('admin.blog.faq_show')) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function faqStore(User $user): bool
     {
         if ($user->can('admin.blog.faq_store')) {

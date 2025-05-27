@@ -42,14 +42,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *      @OA\Property(
  *          property="status",
  *          type="string",
- *          example="published",
- *          enum={"draft", "published", "archived"},
+ *          example="active",
+ *          enum={"active", "inactive"},
  *          description="Current status of the FAQ"
  *      ),
  *      @OA\Property(
  *          property="status_translate",
  *          type="string",
- *          example="منتشر شده",
+ *          example="فعال",
  *          description="Translated status for display purposes"
  *      ),
  *      @OA\Property(
