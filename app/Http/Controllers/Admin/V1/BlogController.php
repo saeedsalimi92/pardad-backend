@@ -717,7 +717,7 @@ class BlogController extends Controller
      *     summary="Get paginated list of blog faqs",
      *     description="Returns a paginated list of blog faqs",
      *     operationId="adminBlogFaqIndex",
-     *     tags={"Blog"},
+     *     tags={"Blog Faq"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *         name="page",
@@ -837,7 +837,7 @@ class BlogController extends Controller
      *     summary="Create a new blog post",
      *     description="Creates a new blog post with featured image",
      *     operationId="adminBlogFaqStore",
-     *     tags={"Blog"},
+     *     tags={"Blog Faq"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *           name="blog_id",
@@ -909,7 +909,7 @@ class BlogController extends Controller
     /**
      * @OA\Get(
      *     path="/admin/v1/blog/{blogId}/faq/{faqId}",
-     *     tags={"Blog"},
+     *     tags={"Blog Faq"},
      *     summary="Display specific FAQ of a blog",
      *     description="Returns a single FAQ item from specified blog",
      *     operationId="adminBlogFaqShow",
@@ -984,7 +984,7 @@ class BlogController extends Controller
      *     summary="Update a blog post",
      *     description="Updates an existing faq with multilingual content, images, and related data",
      *     operationId="adminBlogFaqUpdate",
-     *     tags={"Blog"},
+     *     tags={"Blog Faq"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *         name="blog_id",
@@ -1135,7 +1135,7 @@ class BlogController extends Controller
      *     summary="Delete a blog post",
      *     description="Permanently deletes a blog faq",
      *     operationId="adminBlogFaqDestroy",
-     *     tags={"Blog"},
+     *     tags={"Blog Faq"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *         name="blog_id",
