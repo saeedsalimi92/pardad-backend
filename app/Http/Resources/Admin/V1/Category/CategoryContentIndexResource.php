@@ -38,7 +38,8 @@ class CategoryContentIndexResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->title,
-            "locale" => $this->locale
+            "locale" => $this->locale,
+            "props" => $this->props,
         ];
     }
 }
