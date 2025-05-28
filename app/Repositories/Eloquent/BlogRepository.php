@@ -39,10 +39,17 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
             ->paginate($perPage);
     }
 
-    public function findByLocale($id, $data)
+    public function findByCode($code, $with=[])
     {
         return $this->query()
-            ->where("id", $id)
+            ->with($with)
+            ->first();
+    }
+
+    public function findByLocale($code, $data)
+    {
+        return $this->query()
+            ->where("code", $code)
             ->with(['contents' => function($query) use ($data) {
                 $query
                     ->when(isset($data['locale']), function ($query) use ($data) {
@@ -53,7 +60,7 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                     ->where('status', BlogStatus::Published->value)
                     ->where("published_at", "<=", now());
             }, 'faqs' => function ($query) use ($data) {
-                $query->select(["id", "question", "answer"]);
+                $query->select(["id","faqable_id", "faqable_type", "question", "answer"]);
             }])
             ->first();
     }
@@ -61,6 +68,12 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
     public function getPublishedBlogsPaginated($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
+            ->select([
+                "id",
+                "code",
+                "category_id",
+                "status"
+            ])
             ->with(['contents' => function($query) use ($data) {
                 $query
                     ->when(isset($data['locale']), function ($query) use ($data) {

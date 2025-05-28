@@ -8,5 +8,5 @@ interface CategoryRepositoryInterface extends BaseRepositoryInterface
 
     public function getList($data): \Illuminate\Database\Eloquent\Collection;
 
-    public function findByLocale($id, $data);
+    public function findByLocale($code, $data);
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property CategoryContent $contents
+ * @property mixed $code
  * @OA\Schema(
  *     schema="ApiV1CategoryListResource",
  *     title="Category Resource",
@@ -29,7 +30,7 @@ class CategoryListResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
+            "id" => $this->code,
             "title" => $this->contents?->first()->title ?? "",
         ];
     }

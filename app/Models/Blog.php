@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * @property string $status
  * @property int $id
  * @property string $status_translate
+ * @property string $code
  */
 class Blog extends Model
 {
@@ -22,6 +23,7 @@ class Blog extends Model
     protected $fillable = [
         'id',
         'code',
+        'category_id',
         'status',
         'props',
         'published_at'

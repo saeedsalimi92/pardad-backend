@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * @property mixed $code
  * @OA\Schema(
  *     schema="ApiV1BlogListResource",
  *     title="Blog List Resource",
@@ -62,7 +63,7 @@ class BlogListResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            "id" => $this->code,
             'title' => $this->title,
             'en_title' => $this->en_title,
             'status' => $this->status,

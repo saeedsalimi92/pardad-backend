@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $published_at
  * @property mixed $created_at
  * @property mixed $updated_at
+ * @property mixed $code
  * @OA\Schema(
  *     schema="ApiV1BlogShowResource",
  *     type="object",
@@ -85,7 +86,7 @@ class BlogShowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
+            "id" => $this->code,
             "image" => url($this?->featuredImage?->path),
             "contents" => BlogContentShowResource::collection($this->contents),
             "status" => $this->status,

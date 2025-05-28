@@ -16,6 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $type_translate
  * @property mixed $created_at
  * @property mixed $updated_at
+ * @property mixed $code
  * @OA\Schema(
  *     schema="CategoryIndexResource",
  *     title="Category Index Resource",
@@ -89,7 +90,7 @@ class CategoryIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
+            "id" => $this->code,
             "title" => $this->when(
                 $this->relationLoaded('contents') && $this->contents->isNotEmpty(),
                 fn() => $this->contents->first()->title,

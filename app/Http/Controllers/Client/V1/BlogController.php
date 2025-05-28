@@ -106,18 +106,25 @@ class BlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/blog/{id}",
+     *     path="/api/v1/blog/{code}/{slug}/",
      *     tags={"Blog"},
      *     summary="Get specific published blog",
      *     description="Returns a single published blog if exists and is publicly available",
      *     operationId="blogShow",
      *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of blog to return",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
+     *          name="code",
+     *          in="path",
+     *          description="Unique code of blog to get comments for",
+     *          required=true,
+     *          @OA\Schema(type="string")
+     *      ),
+     *     @OA\Parameter(
+     *          name="slug",
+     *          in="path",
+     *          description="Slug of the blog (optional)",
+     *          required=false,
+     *          @OA\Schema(type="string")
+     *      ),
      *      @OA\Parameter(
      *                name="locale",
      *                in="query",
@@ -144,11 +151,11 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function show($id, BlogShowRequest $request)
+    public function show(BlogShowRequest $request, $code, $slug=null)
     {
         $data = $request->validated();
 
-        $blog = $this->blogService->findByLocale($id, $data);
+        $blog = $this->blogService->findByLocale($code, $data);
         if(is_null($blog)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
@@ -168,17 +175,17 @@ class BlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/blog/{id}/comments",
+     *     path="/api/v1/blog/{code}/comments",
      *     tags={"Blog"},
      *     summary="Get comments for a blog",
      *     description="Returns paginated list of comments for a specific blog",
      *     operationId="blogComments",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="code",
      *         in="path",
-     *         description="ID of blog to get comments for",
+     *         description="Unique code of blog to get comments for",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -201,9 +208,9 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function comments($id, BlogCommentIndexRequest $request)
+    public function comments($code, BlogCommentIndexRequest $request): \Illuminate\Http\JsonResponse
     {
-        $blog = $this->blogService->findById($id);
+        $blog = $this->blogService->findByCode($code);
         if(is_null($blog)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
@@ -220,18 +227,18 @@ class BlogController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/blog/{id}/comments",
+     *     path="/api/v1/blog/{code}/comments",
      *     tags={"Blog"},
      *     summary="Create a new comment for a blog",
      *     description="Stores a new comment for the specified blog",
      *     operationId="blogCommentStore",
      *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of blog to comment on",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
+     *          name="code",
+     *          in="path",
+     *          description="Unique code of blog to get comments for",
+     *          required=true,
+     *          @OA\Schema(type="string")
+     *      ),
      *     @OA\RequestBody(
      *         required=true,
      *         description="Comment data",
@@ -258,10 +265,10 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function commentStore($id, BlogCommentStoreRequest $request)
+    public function commentStore($code, BlogCommentStoreRequest $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
-        $blog = $this->blogService->findById($id);
+        $blog = $this->blogService->findByCode($code);
         if(is_null($blog)) {
             return $this->apiResponse(httpStatusCode: 404);
         }

@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $type_translate
  * @property mixed $created_at
  * @property mixed $updated_at
+ * @property mixed $code
  * @OA\Schema(
  *     schema="CategoryShowResource",
  *     title="Category Show Resource",
@@ -89,7 +90,7 @@ class CategoryShowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
+            "id" => $this->code,
             "parent_id" => $this->parent_id,
             "parent_name" => $this->when(
                 $this->relationLoaded('parent') && $this->parent?->relationLoaded('contents'),

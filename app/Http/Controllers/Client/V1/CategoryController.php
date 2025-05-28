@@ -145,22 +145,25 @@ class CategoryController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/categories/{id}",
+     *     path="/api/v1/categories/{id}/{slug}",
      *     tags={"Category"},
      *     summary="Get detailed information about a specific category",
      *     description="Returns full details of a category including its parent, children, and contents",
      *     operationId="getCategoryById",
+     *      @OA\Parameter(
+     *           name="code",
+     *           in="path",
+     *           description="Unique code of blog to get comments for",
+     *           required=true,
+     *           @OA\Schema(type="string")
+     *       ),
      *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of the category to retrieve",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *             format="int64",
-     *             example=1
-     *         )
-     *     ),
+     *           name="slug",
+     *           in="path",
+     *           description="Slug of the category (optional)",
+     *           required=false,
+     *           @OA\Schema(type="string")
+     *       ),
      *     @OA\Parameter(
      *            name="locale",
      *            in="query",
@@ -197,10 +200,10 @@ class CategoryController extends Controller
      *     }
      * )
      */
-    public function show(CategoryShowRequest $request, $id, $slug=null): \Illuminate\Http\JsonResponse
+    public function show(CategoryShowRequest $request, $code, $slug=null): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
-        $category = $this->categoryService->findByLocale($id, $data);
+        $category = $this->categoryService->findByLocale($code, $data);
         if(is_null($category)) {
             return $this->apiResponse(httpStatusCode: 404);
         }

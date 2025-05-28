@@ -25,9 +25,14 @@ readonly class BlogService
         return $this->blogRepository->findById($id, $with);
     }
 
-    public function findByLocale($id, $data)
+    public function findByCode($code, $with=[])
     {
-        return $this->blogRepository->findByLocale($id, $data);
+        return $this->blogRepository->findByCode($code, $with);
+    }
+
+    public function findByLocale($code, $data)
+    {
+        return $this->blogRepository->findByLocale($code, $data);
     }
 
     public function getList($data): \Illuminate\Database\Eloquent\Collection
@@ -46,7 +51,7 @@ readonly class BlogService
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
                 'author_id' => auth()->id(),
-                'code' => uniqid()
+                'code' => generateShortUniqueCode()
             ]);
 
             foreach ($data['contents'] as $content) {

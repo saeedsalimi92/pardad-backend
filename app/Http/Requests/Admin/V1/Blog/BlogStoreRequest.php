@@ -33,7 +33,8 @@ use Illuminate\Validation\Rule;
  *                 type="object",
  *                 @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
  *                 @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
- *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true)
+ *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true),
+ *                 @OA\Property(property="no_index", type="boolean", example="true", nullable=true)
  *             )
  *         ),
  *         example={
@@ -112,7 +113,9 @@ class BlogStoreRequest extends FormRequest
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['required', 'url'],
+            'contents.*.props.canonical' => ['url'],
+            'contents.*.props.no_index' => ['boolean'],
+            'contents.*.props.url' => ['url'],
 
             'image' => [
                 'nullable',

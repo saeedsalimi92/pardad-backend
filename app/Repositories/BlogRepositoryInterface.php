@@ -6,7 +6,9 @@ interface BlogRepositoryInterface extends BaseRepositoryInterface
 {
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-    public function findByLocale($id, $data);
+    public function findByLocale($code, $data);
+
+    public function findByCode($code, $with=[]);
 
     public function getList($data): \Illuminate\Database\Eloquent\Collection;
 

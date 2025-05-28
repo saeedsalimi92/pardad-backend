@@ -92,10 +92,10 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
             ->get();
     }
 
-    public function findByLocale($id, $data)
+    public function findByLocale($code, $data)
     {
         return $this->query()
-            ->where("id", $id)
+            ->where("code", $code)
             ->with(['contents' => function($query) use ($data) {
                 $query
                     ->when(isset($data['locale']), function ($query) use ($data) {

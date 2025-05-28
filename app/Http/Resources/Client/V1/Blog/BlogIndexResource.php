@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Client\V1\Blog;
 
-use App\Http\Resources\Client\V1\Faq\FaqIndexResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,6 +15,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $created_at
  * @property mixed $updated_at
  * @property mixed $contents
+ * @property mixed $category_id
+ * @property mixed $code
  * @OA\Schema(
  *     schema="ApiV1BlogIndexResource",
  *     title="Blog Index Resource",
@@ -87,8 +88,9 @@ class BlogIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
+            "id" => $this->code,
             "title" => $this->contents?->first()->title ?? "",
+            "category_id" => $this->category_id,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "published_at" => $this->published_at,

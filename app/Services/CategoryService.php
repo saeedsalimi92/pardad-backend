@@ -35,7 +35,7 @@ readonly class CategoryService
                 'status' => $data['status'],
                 'author_id' => auth()->id(),
                 'parent_id' => $data["parent_id"],
-                'code' => uniqid()
+                'code' => generateShortUniqueCode()
             ]);
 
             foreach ($data['contents'] as $content) {
@@ -116,8 +116,8 @@ readonly class CategoryService
         return $category->delete();
     }
 
-    public function findByLocale($id, $data)
+    public function findByLocale($code, $data)
     {
-        return $this->categoryRepository->findByLocale($id, $data);
+        return $this->categoryRepository->findByLocale($code, $data);
     }
 }
