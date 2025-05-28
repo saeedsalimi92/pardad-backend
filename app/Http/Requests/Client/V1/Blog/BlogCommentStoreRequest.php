@@ -53,10 +53,10 @@ class BlogCommentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "first_name" => ['required', 'string'],
-            "last_name" => ['required', 'string'],
-            "mobile" => ['required', 'string'],
-            "email" => ['nullable', 'string'],
+            "first_name" => ['required', 'string', 'max:60'],
+            "last_name" => ['required', 'string', 'max:60'],
+            "mobile" => ['required', 'string', 'regex:/^(09)([0-9]{9})$/'],
+            "email" => ['nullable', 'string', 'email'],
             "content" => ["required", "string"],
         ];
     }

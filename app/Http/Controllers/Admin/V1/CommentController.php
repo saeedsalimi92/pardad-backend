@@ -58,8 +58,7 @@ class CommentController extends Controller
      *          description="Filter by User mobile",
      *          required=false,
      *          @OA\Schema(
-     *              type="integer",
-     *              default=15
+     *              type="string"
      *          )
      *      ),
      *     @OA\Parameter(

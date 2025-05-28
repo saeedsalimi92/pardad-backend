@@ -57,6 +57,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $status_translate
  * @property mixed $created_at
  * @property mixed $updated_at
+ * @property mixed $id
  */
 class CommentIndexResource extends JsonResource
 {
@@ -68,6 +69,7 @@ class CommentIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "entity_id" => $this->commentable->id,
             "entity_title" => $this->commentable->contents?->first()->title,
             "full_name" => $this->full_name,

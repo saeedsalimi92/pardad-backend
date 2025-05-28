@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\V1\Comment;
 
+use App\Enums\CommentStatus;
 use App\Models\Comment;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CommentIndexRequest extends FormRequest
 {
@@ -27,7 +29,8 @@ class CommentIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "status" => ["nullable", Rule::in(CommentStatus::statuses())],
+            "mobile" => ["nullable", "regex:/^(09)([0-9]{9})$/"]
         ];
     }
 }

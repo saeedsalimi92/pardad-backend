@@ -22,7 +22,7 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
                 $query->where('status', $data["status"]);
             })
             ->when(isset($data['mobile']), function ($query) use ($data) {
-                $query->where('title', "LIKE", "%".$data["mobile"]."%");
+                $query->where('mobile', "LIKE", "%".$data["mobile"]."%");
             })
             ->orderByDesc('created_at')
             ->paginate($perPage);
