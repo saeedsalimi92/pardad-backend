@@ -45,7 +45,8 @@ use Illuminate\Validation\Rule;
  *                 "props": {
  *                     "meta_keyword": "کلمات کلیدی",
  *                     "meta_description": "توضیحات متا",
- *                     "canonical": "http://fa.blog.pardad.com"
+ *                     "canonical": "http://fa.blog.pardad.com",
+ *                     "no_index": false
  *                 }
  *             },
  *             {
@@ -55,7 +56,8 @@ use Illuminate\Validation\Rule;
  *                 "props": {
  *                     "meta_keyword": "keywords",
  *                     "meta_description": "meta description",
- *                     "canonical": "http://en.blog.pardad.com"
+ *                     "canonical": "http://en.blog.pardad.com",
+ *                     "no_index": false
  *                 }
  *             }
  *         }
