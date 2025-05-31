@@ -17,48 +17,54 @@ use Illuminate\Validation\Rule;
  *           type="integer",
  *           example="1"
  *       ),
- *     @OA\Property(
- *         property="contents",
- *         type="array",
- *         minItems=2,
- *         maxItems=2,
- *         @OA\Items(
- *             type="object",
- *             required={"locale", "title", "content"},
- *             @OA\Property(property="locale", type="string", enum={"fa", "en"}, example="fa"),
- *             @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
- *             @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
- *             @OA\Property(
- *                 property="props",
- *                 type="object",
- *                 @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
- *                 @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
- *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true)
- *             )
- *         ),
- *         example={
- *             {
- *                 "locale": "fa",
- *                 "title": "عنوان مقاله",
- *                 "content": "<p>محتوای فارسی</p>",
- *                 "props": {
- *                     "meta_keyword": "کلمات کلیدی",
- *                     "meta_description": "توضیحات متا",
- *                     "canonical": "http://fa.blog.pardad.com"
- *                 }
- *             },
- *             {
- *                 "locale": "en",
- *                 "title": "Blog Title",
- *                 "content": "<p>English content</p>",
- *                 "props": {
- *                     "meta_keyword": "keywords",
- *                     "meta_description": "meta description",
- *                     "canonical": "http://en.blog.pardad.com"
- *                 }
- *             }
- *         }
- *     ),
+ *          @OA\Property(
+ *          property="contents",
+ *          type="array",
+ *          minItems=2,
+ *          maxItems=2,
+ *          @OA\Items(
+ *              type="object",
+ *              required={"locale", "title", "content"},
+ *              @OA\Property(property="locale", type="string", enum={"fa", "en"}, example="fa"),
+ *              @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
+ *              @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
+ *              @OA\Property(property="slug", type="string", example="blog-title"),
+ *              @OA\Property(
+ *                  property="props",
+ *                  type="object",
+ *                  @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
+ *                  @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
+ *                  @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true),
+ *                  @OA\Property(property="no_index", type="boolean", example="true", nullable=true)
+ *              )
+ *          ),
+ *          example={
+ *              {
+ *                  "locale": "fa",
+ *                  "title": "عنوان مقاله",
+ *                  "slug": "عنوان-مقاله",
+ *                  "content": "<p>محتوای فارسی</p>",
+ *                  "props": {
+ *                      "meta_keyword": "کلمات کلیدی",
+ *                      "meta_description": "توضیحات متا",
+ *                      "canonical": "http://fa.blog.pardad.com",
+ *                      "no_index": false,
+ *                  }
+ *              },
+ *              {
+ *                  "locale": "en",
+ *                  "title": "Blog Title",
+ *                  "slug": "blog-title",
+ *                  "content": "<p>English content</p>",
+ *                  "props": {
+ *                      "meta_keyword": "keywords",
+ *                      "meta_description": "meta description",
+ *                      "canonical": "http://en.blog.pardad.com",
+ *                      "no_index": false
+ *                  }
+ *              }
+ *          }
+ *      ),
  *     @OA\Property(
  *         property="status",
  *         type="string",
@@ -106,6 +112,7 @@ class BlogUpdateRequest extends FormRequest
             'contents.*.locale' => ['required', Rule::in(Locale::allLocale())],
             'contents.*.title' => ['required', 'string', 'max:255'],
             'contents.*.content' => ['required', 'string'],
+            'contents.*.slug' => ['required', 'string', 'max:255'],
 
             // props as part of each content item
             'contents.*.props' => ['required', 'array'],

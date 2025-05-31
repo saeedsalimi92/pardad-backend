@@ -74,6 +74,11 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                 "category_id",
                 "status"
             ])
+            ->whereHas("category", function ($query) use ($data) {
+                $query->when(isset($data['category_id']), function ($query) use ($data) {
+                    $query->where('code', $data["category_id"]);
+                });
+            })
             ->with(['contents' => function($query) use ($data) {
                 $query
                     ->when(isset($data['locale']), function ($query) use ($data) {
@@ -83,9 +88,6 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                         $query->where('title', "LIKE", "%".$data["title"]."%");
                     });
             }])
-            ->when(isset($data['category_id']), function ($query) use ($data) {
-                $query->where('category_id', $data["category_id"]);
-            })
             ->where('status', BlogStatus::Published->value)
             ->where("published_at", "<=", now())
             ->orderByDesc('created_at')

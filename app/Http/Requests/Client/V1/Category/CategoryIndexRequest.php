@@ -23,6 +23,7 @@ class CategoryIndexRequest extends FormRequest
             "type" => ["nullable", Rule::in(CategoryType::types())],
             "scope" => ["nullable", Rule::in(CategoryScope::scopes())],
             "locale" => ["nullable", Rule::in(Locale::allLocale())],
+            "parent_id" => ["bail", "nullable", "integer", "exists:categories,id"],
         ];
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CategoryContent extends Model
 {
-    use HasFactory, HasSlug, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'id',
@@ -24,6 +24,11 @@ class CategoryContent extends Model
     protected $casts = [
         'props' => 'array',
     ];
+
+    public function getUrl(): string
+    {
+        return "{$this->blog->code}/{$this->slug}";
+    }
 
     public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

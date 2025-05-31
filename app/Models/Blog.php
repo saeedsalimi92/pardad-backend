@@ -46,6 +46,11 @@ class Blog extends Model
         return $this->hasMany(BlogContent::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function relatedBlogs(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(

@@ -24,6 +24,7 @@ use Illuminate\Validation\Rule;
  *             @OA\Property(property="locale", type="string", enum={"fa", "en"}, example="fa"),
  *             @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
  *             @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
+ *             @OA\Property(property="slug", type="string", example="blog-title"),
  *             @OA\Property(
  *                 property="props",
  *                 type="object",
@@ -40,7 +41,8 @@ use Illuminate\Validation\Rule;
  *                 "props": {
  *                     "meta_keyword": "کلمات کلیدی",
  *                     "meta_description": "توضیحات متا",
- *                     "canonical": "http://fa.blog.pardad.com"
+ *                     "canonical": "http://fa.blog.pardad.com",
+ *                     "slug": "عنوان-مقاله"
  *                 }
  *             },
  *             {
@@ -50,7 +52,8 @@ use Illuminate\Validation\Rule;
  *                 "props": {
  *                     "meta_keyword": "keywords",
  *                     "meta_description": "meta description",
- *                     "canonical": "http://en.blog.pardad.com"
+ *                     "canonical": "http://en.blog.pardad.com",
+ *                     "slug": "blog-title"
  *                 }
  *             }
  *         }
@@ -100,6 +103,7 @@ class CategoryStoreRequest extends FormRequest
             'contents.*.locale' => ['required', Rule::in(Locale::allLocale())],
             'contents.*.title' => ['required', 'string', 'max:255'],
             'contents.*.content' => ['required', 'string'],
+            'contents.*.slug' => ['required', 'string', 'max:255'],
 
             // props as part of each content item
             'contents.*.props' => ['required', 'array'],

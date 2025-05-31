@@ -58,7 +58,7 @@ readonly class BlogService
                 $blog->contents()->create([
                     'locale' => $content["locale"],
                     'title' => $content['title'],
-                    'slug' => $content['title'],
+                    'slug' => $content['slug'],
                     'content' => $content['content'],
                     'props' => $content['props'] ?? [],
                 ]);
@@ -102,11 +102,18 @@ readonly class BlogService
             ]);
 
             foreach ($data['contents'] as $content) {
-                $blog->contents()->where("locale", $content["locale"])->update([
+
+                $data = [
                     'title' => $content['title'],
                     'content' => $content['content'],
                     'props' => $content['props'] ?? [],
-                ]);
+                ];
+
+                if(isset($content["slug"]) && !is_null($content["slug"])) {
+                    $data["slug"] = $content["slug"];
+                }
+
+                $blog->contents()->where("locale", $content["locale"])->update($data);
             }
 
             if (isset($data['related_blog_ids'])) {

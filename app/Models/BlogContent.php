@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BlogContent extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory;
 
     protected $fillable = [
         'id',
@@ -33,7 +33,7 @@ class BlogContent extends Model
 
     public function getUrl(): string
     {
-        return config('app.url') . "/blog/{$this->blog->code}/{$this->slug}";
+        return "{$this->blog->code}/{$this->slug}";
     }
 
     public function blog(): \Illuminate\Database\Eloquent\Relations\BelongsTo

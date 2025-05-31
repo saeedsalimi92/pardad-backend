@@ -13,48 +13,51 @@ use Illuminate\Validation\Rule;
  * @OA\Schema(
  *     schema="CategoryUpdateRequest",
  *     required={"contents", "status", "type"},
- *     @OA\Property(
- *         property="contents",
- *         type="array",
- *         minItems=2,
- *         maxItems=2,
- *         @OA\Items(
- *             type="object",
- *             required={"locale", "title", "content"},
- *             @OA\Property(property="locale", type="string", enum={"fa", "en"}, example="fa"),
- *             @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
- *             @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
- *             @OA\Property(
- *                 property="props",
- *                 type="object",
- *                 @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
- *                 @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
- *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true)
- *             )
- *         ),
- *         example={
- *             {
- *                 "locale": "fa",
- *                 "title": "عنوان دسته بندی",
- *                 "content": "<p>محتوای دسته بندی فارسی</p>",
- *                 "props": {
- *                     "meta_keyword": "کلمات کلیدی",
- *                     "meta_description": "توضیحات متا",
- *                     "canonical": "http://fa.blog.pardad.com"
- *                 }
- *             },
- *             {
- *                 "locale": "en",
- *                 "title": "Category Title",
- *                 "content": "<p>English content</p>",
- *                 "props": {
- *                     "meta_keyword": "keywords",
- *                     "meta_description": "meta description",
- *                     "canonical": "http://en.blog.pardad.com"
- *                 }
- *             }
- *         }
- *     ),
+ *          @OA\Property(
+ *          property="contents",
+ *          type="array",
+ *          minItems=2,
+ *          maxItems=2,
+ *          @OA\Items(
+ *              type="object",
+ *              required={"locale", "title", "content"},
+ *              @OA\Property(property="locale", type="string", enum={"fa", "en"}, example="fa"),
+ *              @OA\Property(property="title", type="string", maxLength=255, example="عنوان مقاله"),
+ *              @OA\Property(property="content", type="string", example="<p>محتوای مقاله به فارسی</p>"),
+ *              @OA\Property(property="slug", type="string", example="blog-title"),
+ *              @OA\Property(
+ *                  property="props",
+ *                  type="object",
+ *                  @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
+ *                  @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
+ *                  @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true)
+ *              )
+ *          ),
+ *          example={
+ *              {
+ *                  "locale": "fa",
+ *                  "title": "عنوان دسته بندی",
+ *                  "slug": "عنوان-مقاله",
+ *                  "content": "<p>محتوای دسته بندی فارسی</p>",
+ *                  "props": {
+ *                      "meta_keyword": "کلمات کلیدی",
+ *                      "meta_description": "توضیحات متا",
+ *                      "canonical": "http://fa.blog.pardad.com"
+ *                  }
+ *              },
+ *              {
+ *                  "locale": "en",
+ *                  "title": "Category Title",
+ *                  "slug": "blog-title",
+ *                  "content": "<p>English content</p>",
+ *                  "props": {
+ *                      "meta_keyword": "keywords",
+ *                      "meta_description": "meta description",
+ *                      "canonical": "http://en.blog.pardad.com"
+ *                  }
+ *              }
+ *          }
+ *      ),
  *     @OA\Property(
  *          property="parent_id",
  *          type="integer",
@@ -95,19 +98,22 @@ class CategoryUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+
             'contents' => ['required', 'array', 'min:1'],
             'contents.*' => ['required', 'array'],
             'contents.*.locale' => ['required', Rule::in(Locale::allLocale())],
             'contents.*.title' => ['required', 'string', 'max:255'],
             'contents.*.content' => ['required', 'string'],
+            'contents.*.slug' => ['required', 'string', 'max:255'],
 
             // props as part of each content item
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['required', 'url'],
+            'contents.*.props.canonical' => ['nullable', 'url'],
 
             'image' => [
+                'bail',
                 'nullable',
                 'file',
                 'image',

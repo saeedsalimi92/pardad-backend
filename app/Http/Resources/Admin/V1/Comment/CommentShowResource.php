@@ -91,6 +91,7 @@ class CommentShowResource extends JsonResource
             "email" => $this->email,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
+            "replies" => CommentReplyResource::collection($this->replies),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];

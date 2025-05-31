@@ -50,6 +50,7 @@ class BlogContentShowResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->title,
+            "slug" => $this->slug,
             "locale" => $this->locale,
             "content" => $this->content,
             "props" => $this->props

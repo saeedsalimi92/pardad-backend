@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\V1\Blog;
 
+use App\Http\Resources\Admin\V1\Category\CategoryShowResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -118,6 +119,8 @@ class BlogShowResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "category_id" => $this->category->contents()->first()?->id,
+            "category_title" => $this->category->contents()->first()?->title,
             "image" => url($this?->featuredImage?->path),
             "contents" => BlogContentShowResource::collection($this->contents),
             "status" => $this->status,
