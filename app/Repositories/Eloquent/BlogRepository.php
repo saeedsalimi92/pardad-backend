@@ -89,7 +89,7 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                     });
             }])
             ->where('status', BlogStatus::Published->value)
-            ->where("published_at", "<=", now())
+            /*->where("published_at", "<=", now())*/
             ->orderByDesc('created_at')
             ->paginate($perPage);
     }

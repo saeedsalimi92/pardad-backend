@@ -110,7 +110,7 @@ class CategoryUpdateRequest extends FormRequest
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['nullable', 'url'],
+            'contents.*.props.canonical' => ['required', 'string', 'max:255'],
 
             'image' => [
                 'bail',
