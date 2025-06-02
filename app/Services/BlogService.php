@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\BlogStatus;
 use App\Http\Requests\Admin\V1\Blog\BlogStoreRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogUpdateRequest;
 use App\Models\Blog;
@@ -85,7 +86,12 @@ readonly class BlogService
 
     public function changeStatus($id, $status): int
     {
-        return $this->blogRepository->update($id, ["status" => $status]);
+        $data = ["status" => $status];
+        if($status == BlogStatus::Published->value) {
+           $data["published_at"] = now();
+        }
+
+        return $this->blogRepository->update($id, $data);
     }
 
     public function update(Blog $blog, BlogUpdateRequest $request): int

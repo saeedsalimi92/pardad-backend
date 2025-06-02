@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Client\V1\Blog;
 
+use App\Http\Resources\Client\V1\Category\CategoryContentShowResource;
+use App\Http\Resources\Client\V1\Category\CategoryShowResource;
 use App\Http\Resources\Client\V1\Faq\FaqIndexResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -87,6 +89,7 @@ class BlogShowResource extends JsonResource
     {
         return [
             "id" => $this->code,
+            "category" => CategoryContentShowResource::make($this->category?->contents?->first()),
             "image" => url($this?->featuredImage?->path),
             "contents" => BlogContentShowResource::collection($this->contents),
             "status" => $this->status,

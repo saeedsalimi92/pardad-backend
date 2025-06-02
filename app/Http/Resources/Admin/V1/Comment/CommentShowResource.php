@@ -72,6 +72,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $comment
  * @property mixed $email
  * @property mixed $commentable
+ * @property mixed $content
  */
 class CommentShowResource extends JsonResource
 {
@@ -87,6 +88,7 @@ class CommentShowResource extends JsonResource
             "entity_id" => $this->commentable->id,
             "entity_title" => $this->commentable->contents?->first()->title,
             "full_name" => $this->full_name,
+            "content" => $this->content,
             "mobile" => $this->mobile,
             "email" => $this->email,
             "status" => $this->status,

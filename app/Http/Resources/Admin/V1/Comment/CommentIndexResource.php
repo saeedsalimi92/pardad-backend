@@ -75,6 +75,7 @@ class CommentIndexResource extends JsonResource
             "full_name" => $this->full_name,
             "mobile" => $this->mobile,
             "status" => $this->status,
+            "has_reply" => count($this->replies) > 0,
             "status_translate" => $this->status_translate,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at

@@ -72,7 +72,10 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                 "id",
                 "code",
                 "category_id",
-                "status"
+                "status",
+                "created_at",
+                "updated_at",
+                "published_at",
             ])
             ->whereHas("category", function ($query) use ($data) {
                 $query->when(isset($data['category_id']), function ($query) use ($data) {

@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources\Client\V1\Blog;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /**
  * @property mixed $id
@@ -17,6 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $contents
  * @property mixed $category_id
  * @property mixed $code
+ * @property Category $category
  * @OA\Schema(
  *     schema="ApiV1BlogIndexResource",
  *     title="Blog Index Resource",
@@ -90,7 +93,9 @@ class BlogIndexResource extends JsonResource
         return [
             "id" => $this->code,
             "title" => $this->contents?->first()->title ?? "",
-            "category_id" => $this->category_id,
+            "slug" => $this->contents?->first()->slug ?? "",
+            "content" => Str::limit($this->contents?->first()->content, 200) ?? "",
+            "category_id" => $this->category?->code,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "published_at" => $this->published_at,

@@ -17,13 +17,14 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
-            ->with(['commentable.contents'])
+            ->with(['commentable.contents', 'replies'])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
             ->when(isset($data['mobile']), function ($query) use ($data) {
                 $query->where('mobile', "LIKE", "%".$data["mobile"]."%");
             })
+            ->where("parent_id", "=", null)
             ->orderByDesc('created_at')
             ->paginate($perPage);
     }
