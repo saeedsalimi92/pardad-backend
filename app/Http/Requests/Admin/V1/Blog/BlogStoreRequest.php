@@ -119,8 +119,8 @@ class BlogStoreRequest extends FormRequest
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['url'],
-            'contents.*.props.no_index' => ['boolean'],
+            'contents.*.props.canonical' => ['string', 'max:255'],
+            'contents.*.props.no_index' => ['required' ,'boolean'],
 
             'image' => [
                 'nullable',
