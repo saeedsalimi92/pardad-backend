@@ -109,7 +109,7 @@ class CategoryStoreRequest extends FormRequest
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['required', 'url'],
+            'contents.*.props.canonical' => ['string', 'max:255'],
 
             'image' => [
                 'nullable',

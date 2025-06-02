@@ -42,7 +42,7 @@ use Illuminate\Validation\Rule;
  *                  "props": {
  *                      "meta_keyword": "کلمات کلیدی",
  *                      "meta_description": "توضیحات متا",
- *                      "canonical": "http://fa.blog.pardad.com"
+ *                      "canonical": "/code/کلمات کلیدی"
  *                  }
  *              },
  *              {
@@ -53,7 +53,7 @@ use Illuminate\Validation\Rule;
  *                  "props": {
  *                      "meta_keyword": "keywords",
  *                      "meta_description": "meta description",
- *                      "canonical": "http://en.blog.pardad.com"
+ *                      "canonical": "/code/کلمات کلیدی"
  *                  }
  *              }
  *          }
@@ -110,7 +110,7 @@ class CategoryUpdateRequest extends FormRequest
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['nullable', 'url'],
+            'contents.*.props.canonical' => ['nullable', 'string', 'max:255'],
 
             'image' => [
                 'bail',
