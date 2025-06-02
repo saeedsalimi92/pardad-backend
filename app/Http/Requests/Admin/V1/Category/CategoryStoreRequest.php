@@ -38,22 +38,22 @@ use Illuminate\Validation\Rule;
  *                 "locale": "fa",
  *                 "title": "عنوان دسته بندی",
  *                 "content": "<p>محتوای دسته بندی فارسی</p>",
+ *                 "slug": "عنوان-دسته-بندی",
  *                 "props": {
  *                     "meta_keyword": "کلمات کلیدی",
  *                     "meta_description": "توضیحات متا",
- *                     "canonical": "http://fa.blog.pardad.com",
- *                     "slug": "عنوان-مقاله"
+ *                     "canonical": "http://fa.blog.pardad.com"
  *                 }
  *             },
  *             {
  *                 "locale": "en",
  *                 "title": "Category Title",
  *                 "content": "<p>English content</p>",
+ *                 "slug": "category-title",
  *                 "props": {
  *                     "meta_keyword": "keywords",
  *                     "meta_description": "meta description",
- *                     "canonical": "http://en.blog.pardad.com",
- *                     "slug": "blog-title"
+ *                     "canonical": "http://en.blog.pardad.com"
  *                 }
  *             }
  *         }
