@@ -94,7 +94,7 @@ class BlogShowResource extends JsonResource
             "contents" => BlogContentShowResource::collection($this->contents),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
-            "related_blogs" => BlogListResource::collection($this->relatedBlogs),
+            "related_blogs" => BlogIndexResource::collection($this->relatedBlogs),
             "faq" => FaqIndexResource::collection($this->faqs),
             "published_at" => $this->published_at,
             "created_at" => $this->created_at,
