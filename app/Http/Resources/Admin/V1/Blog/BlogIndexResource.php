@@ -92,8 +92,8 @@ class BlogIndexResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "category_id" => $this->category->contents()->first()?->id,
-            "category_title" => $this->category->contents()->first()?->title,
+            "category_id" => $this->category?->contents()->first()?->id,
+            "category_title" => $this->category?->contents()->first()?->title,
             "title" => $this->contents?->first()->title ?? "",
             "status" => $this->status,
             "status_translate" => $this->status_translate,
