@@ -39,7 +39,7 @@ class BlogContentIndexResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->title,
-            "locale" => $this->locale
+            "locale" => $this->locale,
         ];
     }
 }

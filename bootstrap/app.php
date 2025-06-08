@@ -25,6 +25,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(function () {
                     require base_path('routes/client/v1.php');
                 });
+            Route::prefix('api/v2')
+                ->name("admin.")
+                ->namespace("App\Http\Controllers\Admin\V1")
+                ->group(function () {
+                    require base_path('routes/client/v2.php');
+                });
+
 
         }
     )

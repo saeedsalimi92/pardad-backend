@@ -117,6 +117,7 @@ class BlogStoreRequest extends FormRequest
 
             // props as part of each content item
             'contents.*.props' => ['required', 'array'],
+            'contents.*.props.meta_title' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
             'contents.*.props.canonical' => ['string', 'max:255'],
