@@ -118,7 +118,7 @@ class BlogUpdateRequest extends FormRequest
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
-            'contents.*.props.canonical' => ['string', 'max:255'],
+            'contents.*.props.canonical' => ['nullable', 'string', 'max:255'],
             'contents.*.props.no_index' => ['required' ,'boolean'],
 
             'image' => [

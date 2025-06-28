@@ -33,11 +33,20 @@ class BlogContent extends Model
 
     public function getUrl(): string
     {
-        return "{$this->blog->code}/{$this->slug}";
+        $blog = $this->blog;
+        $category = $blog->category;
+        $category_slug = $category->contents()->first()->slug ?? null;
+
+        return "{$category_slug}/{$this->blog->code}/{$this->slug}";
     }
 
     public function blog(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Blog::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
