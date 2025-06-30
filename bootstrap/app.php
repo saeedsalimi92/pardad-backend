@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
 
             Route::prefix("admin/v1")
+                ->middleware("api")
                 ->name("admin.")
                 ->namespace("App\Http\Controllers\Admin\V1")
                 ->group(function () {
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 });
 
             Route::prefix('api/v1')
+                ->middleware("api")
                 ->name("client.")
                 ->namespace("App\Http\Controllers\Client\V1")
                 ->group(function () {
