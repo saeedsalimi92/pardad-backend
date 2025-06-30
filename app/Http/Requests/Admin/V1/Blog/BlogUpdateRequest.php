@@ -120,6 +120,7 @@ class BlogUpdateRequest extends FormRequest
             'contents.*.props.meta_description' => ['required', 'string'],
             'contents.*.props.canonical' => ['nullable', 'string', 'max:255'],
             'contents.*.props.no_index' => ['required' ,'boolean'],
+            'contents.*.props.about' => ['required', 'string', 'max:255'],
 
             'image' => [
                 'nullable',
