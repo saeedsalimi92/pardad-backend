@@ -25,12 +25,17 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                     ->when(isset($data['title']), function ($query) use ($data) {
                         $query->where('title', "LIKE", "%".$data["title"]."%");
                     });
+            }, 'category' => function($query) use ($data) {
+                $query
+                    ->when(isset($data['category_id']), function ($query) use ($data) {
+                        $query->where('id', $data["category_id"]);
+                    })
+                    ->when(isset($data['type']), function ($query) use ($data) {
+                        $query->where('type', $data["type"]);
+                    });
             }])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
-            })
-            ->when(isset($data['category_id']), function ($query) use ($data) {
-                $query->where('category_id', $data["category_id"]);
             })
             ->when(isset($data['title']), function ($query) use ($data) {
                 $query->where('title', "LIKE", "%".$data["title"]."%");

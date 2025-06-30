@@ -85,6 +85,16 @@ class BlogController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
+     *               name="type",
+     *               in="query",
+     *               description="Filter by category type",
+     *               required=false,
+     *               @OA\Schema(
+     *                   type="string",
+     *                   enum={"normal", "expert"}
+     *               )
+     *     ),
+     *     @OA\Parameter(
      *              name="locale",
      *              in="query",
      *              description="Filter by locale",

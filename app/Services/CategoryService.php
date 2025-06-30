@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\CategoryType;
 use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
 use App\Models\Category;
@@ -34,6 +35,7 @@ readonly class CategoryService
             $category = $this->categoryRepository->create([
                 'status' => $data['status'],
                 'author_id' => auth()->id(),
+                'type' => $data["type"] ?? CategoryType::Normal->value,
                 'parent_id' => $data["parent_id"],
                 'code' => generateShortUniqueCode()
             ]);
