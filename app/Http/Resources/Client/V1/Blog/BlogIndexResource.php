@@ -94,7 +94,7 @@ class BlogIndexResource extends JsonResource
             "id" => $this->code,
             "title" => $this->contents?->first()->title ?? "",
             "slug" => $this->contents?->first()->slug ?? "",
-            "content" => Str::limit($this->contents?->first()->content, 200) ?? "",
+            "about" =>  $this->contents?->first()->props['about'] ?? "",
             "category_id" => $this->category?->code,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
