@@ -17,6 +17,11 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
+            ->when(isset($data['type']), function ($query) use ($data) {
+                $query->whereHas('category', function ($q) use ($data) {
+                    $q->where('type', $data['type']);
+                });
+            })
             ->with(['contents' => function($query) use ($data) {
                 $query
                     ->when(isset($data['locale']), function ($query) use ($data) {
@@ -29,9 +34,6 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                 $query
                     ->when(isset($data['category_id']), function ($query) use ($data) {
                         $query->where('id', $data["category_id"]);
-                    })
-                    ->when(isset($data['type']), function ($query) use ($data) {
-                        $query->where('type', $data["type"]);
                     });
             }])
             ->when(isset($data['status']), function ($query) use ($data) {
