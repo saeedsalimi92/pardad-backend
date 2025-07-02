@@ -20,6 +20,10 @@ return [
     'role' => [
         'permissions_assigned' => 'دسترسی ها به نقش اعطا شد'
     ],
+    'bento_layout' => [
+        'update' => 'با موفقیت آپدیت شد',
+        'destroy' => 'با موفقیت حذف شد'
+    ],
     'category' => [
         'created' => 'دسته بندی با موفقیت ایجاد شد',
         'updated' => 'دسته بندی با موفقیت آپدیت شد',

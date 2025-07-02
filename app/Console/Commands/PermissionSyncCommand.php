@@ -43,6 +43,13 @@ class PermissionSyncCommand extends Command
             'admin.role.assign_to_user',
             'admin.role.give_permission',
 
+            // bento layout
+            'admin.bento_layout.index',
+            'admin.bento_layout.store',
+            'admin.bento_layout.show',
+            'admin.bento_layout.update',
+            'admin.bento_layout.destroy',
+
             // permission
             'admin.permission.index',
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\V1\AuthController;
+use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;
 use App\Http\Controllers\Admin\V1\BrandController;
 use App\Http\Controllers\Admin\V1\CategoryController;
@@ -77,6 +78,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('list', [CategoryController::class, 'getList']);
     });
     Route::apiResource('categories', CategoryController::class)->except(['update']);
+
+
+    Route::apiResource("bento-layouts", BentoLayoutController::class);
 
 
     Route::get('/brand', [BrandController::class, 'index']);

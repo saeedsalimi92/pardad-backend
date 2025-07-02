@@ -130,6 +130,8 @@ class BlogStoreRequest extends FormRequest
             'contents.*.props.no_index' => ['required' ,'boolean'],
             'contents.*.props.short_desc' => ['required', 'string', 'max:255'],
 
+            'props.bento_layout' => ['nullable', 'array'],
+
             'image' => [
                 'nullable',
                 'file',
