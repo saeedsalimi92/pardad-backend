@@ -33,6 +33,7 @@ use Illuminate\Validation\Rule;
  *                  property="props",
  *                  type="object",
  *                  @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
+ *                  @OA\Property(property="meta_title", type="string", maxLength=255, example="عنوان متا"),
  *                  @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
  *                  @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true),
  *                  @OA\Property(property="no_index", type="boolean", example="true", nullable=true),
@@ -47,6 +48,7 @@ use Illuminate\Validation\Rule;
  *                  "content": "<p>محتوای فارسی</p>",
  *                  "props": {
  *                      "meta_keyword": "کلمات کلیدی",
+ *                      "meta_title": "عنوان مقاله",
  *                      "meta_description": "توضیحات متا",
  *                      "canonical": "http://fa.blog.pardad.com",
  *                      "no_index": false,
@@ -60,6 +62,7 @@ use Illuminate\Validation\Rule;
  *                  "content": "<p>English content</p>",
  *                  "props": {
  *                      "meta_keyword": "keywords",
+ *                      "meta_title": "Blog Title",
  *                      "meta_description": "meta description",
  *                      "canonical": "http://en.blog.pardad.com",
  *                      "no_index": false,
@@ -119,6 +122,7 @@ class BlogUpdateRequest extends FormRequest
 
             // props as part of each content item
             'contents.*.props' => ['required', 'array'],
+            'contents.*.props.meta_title' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
             'contents.*.props.canonical' => ['nullable', 'string', 'max:255'],
@@ -148,6 +152,7 @@ class BlogUpdateRequest extends FormRequest
             'contents.*.content' => 'محتوای',
             'contents.*.locale' => 'زبان',
             'props.*.locale' => 'زبان',
+            'props.*.meta_title' => 'عنوان متا',
             'props.*.meta_keyword' => 'کلمات کلیدی متا',
             'props.*.meta_description' => 'توضیحات متا',
             'props.*.canonical' => 'لینک کنونیکال',
