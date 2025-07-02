@@ -18,7 +18,7 @@ class BlogIndexRequest extends FormRequest
     {
         return [
             "locale" => ["required", Rule::in(Locale::allLocale())],
-            "category_id" => ["bail", "nullable", "integer", "exists:categories,code"],
+            "category_id" => ["bail", "nullable", "exists:categories,code"],
         ];
     }
 }
