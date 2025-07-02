@@ -109,17 +109,17 @@ readonly class BlogService
 
             foreach ($data['contents'] as $content) {
 
-                $data = [
+                $item = [
                     'title' => $content['title'],
                     'content' => $content['content'],
                     'props' => $content['props'] ?? [],
                 ];
 
                 if(isset($content["slug"]) && !is_null($content["slug"])) {
-                    $data["slug"] = $content["slug"];
+                    $item["slug"] = $content["slug"];
                 }
 
-                $blog->contents()->where("locale", $content["locale"])->update($data);
+                $blog->contents()->where("locale", $content["locale"])->update($item);
             }
 
             if (isset($data['related_blog_ids'])) {
