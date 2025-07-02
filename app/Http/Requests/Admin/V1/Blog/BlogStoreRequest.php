@@ -35,7 +35,8 @@ use Illuminate\Validation\Rule;
  *                 @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
  *                 @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
  *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true),
- *                 @OA\Property(property="no_index", type="boolean", example="true", nullable=true)
+ *                 @OA\Property(property="no_index", type="boolean", example="true", nullable=true),
+ *                 @OA\Property(property="short_desc", type="string", example="short_desc", nullable=true)
  *             )
  *         ),
  *         example={
@@ -49,6 +50,7 @@ use Illuminate\Validation\Rule;
  *                     "meta_description": "توضیحات متا",
  *                     "canonical": "http://fa.blog.pardad.com",
  *                     "no_index": false,
+ *                     "short_desc": "خلاصه بلاگ"
  *                 }
  *             },
  *             {
@@ -60,7 +62,8 @@ use Illuminate\Validation\Rule;
  *                     "meta_keyword": "keywords",
  *                     "meta_description": "meta description",
  *                     "canonical": "http://en.blog.pardad.com",
- *                     "no_index": false
+ *                     "no_index": false,
+ *                     "short_desc": "Short Desc"
  *                 }
  *             }
  *         }
@@ -118,10 +121,10 @@ class BlogStoreRequest extends FormRequest
             // props as part of each content item
             'contents.*.props' => ['required', 'array'],
             'contents.*.props.meta_keyword' => ['required', 'string', 'max:255'],
-            'contents.*.props.about' => ['required', 'string', 'max:255'],
             'contents.*.props.meta_description' => ['required', 'string'],
             'contents.*.props.canonical' => ['string', 'max:255'],
             'contents.*.props.no_index' => ['required' ,'boolean'],
+            'contents.*.props.short_desc' => ['required', 'string', 'max:255'],
 
             'image' => [
                 'nullable',
