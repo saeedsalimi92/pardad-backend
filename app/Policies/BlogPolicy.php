@@ -118,4 +118,13 @@ class BlogPolicy
 
         return false;
     }
+
+    public function bentoLayoutUpdate(User $user): bool
+    {
+        if ($user->can('admin.blog.bento_layout_update')) {
+            return true;
+        }
+
+        return false;
+    }
 }

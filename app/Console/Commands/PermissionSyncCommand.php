@@ -67,6 +67,7 @@ class PermissionSyncCommand extends Command
             'admin.blog.show',
             'admin.blog.update',
             'admin.blog.destroy',
+            'admin.blog.bento_layout_update',
 
             // category crud
             'admin.category.index',

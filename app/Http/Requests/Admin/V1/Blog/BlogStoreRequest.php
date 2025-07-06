@@ -191,9 +191,14 @@ class BlogStoreRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $contents = $this->input('contents');
-        $props = $this->input('props');
         $contents = is_array($contents) ? $contents : ($contents ? json_decode($contents, true) : null);
-        $props = is_array($props) ? $props : ($props ? json_decode($props, true) : null);
+
+        if(auth()->user()->can('bentoLayoutUpdate', Blog::class)) {
+            $props = $this->input('props');
+            $props = is_array($props) ? $props : ($props ? json_decode($props, true) : null);
+        } else {
+            $props = [];
+        }
 
         $relatedBlogIds = is_string($this->input('related_blog_ids'))
             ? explode(",", $this->input('related_blog_ids'))
