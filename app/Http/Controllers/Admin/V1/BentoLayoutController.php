@@ -8,11 +8,10 @@ use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutShowRequest;
 use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutStoreRequest;
 use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutUpdateRequest;
 use App\Services\BentoLayoutService;
-use Illuminate\Http\Request;
 
 class BentoLayoutController extends Controller
 {
-    public function __construct(private BentoLayoutService $bentoLayoutService)
+    public function __construct(private readonly BentoLayoutService $bentoLayoutService)
     {
     }
 
@@ -29,7 +28,52 @@ class BentoLayoutController extends Controller
      *         description="List retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example=""
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(
+     *                         property="param",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="i", type="string", example="0"),
+     *                             @OA\Property(property="x", type="integer", example=8),
+     *                             @OA\Property(property="y", type="integer", example=1),
+     *                             @OA\Property(property="w", type="integer", example=2),
+     *                             @OA\Property(property="h", type="integer", example=4),
+     *                             @OA\Property(property="component", type="string", example="Panel1"),
+     *                             @OA\Property(property="noResize", type="boolean", example=false),
+     *                             @OA\Property(property="noMove", type="boolean", example=false),
+     *                             @OA\Property(property="dashboard", type="string", example="user"),
+     *                             @OA\Property(property="showMore", type="boolean", example=false),
+     *                             @OA\Property(property="hasTitle", type="boolean", example=false),
+     *                             @OA\Property(property="hasScreenshot", type="boolean", example=false),
+     *                             @OA\Property(property="title", type="string", nullable=true, example=null)
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-07-06T18:01:24.000000Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-07-06T18:01:24.000000Z"),
+     *                     @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null)
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination_info",
+     *                 type="array",
+     *                 @OA\Items(type="object")
+     *             )
      *         )
      *     )
      * )
@@ -51,21 +95,69 @@ class BentoLayoutController extends Controller
      *     security={{"sanctum": {}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"param"},
-     *             @OA\Property(property="param", type="array", @OA\Items(type="string"))
-     *         )
+     *         description="Category data and featured image",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/BentoLayoutStoreRequest")
+     *         ),
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Bento layout created successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     )
-     * )
+     *          @OA\Response(
+     *          response=200,
+     *          description="Bento layout retrieved",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(
+     *                  property="success",
+     *                  type="boolean",
+     *                  example=true
+     *              ),
+     *              @OA\Property(
+     *                  property="message",
+     *                  type="string",
+     *                  example=""
+     *              ),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  @OA\Property(property="id", type="integer", example=1),
+     *                  @OA\Property(
+     *                      property="param",
+     *                      type="array",
+     *                      @OA\Items(
+     *                          type="object",
+     *                          @OA\Property(property="i", type="string", example="0"),
+     *                          @OA\Property(property="x", type="integer", example=8),
+     *                          @OA\Property(property="y", type="integer", example=1),
+     *                          @OA\Property(property="w", type="integer", example=2),
+     *                          @OA\Property(property="h", type="integer", example=4),
+     *                          @OA\Property(property="component", type="string", example="Panel1"),
+     *                          @OA\Property(property="noResize", type="boolean", example=false),
+     *                          @OA\Property(property="noMove", type="boolean", example=false),
+     *                          @OA\Property(property="dashboard", type="string", example="user"),
+     *                          @OA\Property(property="showMore", type="boolean", example=false),
+     *                          @OA\Property(property="hasTitle", type="boolean", example=false),
+     *                          @OA\Property(property="hasScreenshot", type="boolean", example=false),
+     *                          @OA\Property(property="title", type="string", nullable=true, example=null)
+     *                      )
+     *                  ),
+     *                  @OA\Property(property="created_at", type="string", format="date-time", example="2025-07-06T18:01:24.000000Z"),
+     *                  @OA\Property(property="updated_at", type="string", format="date-time", example="2025-07-06T18:01:24.000000Z"),
+     *                  @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null)
+     *              ),
+     *              @OA\Property(
+     *                  property="pagination_info",
+     *                  type="array",
+     *                  @OA\Items(type="object")
+     *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Bento layout not found"
+     *      )
+     *  )
      */
-    public function store(BentoLayoutStoreRequest $request)
+    public function store(BentoLayoutStoreRequest $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
 
@@ -87,18 +179,65 @@ class BentoLayoutController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the bento layout",
-     *         @OA\Schema(type="string", example="abc123")
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Bento layout retrieved",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="object")
+     *             type="object",
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example=""
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="param",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="i", type="string", example="0"),
+     *                         @OA\Property(property="x", type="integer", example=8),
+     *                         @OA\Property(property="y", type="integer", example=1),
+     *                         @OA\Property(property="w", type="integer", example=2),
+     *                         @OA\Property(property="h", type="integer", example=4),
+     *                         @OA\Property(property="component", type="string", example="Panel1"),
+     *                         @OA\Property(property="noResize", type="boolean", example=false),
+     *                         @OA\Property(property="noMove", type="boolean", example=false),
+     *                         @OA\Property(property="dashboard", type="string", example="user"),
+     *                         @OA\Property(property="showMore", type="boolean", example=false),
+     *                         @OA\Property(property="hasTitle", type="boolean", example=false),
+     *                         @OA\Property(property="hasScreenshot", type="boolean", example=false),
+     *                         @OA\Property(property="title", type="string", nullable=true, example=null)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-07-06T18:01:24.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-07-06T18:01:24.000000Z"),
+     *                 @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example=null)
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination_info",
+     *                 type="array",
+     *                 @OA\Items(type="object")
+     *             )
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Bento layout not found"
      *     )
      * )
      */
-    public function show(BentoLayoutShowRequest $request, string $id)
+    public function show(BentoLayoutShowRequest $request, string $id): \Illuminate\Http\JsonResponse
     {
         $bento = $this->bentoLayoutService->findById($id);
 
@@ -118,14 +257,15 @@ class BentoLayoutController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the bento layout to update",
-     *         @OA\Schema(type="string", example="abc123")
+     *         @OA\Schema(type="string", example="1")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"param"},
-     *             @OA\Property(property="param", type="array", @OA\Items(type="string"))
-     *         )
+     *         description="Category data and featured image",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(ref="#/components/schemas/BentoLayoutUpdateRequest")
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -136,7 +276,7 @@ class BentoLayoutController extends Controller
      *     )
      * )
      */
-    public function update(BentoLayoutUpdateRequest $request, string $id)
+    public function update(BentoLayoutUpdateRequest $request, string $id): \Illuminate\Http\JsonResponse
     {
         $this->bentoLayoutService->update($id, $request->validated());
 
@@ -156,7 +296,7 @@ class BentoLayoutController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the bento layout to delete",
-     *         @OA\Schema(type="string", example="abc123")
+     *         @OA\Schema(type="string", example="1")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -167,7 +307,7 @@ class BentoLayoutController extends Controller
      *     )
      * )
      */
-    public function destroy(string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $this->bentoLayoutService->destroy($id);
 

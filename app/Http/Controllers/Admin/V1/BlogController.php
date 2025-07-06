@@ -375,7 +375,7 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function show($id, BlogShowRequest $request)
+    public function show($id, BlogShowRequest $request): \Illuminate\Http\JsonResponse
     {
         $blog = $this->blogService->findById($id, ["contents", "relatedBlogs"]);
         if(is_null($blog)) {

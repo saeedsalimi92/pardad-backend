@@ -52,7 +52,8 @@ readonly class BlogService
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
                 'author_id' => auth()->id(),
-                'code' => generateShortUniqueCode()
+                'code' => generateShortUniqueCode(),
+                'props' => $data['props'] ?? [],
             ]);
 
             foreach ($data['contents'] as $content) {
@@ -104,7 +105,8 @@ readonly class BlogService
                 'category_id' => $data['category_id'],
                 'status' => $data['status'],
                 'published_at' => $data['published_at'],
-                'author_id' => auth()->id()
+                'author_id' => auth()->id(),
+                'props' => $data['props'] ?? [],
             ]);
 
             foreach ($data['contents'] as $content) {

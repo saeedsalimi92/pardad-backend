@@ -77,6 +77,33 @@ use Illuminate\Validation\Rule;
  *         enum={"draft", "published", "archived"},
  *         example="draft"
  *     ),
+ *               @OA\Property(
+ *           property="props",
+ *           type="array",
+ *           @OA\Items(
+ *               type="object",
+ *               @OA\Property(
+ *                   property="bento_layouts",
+ *                   type="array",
+ *                   @OA\Items(
+ *                       type="object",
+ *                       @OA\Property(property="i", type="string", example="0"),
+ *                       @OA\Property(property="x", type="integer", example=8),
+ *                       @OA\Property(property="y", type="integer", example=1),
+ *                       @OA\Property(property="w", type="integer", example=2),
+ *                       @OA\Property(property="h", type="integer", example=4),
+ *                       @OA\Property(property="component", type="string", example="Panel1"),
+ *                       @OA\Property(property="noResize", type="boolean", example=false),
+ *                       @OA\Property(property="noMove", type="boolean", example=false),
+ *                       @OA\Property(property="dashboard", type="string", example="user"),
+ *                       @OA\Property(property="showMore", type="boolean", example=false),
+ *                       @OA\Property(property="hasTitle", type="boolean", example=false),
+ *                       @OA\Property(property="hasScreenshot", type="boolean", example=false),
+ *                       @OA\Property(property="title", type="string", example="")
+ *                   )
+ *               )
+ *           )
+ *       ),
  *     @OA\Property(
  *         property="published_at",
  *         type="string",
@@ -128,6 +155,8 @@ class BlogUpdateRequest extends FormRequest
             'contents.*.props.canonical' => ['nullable', 'string', 'max:255'],
             'contents.*.props.no_index' => ['required' ,'boolean'],
             'contents.*.props.short_desc' => ['required', 'string', 'max:255'],
+
+            'props' => ['nullable', 'array'],
             'props.bento_layout' => ['nullable', 'array'],
 
             'image' => [
