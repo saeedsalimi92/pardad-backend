@@ -79,15 +79,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::apiResource('categories', CategoryController::class)->except(['update']);
 
+    Route::group(["prefix" => "brands"], function () {
+        Route::post('{brand}/update', [BrandController::class, 'update']);
+        Route::get('list', [BrandController::class, 'getList']);
+    });
+    Route::apiResource('brands', BrandController::class)->except(['update']);
+
 
     Route::apiResource("bento-layouts", BentoLayoutController::class);
 
 
-    Route::get('/brand', [BrandController::class, 'index']);
-    Route::get('/brand/{id}', [BrandController::class, 'show']);
-    Route::post('/brand', [BrandController::class, 'store']);
-    Route::post('/brand/{id}', [BrandController::class, 'update']);
-    Route::delete('/brand/{id}', [BrandController::class, 'destroy']);
 
     Route::get('/list', [CategoryController::class, 'allList']);
 });
