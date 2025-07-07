@@ -36,6 +36,9 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                         $query->where('id', $data["category_id"]);
                     });
             }])
+            ->when(isset($data['user_id']), function ($query) use ($data) {
+                $query->where('author_id', $data["user_id"]);
+            })
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })

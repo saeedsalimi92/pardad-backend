@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Blog;
 use App\Models\User;
 
 class BlogPolicy
@@ -10,7 +11,16 @@ class BlogPolicy
     {
     }
 
-    public function index(User $user): bool
+    public function SuperIndex(User $user): bool
+    {
+        if ($user->can('admin.blog.super_index')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function index(User $user, Blog $blog): bool
     {
         if ($user->can('admin.blog.index')) {
             return true;
@@ -19,9 +29,18 @@ class BlogPolicy
         return false;
     }
 
-    public function show(User $user): bool
+    public function SuperShow(User $user): bool
     {
-        if ($user->can('admin.blog.show')) {
+        if ($user->can('admin.blog.super_show')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function show(User $user, Blog $blog): bool
+    {
+        if ($user->can('admin.blog.show') && $blog->author_id == $user->id) {
             return true;
         }
 
@@ -37,18 +56,36 @@ class BlogPolicy
         return false;
     }
 
-    public function update(User $user): bool
+    public function update(User $user, Blog $blog): bool
     {
-        if ($user->can('admin.blog.update')) {
+        if ($user->can('admin.blog.update') && $blog->author_id == $user->id) {
             return true;
         }
 
         return false;
     }
 
-    public function destroy(User $user): bool
+    public function SuperUpdate(User $user): bool
     {
-        if ($user->can('admin.blog.destroy')) {
+        if ($user->can('admin.blog.super_update')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function SuperDestroy(User $user): bool
+    {
+        if ($user->can('admin.blog.super_destroy')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function destroy(User $user, Blog $blog): bool
+    {
+        if ($user->can('admin.blog.destroy') && $blog->author_id == $user->id) {
             return true;
         }
 
@@ -113,6 +150,15 @@ class BlogPolicy
     public function faqDestroy(User $user): bool
     {
         if ($user->can('admin.blog.faq_destroy')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function bentoLayoutUpdate(User $user): bool
+    {
+        if ($user->can('admin.blog.bento_layout_update')) {
             return true;
         }
 

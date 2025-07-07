@@ -5,6 +5,9 @@ namespace App\Http\Requests\Admin\V1\Blog;
 use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property Blog $blog
+ */
 class BlogDestroyRequest extends FormRequest
 {
     /**
@@ -12,7 +15,8 @@ class BlogDestroyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (auth()->user()->can('destroy', Blog::class)) {
+        if (auth()->user()->can('SuperDestroy', Blog::class) ||
+            auth()->user()->can('destroy', $this->blog)) {
             return true;
         }
 

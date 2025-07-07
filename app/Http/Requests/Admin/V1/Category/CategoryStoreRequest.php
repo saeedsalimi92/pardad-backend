@@ -30,7 +30,8 @@ use Illuminate\Validation\Rule;
  *                 type="object",
  *                 @OA\Property(property="meta_keyword", type="string", maxLength=255, example="کلمات کلیدی"),
  *                 @OA\Property(property="meta_description", type="string", example="توضیحات متا"),
- *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true)
+ *                 @OA\Property(property="canonical", type="string", example="http://fa.blog.pardad.com", nullable=true),
+ *                 @OA\Property(property="no_index", type="boolean", example="true", nullable=true)
  *             )
  *         ),
  *         example={
@@ -42,7 +43,8 @@ use Illuminate\Validation\Rule;
  *                 "props": {
  *                     "meta_keyword": "کلمات کلیدی",
  *                     "meta_description": "توضیحات متا",
- *                     "canonical": "http://fa.blog.pardad.com"
+ *                     "canonical": "http://fa.blog.pardad.com",
+ *                     "no_index": 1
  *                 }
  *             },
  *             {
@@ -53,7 +55,8 @@ use Illuminate\Validation\Rule;
  *                 "props": {
  *                     "meta_keyword": "keywords",
  *                     "meta_description": "meta description",
- *                     "canonical": "http://en.blog.pardad.com"
+ *                     "canonical": "http://en.blog.pardad.com",
+ *                     "no_index": 1
  *                 }
  *             }
  *         }

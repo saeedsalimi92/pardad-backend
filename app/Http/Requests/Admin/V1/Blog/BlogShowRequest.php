@@ -12,7 +12,8 @@ class BlogShowRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (auth()->user()->can('show', Blog::class)) {
+        if (auth()->user()->can('SuperShow', Blog::class) ||
+            auth()->user()->can('show', $this->blog)) {
             return true;
         }
 
