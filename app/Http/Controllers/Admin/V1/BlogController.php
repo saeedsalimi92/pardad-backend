@@ -165,7 +165,7 @@ class BlogController extends Controller
     {
         $data = $request->validated();
 
-        if(auth()->user()->can('admin.blog.super_index') && auth()->user()->can('admin.blog.index')) {
+        if(!auth()->user()->can('admin.blog.super_index') && auth()->user()->can('admin.blog.index')) {
             $data["user_id"] = auth()->user()->getAuthIdentifier();
         }
 
