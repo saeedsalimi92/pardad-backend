@@ -21,6 +21,7 @@ use App\Http\Resources\Admin\V1\Blog\BlogShowResource;
 use App\Http\Resources\Admin\V1\Faq\FaqIndexResource;
 use App\Http\Resources\Admin\V1\Faq\FaqShowResource;
 use App\Http\Resources\PaginationResource;
+use App\Models\Blog;
 use App\Services\BlogService;
 use App\Services\FaqService;
 
@@ -163,6 +164,11 @@ class BlogController extends Controller
     public function index(BlogIndexRequest $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
+
+        if(auth()->user()->can('admin.blog.super_index') && auth()->user()->can('admin.blog.index')) {
+            $data["user_id"] = auth()->user()->getAuthIdentifier();
+        }
+
         $blogs = $this->blogService->index($data);
 
         $resource = BlogIndexResource::collection($blogs);
@@ -375,12 +381,9 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function show($id, BlogShowRequest $request): \Illuminate\Http\JsonResponse
+    public function show(Blog $blog, BlogShowRequest $request): \Illuminate\Http\JsonResponse
     {
-        $blog = $this->blogService->findById($id, ["contents", "relatedBlogs"]);
-        if(is_null($blog)) {
-            return $this->apiResponse(httpStatusCode: 404);
-        }
+        $blog->load(["contents", "relatedBlogs"]);
 
         $resource = BlogShowResource::make($blog);
 
@@ -513,13 +516,8 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function update($id, BlogUpdateRequest $request): \Illuminate\Http\JsonResponse
+    public function update(Blog $blog, BlogUpdateRequest $request): \Illuminate\Http\JsonResponse
     {
-        $blog = $this->blogService->findById($id, ["contents"]);
-        if(is_null($blog)) {
-            return $this->apiResponse(httpStatusCode: 404);
-        }
-
         $this->blogService->update($blog, $request);
 
         $blog->refresh();
@@ -610,12 +608,9 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function destroy($id, BlogDestroyRequest $request): \Illuminate\Http\JsonResponse
+    public function destroy(Blog $blog, BlogDestroyRequest $request): \Illuminate\Http\JsonResponse
     {
-        $blog = $this->blogService->findById($id, ["contents"]);
-        if(is_null($blog)) {
-            return $this->apiResponse(httpStatusCode: 404);
-        }
+        $blog->load("contents");
 
         $this->blogService->destroy($blog);
 

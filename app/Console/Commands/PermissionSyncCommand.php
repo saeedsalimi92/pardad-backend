@@ -58,14 +58,19 @@ class PermissionSyncCommand extends Command
             'admin.blog.faq_store',
             'admin.blog.faq_show',
             'admin.blog.faq_update',
+            'admin.blog.faq_update',
             'admin.blog.faq_destroy',
 
             // blog crud
+            'admin.blog.super_index',
             'admin.blog.index',
             'admin.blog.list',
             'admin.blog.store',
+            'admin.blog.super_show',
             'admin.blog.show',
             'admin.blog.update',
+            'admin.blog.super_update',
+            'admin.blog.super_destroy',
             'admin.blog.destroy',
             'admin.blog.bento_layout_update',
 

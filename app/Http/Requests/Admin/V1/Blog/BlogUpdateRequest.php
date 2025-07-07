@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
+ * @property Blog $blog
  * @OA\Schema(
  *     schema="BlogUpdateRequest",
  *     required={"contents", "status", "published_at"},
@@ -128,7 +129,8 @@ class BlogUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if (auth()->user()->can('update', Blog::class)) {
+        if (auth()->user()->can('SuperUpdate', Blog::class) ||
+            auth()->user()->can('update', $this->blog)) {
             return true;
         }
 
