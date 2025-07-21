@@ -6,6 +6,7 @@ use App\Enums\BlogStatus;
 use App\Enums\Locale;
 use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 /**
@@ -159,7 +160,6 @@ class BlogUpdateRequest extends FormRequest
             'contents.*.props.short_desc' => ['required', 'string', 'max:255'],
 
             'props' => ['nullable', 'array'],
-            'props.bento_layout' => ['nullable', 'array'],
 
             'image' => [
                 'nullable',
@@ -196,12 +196,8 @@ class BlogUpdateRequest extends FormRequest
         $contents = $this->input('contents');
         $contents = is_array($contents) ? $contents : ($contents ? json_decode($contents, true) : null);
 
-        if(auth()->user()->can('bentoLayoutUpdate', Blog::class)) {
-            $props = $this->input('props');
-            $props = is_array($props) ? $props : ($props ? json_decode($props, true) : null);
-        } else {
-            $props = [];
-        }
+        $props = $this->input('props');
+        $props = is_array($props) ? $props : ($props ? json_decode($props, true) : null);
 
         $relatedBlogIds = is_string($this->input('related_blog_ids'))
             ? explode(",", $this->input('related_blog_ids'))

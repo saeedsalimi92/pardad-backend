@@ -30,7 +30,7 @@ class Blog extends Model
     ];
 
     protected $casts = [
-        'props' => 'json',
+        'props' => 'array',
         'published_at' => 'datetime:Y-m-d H:i:s',
     ];
 

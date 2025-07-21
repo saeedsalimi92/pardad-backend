@@ -20,7 +20,7 @@ class BlogPolicy
         return false;
     }
 
-    public function index(User $user, Blog $blog): bool
+    public function index(User $user): bool
     {
         if ($user->can('admin.blog.index')) {
             return true;
