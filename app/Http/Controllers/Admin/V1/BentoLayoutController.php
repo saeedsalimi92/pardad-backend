@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutIndexRequest;
 use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutShowRequest;
 use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutStoreRequest;
 use App\Http\Requests\Admin\V1\BentoLayout\BentoLayoutUpdateRequest;
+use App\Http\Resources\Admin\V1\BentoLayout\BentoLayoutIndexResource;
 use App\Services\BentoLayoutService;
 
 class BentoLayoutController extends Controller
@@ -82,7 +83,8 @@ class BentoLayoutController extends Controller
     {
         $bentoLayouts = $this->bentoLayoutService->index();
 
-        return $this->apiResponse(data: $bentoLayouts);
+        $collection = BentoLayoutIndexResource::collection($bentoLayouts);
+        return $this->apiResponse(data: $collection);
     }
 
     /**
