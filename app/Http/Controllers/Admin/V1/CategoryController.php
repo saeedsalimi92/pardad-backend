@@ -9,9 +9,11 @@ use App\Http\Requests\Admin\V1\Category\CategoryListRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryShowRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
-use App\Http\Resources\Admin\V1\Category\CategoryIndexResource;
+
 use App\Http\Resources\Admin\V1\Category\CategoryListResource;
+
 use App\Http\Resources\Admin\V1\Category\CategoryShowResource;
+
 use App\Http\Resources\PaginationResource;
 use App\Services\CategoryService;
 
@@ -160,7 +162,7 @@ class CategoryController extends Controller
         $data = $request->validated();
         $categories = $this->categoryService->index($data);
 
-        $resource = CategoryIndexResource::collection($categories);
+        $resource = CategoryIndexRequest::collection($categories);
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($categories));
     }

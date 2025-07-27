@@ -36,4 +36,10 @@ return [
             Status::InActive->value => 'غیرفعال',
         ]
     ],
+    'brand' => [
+        'status' => [
+            Status::Active->value => 'فعال',
+            Status::InActive->value => 'غیرفعال',
+        ]
+    ],
 ];

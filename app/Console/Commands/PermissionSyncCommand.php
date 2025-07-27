@@ -88,6 +88,17 @@ class PermissionSyncCommand extends Command
             'admin.comment.change_status',
             'admin.comment.reply',
 
+
+            // brand
+            'admin.brand.index',
+            'admin.brand.store',
+            'admin.brand.show',
+            'admin.brand.update',
+            'admin.brand.update',
+            'admin.brand.destroy',
+            'admin.brand.change_status',
+            'admin.brand.change_priority',
+
             //user
             'admin.user.index',
         ];

@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\V1\Blog;
 
 use App\Http\Resources\Admin\V1\Category\CategoryListResource;
-use App\Http\Resources\Admin\V1\Category\CategoryShowResource;
+use App\Http\Resources\Admin\V1\Category\BrandShowResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
