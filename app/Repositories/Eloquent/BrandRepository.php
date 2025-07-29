@@ -18,7 +18,7 @@ class BrandRepository extends BaseRepository implements BrandRepositoryInterface
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
-            ->orderByDesc('priority')
+            ->orderBy('priority')
             ->paginate($perPage);
     }
 

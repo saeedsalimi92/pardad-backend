@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin\V1\Brand;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -74,6 +75,7 @@ class BrandIndexResource extends JsonResource
             "file" => $this->file,
             "action" => $this->action,
             "priority" => $this->priority,
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "created_at" => $this->created_at,

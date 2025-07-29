@@ -103,6 +103,7 @@ readonly class BrandService
 
     public function changePriority($id, $priority): int
     {
+
         DB::beginTransaction();
         try {
             $brand = $this->brandRepository->findById($id);

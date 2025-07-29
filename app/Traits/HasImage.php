@@ -61,7 +61,7 @@ trait HasImage
 
     protected function getDisk(): string
     {
-        return config('filesystems.default', 'public');
+        return 'public';
     }
 
     public function featuredImage(): \Illuminate\Database\Eloquent\Relations\MorphOne

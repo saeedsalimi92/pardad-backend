@@ -81,8 +81,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(["prefix" => "brands"], function () {
         Route::post('{brand}/update', [BrandController::class, 'update']);
-        Route::post('{blog}/status/change',[BrandController::class, 'changeStatus']);
-        Route::post('{blog}/priority/change',[BrandController::class, 'changePriority']);
+        Route::post('{brand}/status/change',[BrandController::class, 'changeStatus']);
+        Route::post('{brand}/priority/change',[BrandController::class, 'changePriority']);
     });
     Route::apiResource('brands', BrandController::class)->except(['update']);
 

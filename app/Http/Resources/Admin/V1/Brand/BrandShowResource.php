@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Admin\V1\Brand;
 
 use App\Models\Brand;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +22,7 @@ class BrandShowResource extends JsonResource
             "name" => $this->name,
             "file" => $this->file,
             "action" => $this->action,
-            "image" => url($this?->featuredImage?->path),
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
             "priority" => $this->priority,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
