@@ -14,15 +14,9 @@ use App\Services\BrandService;
 
 class BrandController extends Controller
 {
-
-    protected BrandService $brandService;
-
-    public function __construct(BrandService $brandService)
+    public function __construct(private readonly BrandService $brandService)
     {
-        $this->brandService = $brandService;
     }
-
-
 
     public function index(BrandIndexRequest $request)
     {
@@ -34,11 +28,6 @@ class BrandController extends Controller
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($brands));
     }
-
-
-
-
-
 
     public function show($id, BrandShowRequest $request)
     {

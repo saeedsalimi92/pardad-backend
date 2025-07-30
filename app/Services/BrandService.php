@@ -40,8 +40,6 @@ readonly class BrandService
                 'priority' => $data['priority'],
             ]);
 
-
-
             if($request->hasFile('image')) {
                 $brand->storeFeaturedImage($request->file('image'), 'brand');
             }

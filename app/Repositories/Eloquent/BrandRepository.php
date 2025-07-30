@@ -12,6 +12,7 @@ class BrandRepository extends BaseRepository implements BrandRepositoryInterface
     {
         return Brand::class;
     }
+
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
