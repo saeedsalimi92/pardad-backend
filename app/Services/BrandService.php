@@ -59,6 +59,8 @@ readonly class BrandService
 
     public function update(Brand $brand, BrandUpdateRequest $request): bool
     {
+
+
         $data = $request->validated();
 
         DB::beginTransaction();
@@ -72,7 +74,7 @@ readonly class BrandService
             ]);
 
 
-            if($request->hasFile('')) {
+            if($request->hasFile('image')) {
                 $brand->storeFeaturedImage($request->file('image'), 'brand');
             }
 

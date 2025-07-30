@@ -168,8 +168,8 @@ class BlogController extends Controller
         if(!auth()->user()->can('admin.blog.super_index') && auth()->user()->can('admin.blog.index')) {
             $data["user_id"] = auth()->user()->getAuthIdentifier();
         }
-
-        $blogs = $this->blogService->index($data);
+        $perPage = $request->input('per_page', 15);
+        $blogs = $this->blogService->index($data , $perPage);
 
         $resource = BlogIndexResource::collection($blogs);
 

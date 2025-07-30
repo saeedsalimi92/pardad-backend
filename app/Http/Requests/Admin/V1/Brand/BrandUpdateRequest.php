@@ -14,6 +14,7 @@ class BrandUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
+
         if (auth()->user()->can('update', Brand::class)) {
             return true;
         }
@@ -32,19 +33,14 @@ class BrandUpdateRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'action' => ['nullable', 'string', 'max:255'],
             'file' => ['nullable', 'string', 'max:255'],
-
-
             'image' => [
                 'nullable',
-                'file',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'mimetypes:image/jpeg,image/png,image/webp',
-                'max:500',
+                'max:5000',
             ],
-
             'priority' => ['nullable', 'integer'],
-
             'status' => ['required', 'string', Rule::in(Status::statuses())],
 
         ];
@@ -56,6 +52,7 @@ class BrandUpdateRequest extends FormRequest
             'name' => 'عنوان',
             'file' => 'فایل',
             'action' => 'لینک',
+            'status' => 'وضعیت',
         ];
     }
 }

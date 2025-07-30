@@ -31,7 +31,8 @@ class BrandController extends Controller
     public function index(BrandIndexRequest $request)
     {
         $data = $request->validated();
-        $categories = $this->brandService->index($data);
+        $perPage = $request->input('per_page', 15);
+        $categories = $this->brandService->index($data , $perPage);
 
         $resource = BrandShowResource::collection($categories);
 
@@ -70,7 +71,6 @@ class BrandController extends Controller
 
     public function update($id, BrandUpdateRequest $request)
     {
-        dd($id);
         $brand = $this->brandService->findById($id);
         if(is_null($brand)) {
             return $this->apiResponse(httpStatusCode: 404);
