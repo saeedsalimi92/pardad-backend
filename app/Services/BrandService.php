@@ -16,6 +16,7 @@ readonly class BrandService
     public function __construct(private readonly BrandRepositoryInterface $brandRepository)
     {
     }
+
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->brandRepository->index($data, $perPage);
@@ -39,8 +40,6 @@ readonly class BrandService
                 'action' => $data['action'],
                 'priority' => $data['priority'],
             ]);
-
-
 
             if($request->hasFile('image')) {
                 $brand->storeFeaturedImage($request->file('image'), 'brand');
@@ -70,7 +69,6 @@ readonly class BrandService
                 'action' => $data['action'],
                 'priority' => $data['priority'],
             ]);
-
 
             if($request->hasFile('')) {
                 $brand->storeFeaturedImage($request->file('image'), 'brand');
