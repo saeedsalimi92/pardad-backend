@@ -101,40 +101,20 @@ readonly class BrandService
         return $this->brandRepository->update($id, ["status" => $status]);
     }
 
-    public function changePriority($id, $priority): int
+    public function changePriority($orderedIds): int
     {
-
         DB::beginTransaction();
         try {
-            $brand = $this->brandRepository->findById($id);
-
-            if (!$brand) {
-                throw new \Exception("Brand not found.");
+            foreach ($orderedIds as $index => $id) {
+                $priority = $index + 1; // چون اولویت باید از 1 شروع بشه
+                Brand::where('id', $id)->update(['priority' => $priority]);
             }
-
-            if ($brand->priority == $priority) {
-                DB::rollBack(); // نیازی به تغییر نیست
-                return 0;
-            }
-
-            // شیفت دادن برندهایی که از قبل این اولویت رو دارند
-            Brand::where('priority', '>=', $priority)
-                ->where('id', '<>', $brand->id)
-                ->orderBy('priority', 'desc')
-                ->get()
-                ->each(function ($item) {
-                    $item->priority += 1;
-                    $item->save();
-                });
-
-            // تغییر اولویت برند اصلی
-            $this->brandRepository->update($brand->id, ['priority' => $priority]);
 
             DB::commit();
             return 1;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Change Priority Error: ' . $e->getMessage());
+            Log::error('Update Priorities Error: ' . $e->getMessage());
             return 0;
         }
     }

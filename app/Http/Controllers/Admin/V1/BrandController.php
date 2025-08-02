@@ -96,14 +96,15 @@ class BrandController extends Controller
         return $this->apiResponse(message: __("response.brand.change_status", ['status' => $brand->status_translate]));
     }
 
-    public function changePriority($id, BrandChangePriorityRequest $request): \Illuminate\Http\JsonResponse
+    public function changePriority(BrandChangePriorityRequest $request): \Illuminate\Http\JsonResponse
     {
-        $brand = $this->brandService->findById($id);
-        if(is_null($brand)) {
-            return $this->apiResponse(httpStatusCode: 404);
+        $orderedIds = $request->input('list'); // فرض بر اینکه name فیلد priority هست
+
+        if (!is_array($orderedIds) || empty($orderedIds)) {
+            return $this->apiResponse(httpStatusCode: 422, message: __('Invalid input.'));
         }
 
-        $this->brandService->changePriority($brand->id, $request->priority);
+        $this->brandService->changePriority($orderedIds);
 
         return $this->apiResponse(message: __("response.brand.change_priority"));
     }

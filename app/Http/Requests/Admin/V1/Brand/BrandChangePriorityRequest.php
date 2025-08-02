@@ -31,7 +31,7 @@ class BrandChangePriorityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'priority' => ['required'],
+            'list' => ['required'],
         ];
     }
 }
