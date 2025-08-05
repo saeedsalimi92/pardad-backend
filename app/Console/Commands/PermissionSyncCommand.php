@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
+
 class PermissionSyncCommand extends Command
 {
     protected $signature = 'permission:sync';
