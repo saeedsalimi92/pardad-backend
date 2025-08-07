@@ -58,7 +58,6 @@ class PermissionSyncCommand extends Command
             'admin.blog.faq_store',
             'admin.blog.faq_show',
             'admin.blog.faq_update',
-            'admin.blog.faq_update',
             'admin.blog.faq_destroy',
 
             // blog crud
@@ -94,10 +93,17 @@ class PermissionSyncCommand extends Command
             'admin.brand.store',
             'admin.brand.show',
             'admin.brand.update',
-            'admin.brand.update',
             'admin.brand.destroy',
             'admin.brand.change_status',
             'admin.brand.change_priority',
+
+            // redirect
+            'admin.redirect.index',
+            'admin.redirect.store',
+            'admin.redirect.show',
+            'admin.redirect.update',
+            'admin.redirect.destroy',
+            'admin.redirect.change_status',
 
             //user
             'admin.user.index',

@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Category;
+
 use App\Repositories\BentoLayoutRepositoryInterface;
 use App\Repositories\BlogRepositoryInterface;
 use App\Repositories\BrandRepositoryInterface;
@@ -14,11 +14,14 @@ use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\ImageRepository;
-use App\Repositories\Eloquent\SubCategoryRepository;
+use App\Repositories\Eloquent\RedirectRepository;
+/*use App\Repositories\Eloquent\SubCategoryRepository;*/
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\ImageRepositoryInterface;
-use App\Repositories\SubCategoryRepositoryInterface;
+use App\Repositories\RedirectRepositoryInterface;
+/*use App\Repositories\SubCategoryRepositoryInterface;*/
 use App\Repositories\UserRepositoryInterface;
+use App\Services\RedirectService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
@@ -48,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(BlogRepositoryInterface::class, BlogRepository::class);
         $this->app->bind(BrandRepositoryInterface::class, BrandRepository::class);
+        $this->app->bind(RedirectRepositoryInterface::class, RedirectRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
         $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
         $this->app->bind(ImageRepositoryInterface::class, ImageRepository::class);

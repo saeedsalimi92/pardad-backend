@@ -3,6 +3,7 @@
 use App\Http\Controllers\Client\V1\BlogController;
 use App\Http\Controllers\Client\V1\BrandController;
 use App\Http\Controllers\Client\V1\CategoryController;
+use App\Http\Controllers\Client\V1\RedirectController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'client.'], function () {
@@ -22,6 +23,10 @@ Route::group(['as' => 'client.'], function () {
     Route::group(['prefix' => 'brands'], function () {
         Route::get("/", [BrandController::class, 'index']);
         Route::get("{code}", [BrandController::class, 'show']);
+    });
+    Route::group(['prefix' => 'redirects'], function () {
+        Route::get("/", [RedirectController::class, 'index']);
+        Route::get("{id}", [RedirectController::class, 'show']);
     });
 
 });

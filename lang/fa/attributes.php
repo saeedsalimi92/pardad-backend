@@ -42,4 +42,10 @@ return [
             Status::InActive->value => 'غیرفعال',
         ]
     ],
+    'redirect' => [
+        'status' => [
+            Status::Active->value => 'فعال',
+            Status::InActive->value => 'غیرفعال',
+        ]
+    ],
 ];

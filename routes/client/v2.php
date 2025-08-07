@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;
 use App\Http\Controllers\Admin\V1\BrandController;
+use App\Http\Controllers\Admin\V1\RedirectController;
 use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\CommentController;
 use App\Http\Controllers\Admin\V1\MenuController;
@@ -85,6 +86,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('priority/change',[BrandController::class, 'changePriority']);
     });
     Route::apiResource('brands', BrandController::class)->except(['update']);
+
+    Route::group(["prefix" => "redirects"], function () {
+        Route::post('{redirect}/update', [RedirectController::class, 'update']);
+        Route::post('{redirect}/status/change', [RedirectController::class, 'changeStatus']);
+    });
+    Route::apiResource('redirects', RedirectController::class)->except(['update']);
 
 
     Route::apiResource("bento-layouts", BentoLayoutController::class);

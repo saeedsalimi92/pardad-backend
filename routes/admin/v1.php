@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;
 use App\Http\Controllers\Admin\V1\BrandController;
+use App\Http\Controllers\Admin\V1\RedirectController;
 use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\CommentController;
 use App\Http\Controllers\Admin\V1\MenuController;
@@ -27,9 +28,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/menu', [MenuController::class, 'getMenu']);
 
-    Route::post('/upload-image', [UploadController::class , 'uploadImage']);
-    Route::post('/upload-file', [UploadController::class , 'uploadFile']);
-    Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
+    Route::post('/upload-image', [UploadController::class, 'uploadImage']);
+    Route::post('/upload-file', [UploadController::class, 'uploadFile']);
+    Route::post('/upload-media', [UploadController::class, 'uploadMedia']);
 
 
     Route::group(["prefix" => "roles"], function () {
@@ -49,7 +50,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
 
-
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', [CommentController::class, 'index']);
         Route::get('{id}/', [CommentController::class, 'show']);
@@ -61,7 +61,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get("list", [BlogController::class, 'list']);
         Route::post('{blog}/update', [BlogController::class, 'update']);
 
-        Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);
+        Route::post('{blog}/status/change', [BlogController::class, 'changeStatus']);
         Route::group(['prefix' => '{blog}/faq'], function () {
             Route::get("/", [BlogController::class, 'faqIndex']);
             Route::post("/", [BlogController::class, 'faqStore']);
@@ -81,10 +81,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(["prefix" => "brands"], function () {
         Route::post('{brand}/update', [BrandController::class, 'update']);
-        Route::post('{brand}/status/change',[BrandController::class, 'changeStatus']);
-        Route::post('priority/change',[BrandController::class, 'changePriority']);
+        Route::post('{brand}/status/change', [BrandController::class, 'changeStatus']);
+        Route::post('priority/change', [BrandController::class, 'changePriority']);
     });
     Route::apiResource('brands', BrandController::class)->except(['update']);
+
+    Route::group(["prefix" => "redirects"], function () {
+        Route::post('{redirect}/update', [RedirectController::class, 'update']);
+        Route::post('{redirect}/status/change', [RedirectController::class, 'changeStatus']);
+    });
+    Route::apiResource('redirects', RedirectController::class)->except(['update']);
 
 
     Route::apiResource("bento-layouts", BentoLayoutController::class);
