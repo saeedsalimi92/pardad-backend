@@ -32,7 +32,7 @@ Route::group(['as' => 'client.'], function () {
         Route::get("{id}", [RedirectController::class, 'show']);
     });
 
-    Route::get('/sitemap-urls', function () {
+  /*  Route::get('/sitemap-urls', function () {
         // کش کردن URL‌ها برای 12 ساعت
         return Cache::remember('sitemap_urls', 43200, function () {
             $baseUrl = 'https://pardad-group.com';
@@ -87,6 +87,6 @@ Route::group(['as' => 'client.'], function () {
             // بازگرداندن نتیجه به صورت آرایه JSON
             return response()->json($urls);
         });
-    });
+    });*/
 
 });
