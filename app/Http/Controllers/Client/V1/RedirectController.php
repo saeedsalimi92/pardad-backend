@@ -21,7 +21,8 @@ class RedirectController extends Controller
     public function index(RedirectIndexRequest $request)
     {
         $cacheKey = 'redirects.index.' . md5(json_encode($request->validated()));
-        $expiresIn = now()->addHours(12); // 12 ساعت
+        $expiresIn = now()->addHours(24); // 12 ساعت
+        $this->addCacheKey($cacheKey);
 
         return Cache::remember($cacheKey, $expiresIn, function () use ($request) {
             $data = $request->validated();
@@ -54,7 +55,19 @@ class RedirectController extends Controller
         });
     }
 
+    protected function cacheKeyList(): string
+    {
+        return 'redirects.cache_keys';
+    }
 
+    protected function addCacheKey(string $key): void
+    {
+        $keys = Cache::get($this->cacheKeyList(), []);
+        if (!in_array($key, $keys)) {
+            $keys[] = $key;
+            Cache::put($this->cacheKeyList(), $keys, now()->addHours(24));
+        }
+    }
 
 }
 

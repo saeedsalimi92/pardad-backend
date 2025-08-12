@@ -14,6 +14,7 @@ use App\Http\Resources\Admin\V1\Redirect\RedirectIndexResource;
 use App\Http\Resources\Admin\V1\Redirect\RedirectShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Services\RedirectService;
+use Illuminate\Support\Facades\Cache;
 
 
 
@@ -42,6 +43,7 @@ class RedirectController extends Controller
         }
 
         $resource = RedirectShowResource::make($redirect);
+        $this->clearAllRedirectCacheKeys();
         return $this->apiResponse(message: __("response.redirect.created"), data: $resource);
     }
 
@@ -67,6 +69,8 @@ class RedirectController extends Controller
 
         $redirect->refresh();
 
+        $this->clearAllRedirectCacheKeys();
+
         $resource = RedirectShowResource::make($redirect);
 
         return $this->apiResponse(data: $resource);
@@ -81,6 +85,7 @@ class RedirectController extends Controller
 
         $this->redirectService->destroy($redirect);
 
+        $this->clearAllRedirectCacheKeys();
         return $this->apiResponse(message: __("response.redirect.destroyed"));
     }
 
@@ -96,6 +101,29 @@ class RedirectController extends Controller
         $redirect->refresh();
 
         return $this->apiResponse(message: __("response.redirect.change_status", ['status' => $redirect->status_translate]));
+    }
+
+    protected function cacheKeyList(): string
+    {
+        return 'redirects.cache_keys';
+    }
+
+    protected function addCacheKey(string $key): void
+    {
+        $keys = Cache::get($this->cacheKeyList(), []);
+        if (!in_array($key, $keys)) {
+            $keys[] = $key;
+            Cache::put($this->cacheKeyList(), $keys, now()->addHours(24));
+        }
+    }
+
+    protected function clearAllRedirectCacheKeys(): void
+    {
+        $keys = Cache::get($this->cacheKeyList(), []);
+        foreach ($keys as $key) {
+            Cache::forget($key);
+        }
+        Cache::forget($this->cacheKeyList());
     }
 
 

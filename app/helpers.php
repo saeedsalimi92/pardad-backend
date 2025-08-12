@@ -23,3 +23,5 @@ if(!function_exists("generateShortUniqueCode")) {
         return substr($numbers, 0, 8);
     }
 }
+
+

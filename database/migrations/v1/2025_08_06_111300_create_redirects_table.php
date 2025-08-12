@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('status_code')->default(301); // یا 302
             $table->enum('status', \App\Enums\Status::statuses())->default(\App\Enums\Status::InActive->value);
             $table->timestamps();
+
         });
     }
 
