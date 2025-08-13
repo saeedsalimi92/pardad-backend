@@ -12,4 +12,15 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     {
         return User::class;
     }
+
+    public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->query()
+            ->when(isset($data['status']), function ($query) use ($data) {
+                $query->where('status', $data["status"]);
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+    }
+
 }

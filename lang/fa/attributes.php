@@ -48,4 +48,10 @@ return [
             Status::InActive->value => 'غیرفعال',
         ]
     ],
+    'user' => [
+        'status' => [
+            Status::Active->value => 'فعال',
+            Status::InActive->value => 'غیرفعال',
+        ]
+    ],
 ];

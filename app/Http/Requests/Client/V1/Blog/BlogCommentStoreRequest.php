@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Client\V1\Blog;
 
+
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Schema(
@@ -50,6 +52,13 @@ class BlogCommentStoreRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation()
+    {
+        Log::info('BlogCommentStoreRequest Received', [
+            'method' => $this->method(),
+            'all_data' => $this->all()
+        ]);
+    }
     public function rules(): array
     {
         return [
@@ -57,7 +66,17 @@ class BlogCommentStoreRequest extends FormRequest
             "last_name" => ['required', 'string', 'max:60'],
             "mobile" => ['required', 'string', 'regex:/^(09)([0-9]{9})$/'],
             "email" => ['nullable', 'string', 'email'],
-            "content" => ["required", "string"],
+            "content" => ['nullable', 'string'],
+        ];
+    }
+    public function attributes(): array
+    {
+        return [
+            'first_name' => 'لینک فعلی',
+            'last_name' => 'لینک جدید',
+            'mobile' => 'کد',
+            'email' => 'وضعیت',
+            'content' => 'محتوا',
         ];
     }
 }

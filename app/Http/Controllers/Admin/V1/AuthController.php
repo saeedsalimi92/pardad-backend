@@ -127,6 +127,12 @@ class AuthController extends Controller
 
         $user = User::where('email', $request['email'])->firstOrFail();
 
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'حساب کاربری شما فعال نیست و اجازه ورود ندارید.'
+            ], 403);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

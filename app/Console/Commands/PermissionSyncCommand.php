@@ -107,6 +107,12 @@ class PermissionSyncCommand extends Command
 
             //user
             'admin.user.index',
+            'admin.user.store',
+            'admin.user.show',
+            'admin.user.update',
+            'admin.user.destroy',
+            'admin.user.change_status',
+            'admin.user.change_password',
         ];
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();

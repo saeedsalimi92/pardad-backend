@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('redirects', function (Blueprint $table) {
-            $table->dropUnique('redirects_source_url_unique');
-
-            // اضافه کردن ایندکس ساده
-            $table->index('source_url');
+            // حذف ایندکس یونیک فعلی (اگر وجود دارد)
+            $table->dropUnique(['source_url']);
 
             // اضافه کردن ستون soft delete
             $table->softDeletes();
+
+            // اضافه کردن ایندکس ترکیبی برای اطمینان از یونیک بودن source_url در رکوردهای غیر حذف شده
+            $table->unique(['source_url', 'deleted_at']);
             //
         });
     }
@@ -30,9 +31,9 @@ return new class extends Migration
     {
         Schema::table('redirects', function (Blueprint $table) {
             //
-            $table->dropIndex(['source_url']);
+            $table->dropUnique(['source_url', 'deleted_at']);
 
-            // برگرداندن ایندکس unique
+            // برگرداندن ایندکس یونیک ساده
             $table->unique('source_url');
 
             // حذف ستون soft delete

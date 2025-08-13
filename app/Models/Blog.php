@@ -26,7 +26,8 @@ class Blog extends Model
         'category_id',
         'status',
         'props',
-        'published_at'
+        'published_at',
+        'author_id'
     ];
 
     protected $casts = [
@@ -59,5 +60,9 @@ class Blog extends Model
             'blog_id',
             'related_blog_id'
         );
+    }
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
     }
 }

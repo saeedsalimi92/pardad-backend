@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/menu', [MenuController::class, 'getMenu']);
 
     Route::post('/upload-image', [UploadController::class , 'uploadImage']);
+    Route::post('/upload-images', [UploadController::class , 'uploadImages']);
     Route::post('/upload-file', [UploadController::class , 'uploadFile']);
     Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
 
@@ -45,9 +46,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::group(["prefix" => "users"], function () {
-        Route::get("/", [UserController::class, "index"]);
+        Route::post('{id}/update', [UserController::class, 'update']);
+        Route::post('{id}/change/status', [UserController::class, 'changeStatus']);
+        Route::post('{id}/change/password', [UserController::class, 'changePassword']);
         Route::get("permissions/", [UserController::class, "permissions"]);
     });
+    Route::apiResource('users', UserController::class)->except(['update']);
+
 
 
 

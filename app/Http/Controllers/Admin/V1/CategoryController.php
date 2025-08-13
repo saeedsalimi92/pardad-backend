@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\V1\Category\CategoryShowRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryStoreRequest;
 use App\Http\Requests\Admin\V1\Category\CategoryUpdateRequest;
 
+use App\Http\Resources\Admin\V1\Category\CategoryIndexResource;
 use App\Http\Resources\Admin\V1\Category\CategoryListResource;
 
 use App\Http\Resources\Admin\V1\Category\CategoryShowResource;
@@ -162,10 +163,11 @@ class CategoryController extends Controller
         $data = $request->validated();
         $categories = $this->categoryService->index($data);
 
-        $resource = CategoryIndexRequest::collection($categories);
+        $resource = CategoryIndexResource::collection($categories);
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($categories));
     }
+
 
     /**
      * @OA\Post(

@@ -47,7 +47,7 @@ class UploadController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($request->hasFile('file')) {
@@ -61,6 +61,29 @@ class UploadController extends Controller
         }
 
         return response()->json(['error' => 'فایل آپلود نشد.'], 400);
+    }
+    public function uploadImages(Request $request)
+    {
+        $request->validate([
+            'files' => 'required|array|max:10', // حداکثر 10 فایل
+            'files.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // اعتبارسنجی هر فایل
+        ]);
+
+        $uploadedFiles = [];
+
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('image', $fileName, 'public');
+                $uploadedFiles[] = asset('storage/image/' . $fileName);
+            }
+
+            return response()->json([
+                'locations' => $uploadedFiles
+            ]);
+        }
+
+        return response()->json(['error' => 'هیچ فایلی آپلود نشد.'], 400);
     }
     public function uploadMedia(Request $request)
     {

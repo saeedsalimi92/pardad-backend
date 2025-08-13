@@ -49,9 +49,10 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
             ->paginate($perPage);
     }
 
-    public function findByCode($code, $with=[])
+    public function findByCode($code, $with = [])
     {
         return $this->query()
+            ->where('code', $code)
             ->with($with)
             ->first();
     }

@@ -54,6 +54,7 @@ readonly class BlogService
                 'author_id' => auth()->id(),
                 'code' => generateShortUniqueCode(),
                 'props' => $data['props'] ?? [],
+
             ]);
 
             foreach ($data['contents'] as $content) {

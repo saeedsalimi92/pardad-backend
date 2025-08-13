@@ -28,11 +28,11 @@ class RedirectController extends Controller
     {
         $data = $request->validated();
         $perPage = $request->input('per_page', 15);
-        $categories = $this->redirectService->index($data , $perPage);
+        $redirects = $this->redirectService->index($data , $perPage);
 
-        $resource = RedirectIndexResource::collection($categories);
+        $resource = RedirectIndexResource::collection($redirects);
 
-        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($categories));
+        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($redirects));
     }
 
     public function store(RedirectStoreRequest $request)

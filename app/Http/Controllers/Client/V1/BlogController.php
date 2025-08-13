@@ -17,6 +17,7 @@ use App\Http\Resources\PaginationResource;
 use App\Services\BlogService;
 use App\Services\CommentService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Tag(
@@ -210,6 +211,8 @@ class BlogController extends Controller
      */
     public function comments($code, BlogCommentIndexRequest $request): \Illuminate\Http\JsonResponse
     {
+
+
         $blog = $this->blogService->findByCode($code);
         if(is_null($blog)) {
             return $this->apiResponse(httpStatusCode: 404);
@@ -222,7 +225,7 @@ class BlogController extends Controller
 
         $resource = BlogCommentIndexResource::collection($comments);
 
-        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($comments));
+        return $this->apiResponse(message:__("responses.comment.created"),data: $resource, paginationData: PaginationResource::make($comments));
     }
 
     /**
@@ -267,8 +270,13 @@ class BlogController extends Controller
      */
     public function commentStore($code, BlogCommentStoreRequest $request): \Illuminate\Http\JsonResponse
     {
+
+
+
         $data = $request->validated();
         $blog = $this->blogService->findByCode($code);
+
+        Log::info($blog);
         if(is_null($blog)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
