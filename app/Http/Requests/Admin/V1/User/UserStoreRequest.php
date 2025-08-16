@@ -29,6 +29,7 @@ class UserStoreRequest extends FormRequest
                 Rule::unique('users', 'email'),
             ],
             'password' => ['required', 'string', 'min:5'],
+            'mobile' => ['required', "regex:/^(09)([0-9]{9})$/"],
             'status' => ['required', 'string', Rule::in(Status::statuses())],
         ];
     }
@@ -40,6 +41,7 @@ class UserStoreRequest extends FormRequest
             'email' => 'ایمیل',
             'password' => 'رمز عبور',
             'status' => 'وضعیت',
+            'mobile' => 'موبایل',
         ];
     }
 }

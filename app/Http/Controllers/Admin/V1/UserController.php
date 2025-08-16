@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\V1\User\UserShowRequest;
 use App\Http\Requests\Admin\V1\User\UserStoreRequest;
 use App\Http\Requests\Admin\V1\User\UserUpdateRequest;
 use App\Http\Requests\Admin\V1\User\UserChangePasswordRequest;
+use App\Http\Resources\Admin\V1\User\UserRoleIndexResource;
 use App\Http\Resources\Admin\V1\User\UserIndexResource;
 use App\Http\Resources\PaginationResource;
 use App\Models\User;
@@ -256,5 +257,40 @@ class UserController extends Controller
         return $this->apiResponse(data: [
             auth()->user()->getAllPermissions()->pluck('name')
         ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/admin/v1/users/{id}/roles",
+     *     summary="Get roles of a specific user",
+     *     operationId="adminUserRoles",
+     *     tags={"Admin User"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of roles",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(type="string", example="admin")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="User not found")
+     * )
+     */
+    public function roles($id): JsonResponse
+    {
+        $user = $this->userService->findById($id);
+        if(!$user) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+
+        $resource = UserRoleIndexResource::collection( $user->roles);// assuming 'name' is the role name
+
+        return $this->apiResponse(data: $resource);
     }
 }

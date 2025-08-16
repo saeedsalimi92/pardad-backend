@@ -32,7 +32,7 @@ class RoleAssignPermissionRequest extends FormRequest
     {
         return [
             "role_id" => ['required', "exists:roles,id"],
-            "permissions" => ["required", "array"],
+            "permissions" => ["sometimes", "array"],
             "permissions.*" => ["string"]
         ];
     }

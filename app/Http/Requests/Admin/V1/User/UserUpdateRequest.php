@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin\V1\User;
 use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UserUpdateRequest extends FormRequest
@@ -17,6 +18,7 @@ class UserUpdateRequest extends FormRequest
         return auth()->user()?->can('update', User::class) ?? false;
     }
 
+
     public function rules(): array
     {
         return [
@@ -26,10 +28,16 @@ class UserUpdateRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email'),
+                Rule::unique('users', 'email')->ignore($this->route('id')),
             ],
-            'password' => ['required', 'string', 'min:5'],
+            'mobile' => [
+                'required',
+                'regex:/^(09)([0-9]{9})$/',
+                Rule::unique('users', 'mobile')
+                    ->ignore($this->route('user')?->id ?? $this->route('id'))
+            ],
             'status' => ['required', 'string', Rule::in(Status::statuses())],
+            'password' => ['prohibited'],
         ];
     }
 
@@ -39,6 +47,7 @@ class UserUpdateRequest extends FormRequest
             'name' => 'نام',
             'email' => 'ایمیل',
             'password' => 'رمز عبور',
+            'mobile' => 'موبایل',
             'status' => 'وضعیت',
         ];
     }

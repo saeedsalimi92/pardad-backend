@@ -31,6 +31,22 @@ class RolePolicy
 
         return false;
     }
+    public function show(User $user): bool
+    {
+        if ($user->can('admin.role.show')) {
+            return true;
+        }
+
+        return false;
+    }
+    public function update(User $user): bool
+    {
+        if ($user->can('admin.role.update')) {
+            return true;
+        }
+
+        return false;
+    }
 
     public function assignToUser(User $user): bool
     {

@@ -21,18 +21,20 @@ class PermissionSyncCommand extends Command
         $user = User::query()->firstOrCreate(
             ["email" => "info@pardad.com"],
             [
-                "name" => "super admin",
+                "name" => "admin",
                 "email" => "info@pardad.com",
                 "password" => Hash::make("pardad"),
+                "mobile" => "09121111111",
                 "status" => Status::Active->value
             ]
         );
 
         $roles = [
-            'super admin',
-            'seo manager',
-            'marketing manager',
-            'author',
+            'super-admin' => 'ادمین اصلی',
+            'admin' => 'ادمین',
+            'seo-manager' => 'مدیر سئو',
+            'marketing-manager' => 'مدیر مارکتینگ',
+            'author' => 'محتوا نویس',
         ];
 
         $permissions = [
@@ -40,6 +42,8 @@ class PermissionSyncCommand extends Command
             // role
             'admin.role.index',
             'admin.role.store',
+            'admin.role.update',
+            'admin.role.show',
             'admin.role.assign_to_user',
             'admin.role.give_permission',
 
@@ -115,7 +119,11 @@ class PermissionSyncCommand extends Command
             'admin.user.change_password',
         ];
 
+
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+
 
         foreach ($permissions as $permission) {
             Permission::query()->firstOrCreate(
@@ -124,13 +132,16 @@ class PermissionSyncCommand extends Command
             );
         }
 
-        foreach ($roles as $roleName) {
+        foreach ($roles as $roleName => $roleFaName) {
             $role = Role::query()->firstOrCreate(
                 ['name' => $roleName],
-                ['name' => $roleName]
+                [
+                    'name' => $roleName,
+                    'display_name' => $roleFaName, // اینجا نام فارسی اضافه شد
+                ]
             );
 
-            if($roleName == 'super admin') {
+            if (in_array($roleName, ['super-admin'])) {
                 $role->givePermissionTo(Permission::all());
                 $user->syncRoles([$roleName]);
             }

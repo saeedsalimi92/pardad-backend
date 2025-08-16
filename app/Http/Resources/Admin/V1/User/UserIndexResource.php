@@ -7,17 +7,26 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *       schema="UserIndexResuorce",
- *       type="object",
- *       title="User Resource",
- *       required={"id","name"},
- *       properties={
- *           @OA\Property(property="id", type="integer", example=1),
- *           @OA\Property(property="name", type="string", example="seo manager")
- *       }
- *   )
+ *     schema="UserIndexResource",
+ *     type="object",
+ *     title="User Index Resource",
+ *     required={"id", "name", "email", "status", "mobile"},
+ *     properties={
+ *         @OA\Property(property="id", type="integer", example=1),
+ *         @OA\Property(property="name", type="string", example="SEO Manager"),
+ *         @OA\Property(property="email", type="string", format="email", example="seo@example.com"),
+ *         @OA\Property(property="status", type="string", example="active"),
+ *         @OA\Property(property="mobile", type="string", example="09123456789"),
+ *         @OA\Property(property="status_translate", type="string", example="فعال")
+ *     }
+ * )
+ *
  * @property mixed $id
  * @property mixed $name
+ * @property mixed $email
+ * @property mixed $status
+ * @property mixed $mobile
+ * @property mixed $status_translate
  */
 class UserIndexResource extends JsonResource
 {
@@ -33,6 +42,7 @@ class UserIndexResource extends JsonResource
             "name" => $this->name,
             "email" => $this->email,
             "status" => $this->status,
+            "mobile" => $this->mobile,
             "status_translate" => $this->status_translate,
         ];
     }

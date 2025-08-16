@@ -35,25 +35,30 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::group(["prefix" => "roles"], function () {
-        Route::get("/", [RoleController::class, "index"]);
-        Route::post("/", [RoleController::class, "store"]);
-        Route::post("/assign/users", [RoleController::class, "assignUser"]);
-        Route::post("/assign/permissions", [RoleController::class, "givePermissionToRole"]);
+        Route::post('{role}/update', [RoleController::class, 'update']);
+        Route::get('{role}/permissions', [RoleController::class, 'permissions']);
+        Route::post("assign/users", [RoleController::class, "assignUser"]);
+        Route::post("assign/permissions", [RoleController::class, "givePermissionToRole"]);
     });
+    Route::apiResource('roles', RoleController::class)->except(['update']);
 
-    Route::group(["prefix" => "permissions"], function () {
-        Route::get("/", [PermissionController::class, "index"]);
-    });
+
+
+
 
     Route::group(["prefix" => "users"], function () {
         Route::post('{id}/update', [UserController::class, 'update']);
         Route::post('{id}/change/status', [UserController::class, 'changeStatus']);
         Route::post('{id}/change/password', [UserController::class, 'changePassword']);
         Route::get("permissions/", [UserController::class, "permissions"]);
+        Route::get('{id}/roles', [UserController::class, 'roles']);
     });
     Route::apiResource('users', UserController::class)->except(['update']);
 
 
+    Route::group(["prefix" => "permissions"], function () {
+        Route::get("/", [PermissionController::class, "index"]);
+    });
 
 
     Route::group(['prefix' => 'comments'], function () {
@@ -104,4 +109,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('/list', [CategoryController::class, 'allList']);
+});
+Route::middleware('auth:sanctum')->get('/user/permissions', function (Request $request) {
+    return [
+        'permissions' => $request->user()->getAllPermissions()->pluck('name')
+    ];
 });

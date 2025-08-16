@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Admin\V1\Redirect\RedirectStoreRequest;
-use App\Http\Requests\Admin\V1\Redirect\RedirectUpdateRequest;
+
+use App\Http\Requests\Admin\V1\User\UserUpdateRequest;
 use App\Http\Requests\Admin\V1\User\UserStoreRequest;
-use App\Models\Redirect;
+use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 readonly class UserService
@@ -27,6 +28,7 @@ readonly class UserService
     public function create(UserStoreRequest $request)
     {
         $data = $request->validated();
+        $data['password'] = Hash::make($data['password']);
 
         DB::beginTransaction();
         try {
@@ -40,10 +42,14 @@ readonly class UserService
         }
     }
 
-    public function update(Redirect $user,RedirectUpdateRequest $request): bool
+    public function update(User $user,UserUpdateRequest $request): bool
     {
 
         $data = $request->validated();
+
+        Log::info($data);
+
+
         DB::beginTransaction();
         try {
             $this->userRepository->update($user->id, $data);
@@ -69,6 +75,7 @@ readonly class UserService
     }
     public function changePassword($id, $password): int
     {
-        return $this->userRepository->update($id, ["password" => $password]);
+        $newPassword = Hash::make($password);
+        return $this->userRepository->update($id, ["password" => $newPassword]);
     }
 }

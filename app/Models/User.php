@@ -30,7 +30,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone',
+        'mobile',
         'token',
         'status',
         'description',
@@ -58,10 +58,6 @@ class User extends Authenticatable
 
 
 
-   /* public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }*/
 
     public function statusTranslate(): Attribute
     {

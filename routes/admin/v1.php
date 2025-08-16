@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/menu', [MenuController::class, 'getMenu']);
@@ -49,6 +50,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('{id}/change/status', [UserController::class, 'changeStatus']);
         Route::post('{id}/change/password', [UserController::class, 'changePassword']);
         Route::get("permissions/", [UserController::class, "permissions"]);
+        Route::get('{id}/roles', [UserController::class, 'roles']);
     });
     Route::apiResource('users', UserController::class)->except(['update']);
 
@@ -101,4 +103,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('/list', [CategoryController::class, 'allList']);
+});
+Route::middleware('auth:sanctum')->get('/user/permissions', function (Request $request) {
+    return [
+        'permissions' => $request->user()->getAllPermissions()->pluck('name')
+    ];
 });

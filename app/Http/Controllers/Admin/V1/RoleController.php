@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\V1\Role\RoleAssignPermissionRequest;
 use App\Http\Requests\Admin\V1\Role\RoleAssignRequest;
 use App\Http\Requests\Admin\V1\Role\RoleStoreRequest;
+use App\Http\Requests\Admin\V1\Role\RoleUpdateRequest;
 use App\Http\Resources\Admin\V1\RolePermission\RoleIndexResource;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Collection;
 
 /**
  * @OA\Tag(
@@ -132,12 +134,118 @@ class RoleController extends Controller
     public function store(RoleStoreRequest $request): \Illuminate\Http\JsonResponse
     {
         $role = Role::query()->firstOrCreate(
-            ['name' => $request->name],
-            ['name' => $request->name, 'guard_name' => 'web'],
+            ['name' => $request->name], // شرط جستجو
+            [
+                'display_name' => $request->display_name,
+                'guard_name' => 'web',   // اینجا باید اضافه شود
+            ]
         );
 
         return $this->apiResponse(data: $role);
     }
+
+
+    public function permissions(Role $role)
+    {
+        return response()->json([
+            'role' => $role->name,
+            'permissions' => $role->permissions->pluck(['name']), // فقط نام پرمیشن‌ها
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/admin/v1/roles/{id}",
+     *     summary="Show a specific role",
+     *     operationId="adminRoleShow",
+     *     tags={"Role"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Role ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Role details",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"success","message","data","pagination_info"},
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example=""),
+     *             @OA\Property(property="data", ref="#/components/schemas/RoleIndexResource"),
+     *             @OA\Property(property="pagination_info", type="array", @OA\Items())
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Role not found"
+     *     )
+     * )
+     */
+    public function show(int $id): \Illuminate\Http\JsonResponse
+    {
+        $role = Role::find($id);
+        if (!$role) {
+            return $this->apiResponse(message: "Role not found", httpStatusCode: 404);
+        }
+
+        return $this->apiResponse(data: new RoleIndexResource($role));
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/admin/v1/roles/{id}",
+     *     summary="Update a role",
+     *     operationId="adminRoleUpdate",
+     *     tags={"Role"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Role ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", example="support")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Role updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"success","message","data","pagination_info"},
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Role updated successfully"),
+     *             @OA\Property(property="data", ref="#/components/schemas/RoleIndexResource"),
+     *             @OA\Property(property="pagination_info", type="array", @OA\Items())
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Role not found"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
+    public function update(RoleUpdateRequest $request, int $id): \Illuminate\Http\JsonResponse
+    {
+        $role = Role::find($id);
+        if (!$role) {
+            return $this->apiResponse(message: "Role not found", httpStatusCode: 404);
+        }
+
+        $role->name = $request->name;
+        $role->display_name = $request->display_name;
+        $role->save();
+
+        return $this->apiResponse(message: "Role updated successfully", data: new RoleIndexResource($role));
+    }
+
 
     /**
      * @OA\Post(
@@ -257,8 +365,9 @@ class RoleController extends Controller
         if(is_null($role)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
+        $permissions = $request->permissions ?? [];
 
-        $role->syncPermissions($request->permissions);
+        $role->syncPermissions(collect($permissions)->map(fn($p) => $p));
 
         return $this->apiResponse(message: __("response.role.permissions_assigned"));
     }

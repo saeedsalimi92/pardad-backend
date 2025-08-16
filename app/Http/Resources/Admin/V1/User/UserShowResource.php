@@ -33,6 +33,7 @@ class UserShowResource extends JsonResource
             "name" => $this->name,
             "email" => $this->email,
             "status" => $this->status,
+            "mobile" => $this->mobile,
             "status_translate" => $this->status_translate,
         ];
     }

@@ -14,18 +14,18 @@ class RoleAssignRequest extends FormRequest
 
     public function authorize(): bool
     {
-        if (auth()->user()->can('assign_to_user', Role::class)) {
+       /* if (auth()->user()->can('assign_to_user', Role::class)) {
             return true;
-        }
+        }*/
 
-        return false;
+        return true;
     }
 
     public function rules(): array
     {
         return [
             'user_id' => ['required', 'exists:users,id'],
-            'role' => ['required', 'string', 'exists:roles,name'],
+            'role' => ['sometimes', 'string', 'exists:roles,name'],
         ];
     }
 }
