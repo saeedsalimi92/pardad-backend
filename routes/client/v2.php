@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(['prefix' => 'blog'], function () {
         Route::get("list", [BlogController::class, 'list']);
+        Route::get("statuses", [BlogController::class, 'statuses']);
         Route::post('{blog}/update', [BlogController::class, 'update']);
 
         Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);

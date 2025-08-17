@@ -13,20 +13,12 @@ class BlogPolicy
 
     public function SuperIndex(User $user): bool
     {
-        if ($user->can('admin.blog.super_index')) {
-            return true;
-        }
-
-        return false;
+        return $user->can('admin.blog.super_index');
     }
 
     public function index(User $user): bool
     {
-        if ($user->can('admin.blog.index')) {
-            return true;
-        }
-
-        return false;
+        return $user->can('admin.blog.index');
     }
 
     public function SuperShow(User $user): bool
@@ -108,6 +100,10 @@ class BlogPolicy
         }
 
         return false;
+    }
+    public function statuses(User $user): bool
+    {
+        return $user->can('admin.blog.all_statuses') || $user->can('admin.blog.statuses');
     }
 
 

@@ -14,6 +14,7 @@ use App\Http\Requests\Admin\V1\Blog\BlogListRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogShowRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogStoreRequest;
 use App\Http\Requests\Admin\V1\Blog\BlogUpdateRequest;
+use App\Http\Requests\Admin\V1\Blog\BlogStatusesRequest;
 use App\Http\Requests\BlogFaqShowRequest;
 use App\Http\Resources\Admin\V1\Blog\BlogIndexResource;
 use App\Http\Resources\Admin\V1\Blog\BlogListResource;
@@ -24,6 +25,7 @@ use App\Http\Resources\PaginationResource;
 use App\Models\Blog;
 use App\Services\BlogService;
 use App\Services\FaqService;
+use App\Enums\BlogStatus;
 
 /**
  * @OA\Tag(
@@ -164,9 +166,16 @@ class BlogController extends Controller
     public function index(BlogIndexRequest $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
+        $user = auth()->user();
+        /*if (!$user->can('super_index', Blog::class) && $user->can('index', Blog::class)) {
+            $data['user_id'] = $user->id;
+        }*/
 
-        if(!auth()->user()->can('admin.blog.super_index') && auth()->user()->can('admin.blog.index')) {
-            $data["user_id"] = auth()->user()->getAuthIdentifier();
+        if ($user->can('SuperIndex', Blog::class)) {
+            // هیچ محدودیتی اعمال نمی‌کنیم
+        } elseif ($user->can('index', Blog::class)) {
+            // اگر فقط دسترسی index دارد، محدود به بلاگ‌های خودش شود
+            $data['user_id'] = $user->id;
         }
         $perPage = $request->input('per_page', 15);
         $blogs = $this->blogService->index($data , $perPage);
@@ -714,6 +723,68 @@ class BlogController extends Controller
 
         return $this->apiResponse(message: __("response.blog.change_status", ['status' => $blog->status_translate]));
     }
+
+    /**
+     * @OA\Get(
+     *     path="/admin/v1/blog/statuses",
+     *     summary="Get available blog statuses based on user permissions",
+     *     description="Returns list of available statuses that user can access",
+     *     operationId="adminBlogStatuses",
+     *     tags={"Blog"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="value", type="string", example="draft"),
+     *                     @OA\Property(property="label", type="string", example="Draft")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Forbidden")
+     *         )
+     *     )
+     * )
+     */
+    public function statuses(BlogStatusesRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $user = $request->user();
+        $statuses = [];
+
+        if ($user->can('admin.blog.all_statuses')) {
+            // ادمین اصلی همه وضعیت‌ها رو می‌بینه
+            $statuses = [
+                ['value' => BlogStatus::Draft->value, 'label' => __('attributes.blog.status.draft')],
+                ['value' => BlogStatus::Published->value, 'label' => __('attributes.blog.status.published')],
+                ['value' => BlogStatus::Archived->value, 'label' => __('attributes.blog.status.archived')],
+            ];
+        } elseif ($user->can('admin.blog.statuses')) {
+            // محتوا نویس فقط draft می‌بینه
+            $statuses = [
+                ['value' => BlogStatus::Draft->value, 'label' => __('attributes.blog.status.draft')],
+            ];
+        }
+
+        return $this->apiResponse(data: $statuses);
+    }
+
 
     /**
      * @OA\Get(

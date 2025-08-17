@@ -140,6 +140,16 @@ class BlogUpdateRequest extends FormRequest
 
     public function rules(): array
     {
+        $user = auth()->user();
+
+        // وضعیت‌های مجاز بر اساس پرمیژن‌ها
+        if ($user->can('admin.blog.all_statuses')) {
+            $allowedStatuses = BlogStatus::statuses(); // همه وضعیت‌ها
+        } elseif ($user->can('admin.blog.statuses')) {
+            $allowedStatuses = [BlogStatus::Draft->value]; // فقط درفت
+        } else {
+            $allowedStatuses = [BlogStatus::Draft->value]; // پیش‌فرض فقط درفت
+        }
         return [
             'category_id' => ['required', 'exists:categories,id'],
 
@@ -170,7 +180,7 @@ class BlogUpdateRequest extends FormRequest
                 'max:500',
             ],
 
-            'status' => ['required', 'string', Rule::in(BlogStatus::statuses())],
+            'status' => ['required', 'string', Rule::in($allowedStatuses)],
             'published_at' => ['required', 'date_format:Y-m-d H:i:s'],
             'related_blog_ids' => ['nullable', 'array'],
             'related_blog_ids.*' => ['integer', 'exists:blogs,id'],

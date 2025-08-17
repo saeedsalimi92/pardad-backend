@@ -13,12 +13,10 @@ class BlogIndexRequest extends FormRequest
 
     public function authorize(): bool
     {
-        if (auth()->user()->can('index', Blog::class)) {
-            return true;
-        }
-
-        return false;
+        return auth()->user()->can('index', Blog::class)
+            || auth()->user()->can('super_index', Blog::class);
     }
+
 
     public function rules(): array
     {

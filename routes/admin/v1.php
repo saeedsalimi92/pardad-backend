@@ -28,22 +28,23 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/menu', [MenuController::class, 'getMenu']);
 
-    Route::post('/upload-image', [UploadController::class, 'uploadImage']);
+    Route::post('/upload-image', [UploadController::class , 'uploadImage']);
     Route::post('/upload-images', [UploadController::class , 'uploadImages']);
-    Route::post('/upload-file', [UploadController::class, 'uploadFile']);
-    Route::post('/upload-media', [UploadController::class, 'uploadMedia']);
+    Route::post('/upload-file', [UploadController::class , 'uploadFile']);
+    Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
 
 
     Route::group(["prefix" => "roles"], function () {
-        Route::get("/", [RoleController::class, "index"]);
-        Route::post("/", [RoleController::class, "store"]);
-        Route::post("/assign/users", [RoleController::class, "assignUser"]);
-        Route::post("/assign/permissions", [RoleController::class, "givePermissionToRole"]);
+        Route::post('{role}/update', [RoleController::class, 'update']);
+        Route::get('{role}/permissions', [RoleController::class, 'permissions']);
+        Route::post("assign/users", [RoleController::class, "assignUser"]);
+        Route::post("assign/permissions", [RoleController::class, "givePermissionToRole"]);
     });
+    Route::apiResource('roles', RoleController::class)->except(['update']);
 
-    Route::group(["prefix" => "permissions"], function () {
-        Route::get("/", [PermissionController::class, "index"]);
-    });
+
+
+
 
     Route::group(["prefix" => "users"], function () {
         Route::post('{id}/update', [UserController::class, 'update']);
@@ -55,6 +56,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('users', UserController::class)->except(['update']);
 
 
+    Route::group(["prefix" => "permissions"], function () {
+        Route::get("/", [PermissionController::class, "index"]);
+    });
+
+
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', [CommentController::class, 'index']);
         Route::get('{id}/', [CommentController::class, 'show']);
@@ -64,9 +70,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(['prefix' => 'blog'], function () {
         Route::get("list", [BlogController::class, 'list']);
+        Route::get("statuses", [BlogController::class, 'statuses']);
         Route::post('{blog}/update', [BlogController::class, 'update']);
 
-        Route::post('{blog}/status/change', [BlogController::class, 'changeStatus']);
+        Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);
         Route::group(['prefix' => '{blog}/faq'], function () {
             Route::get("/", [BlogController::class, 'faqIndex']);
             Route::post("/", [BlogController::class, 'faqStore']);
@@ -86,8 +93,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(["prefix" => "brands"], function () {
         Route::post('{brand}/update', [BrandController::class, 'update']);
-        Route::post('{brand}/status/change', [BrandController::class, 'changeStatus']);
-        Route::post('priority/change', [BrandController::class, 'changePriority']);
+        Route::post('{brand}/status/change',[BrandController::class, 'changeStatus']);
+        Route::post('priority/change',[BrandController::class, 'changePriority']);
     });
     Route::apiResource('brands', BrandController::class)->except(['update']);
 
