@@ -29,33 +29,23 @@ class PermissionSyncCommand extends Command
             ]
         );
 
-        // تعریف نقش‌ها و نام فارسی
-        $roles = [
-            'super-admin' => 'ادمین اصلی',
-            'admin' => 'ادمین',
-            'seo-manager' => 'مدیر سئو',
-            'marketing-manager' => 'مدیر مارکتینگ',
-            'author' => 'محتوا نویس',
-        ];
+        // گرفتن نقش‌ها و پرمیژن‌ها از config
+        $roles = config('role_permissions');
 
         // پاک کردن کش دسترسی‌ها
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        foreach ($roles as $roleName => $roleFaName) {
-
+        foreach ($roles as $roleName => $roleData) {
             // ایجاد یا دریافت نقش
             $role = Role::query()->firstOrCreate(
                 ['name' => $roleName],
                 [
                     'name' => $roleName,
-                    'display_name' => $roleFaName,
+                    'display_name' => $roleData['display_name'],
                 ]
             );
 
-            // بارگذاری دسترسی‌ها از فایل
-            $permissions = file_exists(app_path("Permissions/{$roleName}.php"))
-                ? include app_path("Permissions/{$roleName}.php")
-                : [];
+            $permissions = $roleData['permissions'] ?? [];
 
             // ایجاد دسترسی‌ها اگر وجود ندارند
             foreach ($permissions as $permission) {
@@ -65,7 +55,7 @@ class PermissionSyncCommand extends Command
             // سینک دسترسی‌ها با نقش
             $role->syncPermissions($permissions);
 
-            // اگر super-admin است، همه دسترسی‌ها
+            // اگر super-admin بود همه دسترسی‌ها
             if ($roleName === 'super-admin') {
                 $role->givePermissionTo(Permission::all());
                 $user->syncRoles([$roleName]);
