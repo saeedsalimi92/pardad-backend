@@ -31,7 +31,7 @@ return [
 
             // blog crud
             'admin.blog.super_index',
-            'admin.blog.all_statuses',
+            'admin.blog.super_statuses',
             'admin.blog.statuses',
             'admin.blog.index',
             'admin.blog.list',
@@ -113,7 +113,7 @@ return [
 
             // blog crud
             'admin.blog.super_index',
-            'admin.blog.all_statuses',
+            'admin.blog.super_statuses',
             'admin.blog.statuses',
             'admin.blog.index',
             'admin.blog.list',
@@ -183,7 +183,7 @@ return [
 
             // blog crud
             'admin.blog.super_index',
-            'admin.blog.all_statuses',
+            'admin.blog.super_statuses',
             'admin.blog.statuses',
             'admin.blog.index',
             'admin.blog.list',

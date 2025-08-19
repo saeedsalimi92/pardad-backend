@@ -143,7 +143,8 @@ class BlogUpdateRequest extends FormRequest
         $user = auth()->user();
 
         // وضعیت‌های مجاز بر اساس پرمیژن‌ها
-        if ($user->can('admin.blog.all_statuses')) {
+        if ($user->can('admin.blog.super_statuses')) {
+
             $allowedStatuses = BlogStatus::statuses(); // همه وضعیت‌ها
         } elseif ($user->can('admin.blog.statuses')) {
             $allowedStatuses = [BlogStatus::Draft->value]; // فقط درفت

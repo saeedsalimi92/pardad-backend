@@ -103,7 +103,7 @@ class BlogPolicy
     }
     public function statuses(User $user): bool
     {
-        return $user->can('admin.blog.all_statuses') || $user->can('admin.blog.statuses');
+        return $user->can('admin.blog.super_statuses') || $user->can('admin.blog.statuses');
     }
 
 

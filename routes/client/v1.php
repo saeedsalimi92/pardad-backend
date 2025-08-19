@@ -16,7 +16,7 @@ Route::group(['as' => 'client.'], function () {
         Route::get('/', [BlogController::class, 'index']);
         Route::get('{code}/comments', [BlogController::class, 'comments']);
         Route::post('{code}/comments', [BlogController::class, 'commentStore']);
-        Route::get('{code}/{slug?}', [BlogController::class, 'show']);
+        Route::get('/{code}', [BlogController::class, 'show']);
     });
 
     Route::group(['prefix' => 'categories'], function () {

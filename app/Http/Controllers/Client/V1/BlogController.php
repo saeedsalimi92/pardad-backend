@@ -18,6 +18,7 @@ use App\Services\BlogService;
 use App\Services\CommentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * @OA\Tag(
@@ -152,12 +153,21 @@ class BlogController extends Controller
      *     )
      * )
      */
-    public function show(BlogShowRequest $request, $code, $slug=null)
+    public function show(BlogShowRequest $request, $code)
     {
         $data = $request->validated();
+        $categorySlug = $request->categorySlug;
+        $blogSlug = $request->blogSlug;
+
+
 
         $blog = $this->blogService->findByLocale($code, $data);
+
+
+
+
         if(is_null($blog)) {
+
             return $this->apiResponse(httpStatusCode: 404);
         }
 
@@ -167,6 +177,26 @@ class BlogController extends Controller
 
         if(Carbon::parse($blog->published_at)->isFuture()) {
             return $this->apiResponse(httpStatusCode: 404);
+        }
+
+
+
+
+
+        $correctCategorySlug = $blog->category?->contents->first()->slug; // مثلا Industrial-power-transmission
+        $correctBlogSlug = ($blog->contents->first()->slug); // مثلا industrial-bearings*/
+
+
+
+
+        if ($categorySlug !== $correctCategorySlug || $blogSlug !== $correctBlogSlug) {
+            $redirectUrl = "/blog/{$correctCategorySlug}/{$blog->code}/{$correctBlogSlug}";
+
+            return $this->apiResponse(
+                message: "Redirect to correct URL",
+                data: ['redirect_to' => $redirectUrl],
+                success: false,
+            );
         }
 
         $resource = BlogShowResource::make($blog);
