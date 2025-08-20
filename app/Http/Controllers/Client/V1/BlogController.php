@@ -156,8 +156,7 @@ class BlogController extends Controller
     public function show(BlogShowRequest $request, $code)
     {
         $data = $request->validated();
-        $categorySlug = $request->categorySlug;
-        $blogSlug = $request->blogSlug;
+
 
 
 
@@ -183,21 +182,8 @@ class BlogController extends Controller
 
 
 
-        $correctCategorySlug = $blog->category?->contents->first()->slug; // مثلا Industrial-power-transmission
-        $correctBlogSlug = ($blog->contents->first()->slug); // مثلا industrial-bearings*/
 
 
-
-
-        if ($categorySlug !== $correctCategorySlug || $blogSlug !== $correctBlogSlug) {
-            $redirectUrl = "/blog/{$correctCategorySlug}/{$blog->code}/{$correctBlogSlug}";
-
-            return $this->apiResponse(
-                message: "Redirect to correct URL",
-                data: ['redirect_to' => $redirectUrl],
-                success: false,
-            );
-        }
 
         $resource = BlogShowResource::make($blog);
 

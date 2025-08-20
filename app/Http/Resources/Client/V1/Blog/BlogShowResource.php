@@ -8,6 +8,7 @@ use App\Http\Resources\Client\V1\Category\CategoryShowResource;
 use App\Http\Resources\Client\V1\Faq\FaqIndexResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @property mixed $featuredImage
@@ -87,7 +88,11 @@ class BlogShowResource extends JsonResource
 {
 
     public function toArray(Request $request): array
+
     {
+
+        $canonical = $this->contents?->first()->props['canonical'];
+        $valid_utl= "/blog/{$canonical}";
         return [
             "id" => $this->code,
             "category" => CategoryContentShowResource::make($this->category?->contents?->first()),
@@ -102,6 +107,7 @@ class BlogShowResource extends JsonResource
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             "author" => UserShowResource::make($this->author),
+            "valid_url" => $valid_utl,
         ];
     }
 }
