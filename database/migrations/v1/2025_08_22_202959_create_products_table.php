@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string("code")->unique();
-            $table->foreignId('product_id')->nullable()->references('id')->on('products')->onDelete('cascade');
+            $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade');
             $table->enum('status', \App\Enums\Status::statuses())->default(\App\Enums\Status::InActive->value)->index();
             $table->timestamps();
             $table->softDeletes();

@@ -4,11 +4,13 @@ namespace App\Providers;
 
 
 use App\Repositories\BentoLayoutRepositoryInterface;
+use App\Repositories\ProductRepositoryInterface;
 use App\Repositories\BlogRepositoryInterface;
 use App\Repositories\BrandRepositoryInterface;
 use App\Repositories\CategoryRepositoryInterface;
 use App\Repositories\CommentRepositoryInterface;
 use App\Repositories\Eloquent\BentoLayoutRepository;
+use App\Repositories\Eloquent\ProductRepository;
 use App\Repositories\Eloquent\BlogRepository;
 use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\CategoryRepository;
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
         $this->app->bind(ImageRepositoryInterface::class, ImageRepository::class);
         $this->app->bind(BentoLayoutRepositoryInterface::class, BentoLayoutRepository::class);
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
     }
 
     public function bindServices(): void

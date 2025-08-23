@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product_contents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->enum('locale', ['fa', 'en']);
+            $table->enum('locale', ['fa', 'en' ,'ar']);
             $table->string('title');
             $table->string('slug')->nullable();
             $table->text('content');

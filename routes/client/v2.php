@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;
 use App\Http\Controllers\Admin\V1\BrandController;
 use App\Http\Controllers\Admin\V1\RedirectController;
+use App\Http\Controllers\Admin\V1\ProductController;
 use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\CommentController;
 use App\Http\Controllers\Admin\V1\MenuController;
@@ -83,6 +84,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         });
     });
     Route::apiResource('blog', BlogController::class)->except(['update']);
+
+    Route::group(['prefix' => 'product'], function () {
+        Route::get("list", [ProductController::class, 'list']);
+        Route::get("statuses", [ProductController::class, 'statuses']);
+        Route::post('{blog}/update', [ProductController::class, 'update']);
+        Route::post('{blog}/status/change',[ProductController::class, 'changeStatus']);
+    });
+    Route::apiResource('product', ProductController::class)->except(['update']);
 
 
     Route::group(["prefix" => "categories"], function () {
