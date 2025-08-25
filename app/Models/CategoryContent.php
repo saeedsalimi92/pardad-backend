@@ -27,7 +27,7 @@ class CategoryContent extends Model
 
     public function getUrl(): string
     {
-        return "{$this->blog->code}/{$this->slug}";
+        return "{$this->category->code}/{$this->slug}";
     }
 
     public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo

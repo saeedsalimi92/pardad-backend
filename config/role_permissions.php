@@ -44,6 +44,23 @@ return [
             'admin.blog.destroy',
             'admin.blog.bento_layout_update',
 
+
+
+            // blog crud
+            'admin.product.super_index',
+            'admin.product.super_statuses',
+            'admin.product.statuses',
+            'admin.product.index',
+            'admin.product.list',
+            'admin.product.store',
+            'admin.product.super_show',
+            'admin.product.show',
+            'admin.product.update',
+            'admin.product.super_update',
+            'admin.product.super_destroy',
+            'admin.product.destroy',
+            'admin.product.bento_layout_update',
+
             // category crud
             'admin.category.index',
             'admin.category.list',

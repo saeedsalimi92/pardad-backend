@@ -26,6 +26,7 @@ use App\Models\Blog;
 use App\Services\BlogService;
 use App\Services\FaqService;
 use App\Enums\BlogStatus;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Tag(
@@ -177,6 +178,7 @@ class BlogController extends Controller
             // اگر فقط دسترسی index دارد، محدود به بلاگ‌های خودش شود
             $data['user_id'] = $user->id;
         }
+        Log::info($request->input('per_page'));
         $perPage = $request->input('per_page', 15);
         $blogs = $this->blogService->index($data , $perPage);
 
@@ -768,7 +770,7 @@ class BlogController extends Controller
         $user = $request->user();
         $statuses = [];
 
-        if ($user->can('admin.blog.all_statuses')) {
+        if ($user->can('admin.blog.super_statuses')) {
             // ادمین اصلی همه وضعیت‌ها رو می‌بینه
             $statuses = [
                 ['value' => BlogStatus::Draft->value, 'label' => __('attributes.blog.status.draft')],

@@ -24,13 +24,10 @@ class Product extends Model
         'code',
         'category_id',
         'status',
-        'props',
         'author_id'
     ];
 
-    protected $casts = [
-        'props' => 'array'
-    ];
+
 
     public function statusTranslate(): Attribute
     {

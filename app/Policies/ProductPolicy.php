@@ -101,10 +101,6 @@ class ProductPolicy
 
         return false;
     }
-    public function statuses(User $user): bool
-    {
-        return $user->can('admin.product.super_statuses') || $user->can('admin.product.statuses');
-    }
 
 
 
