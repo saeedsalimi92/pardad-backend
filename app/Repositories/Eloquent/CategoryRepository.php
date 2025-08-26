@@ -15,28 +15,38 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
-            ->with(['contents' => function($query) use ($data) {
-                $query
-                    ->when(isset($data['locale']), function ($query) use ($data) {
-                        $query->where('locale', $data["locale"]);
-                    })
-                    ->when(isset($data['title']), function ($query) use ($data) {
-                        $query->where('title', "LIKE", "%".$data["title"]."%");
+            ->with([
+                'contents' => function($query) use ($data) {
+                    $query
+                        ->when(isset($data['locale']), function ($q) use ($data) {
+                            $q->where('locale', $data["locale"]);
+                        })
+                        ->when(isset($data['title']), function ($q) use ($data) {
+                            $q->where('title', 'LIKE', "%".$data["title"]."%");
+                        });
+                },
+                'parent',
+                'parent.contents' => function($query) use ($data) {
+                    $query->when(isset($data['locale']), function ($q) use ($data) {
+                        $q->where('locale', $data["locale"]);
                     });
-            }, 'parent', 'parent.contents' => function($query) use ($data) {
-                $query->when(isset($data['locale']), function ($query) use ($data) {
-                    $query->where('locale', $data["locale"]);
-                });
-            }, 'children', 'children.contents' => function($query) use ($data) {
-                $query->when(isset($data['locale']), function ($query) use ($data) {
-                    $query->where('locale', $data["locale"]);
-                });
-            }])
+                },
+                'children',
+                'children.contents' => function($query) use ($data) {
+                    $query->when(isset($data['locale']), function ($q) use ($data) {
+                        $q->where('locale', $data["locale"]);
+                    });
+                }
+            ])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
-            ->when(isset($data['type']), function ($query) use ($data) {
-                $query->where('type', $data["type"]);
+            ->when(isset($data['type']) && $data['type'] !== 'all', function ($query) use ($data) {
+                // اگه type مشخص شده و all نباشه
+                $query->where('type', $data['type']);
+            }, function ($query) {
+                // حالت پیش‌فرض: فقط normal
+                $query->where('type', 'normal');
             })
             ->when(isset($data['parent_id']), function ($query) use ($data) {
                 $query->where('parent_id', $data["parent_id"]);
@@ -55,28 +65,38 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
         return $this->query()
-            ->with(['contents' => function($query) use ($data) {
-                $query
-                    ->when(isset($data['locale']), function ($query) use ($data) {
+            ->with([
+                'contents' => function($query) use ($data) {
+                    $query
+                        ->when(isset($data['locale']), function ($query) use ($data) {
+                            $query->where('locale', $data["locale"]);
+                        })
+                        ->when(isset($data['title']), function ($query) use ($data) {
+                            $query->where('title', "LIKE", "%".$data["title"]."%");
+                        });
+                },
+                'parent',
+                'parent.contents' => function($query) use ($data) {
+                    $query->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
-                    })
-                    ->when(isset($data['title']), function ($query) use ($data) {
-                        $query->where('title', "LIKE", "%".$data["title"]."%");
                     });
-            }, 'parent', 'parent.contents' => function($query) use ($data) {
-                $query->when(isset($data['locale']), function ($query) use ($data) {
-                    $query->where('locale', $data["locale"]);
-                });
-            }, 'children', 'children.contents' => function($query) use ($data) {
-                $query->when(isset($data['locale']), function ($query) use ($data) {
-                    $query->where('locale', $data["locale"]);
-                });
-            }])
+                },
+                'children',
+                'children.contents' => function($query) use ($data) {
+                    $query->when(isset($data['locale']), function ($query) use ($data) {
+                        $query->where('locale', $data["locale"]);
+                    });
+                }
+            ])
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
-            ->when(isset($data['type']), function ($query) use ($data) {
-                $query->where('type', $data["type"]);
+            ->when(isset($data['type']) && $data['type'] !== 'all', function ($query) use ($data) {
+                // فیلتر بر اساس type خود دسته‌بندی
+                $query->where('type', $data['type']);
+            }, function ($query) {
+                // حالت پیش‌فرض: فقط normal
+                $query->where('type', 'normal');
             })
             ->when(isset($data['parent_id']), function ($query) use ($data) {
                 $query->where('parent_id', $data["parent_id"]);
@@ -87,6 +107,12 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                     'children' => $query->whereNotNull('parent_id'),
                     default => null,
                 };
+            })
+            ->when(isset($data['category_type']), function ($query) use ($data) {
+                // فیلتر بر اساس type دسته‌بندی والد (اگر نیاز باشد)
+                $query->whereHas('parent', function ($q) use ($data) {
+                    $q->where('type', $data['category_type']);
+                });
             })
             ->orderByDesc('created_at')
             ->get();

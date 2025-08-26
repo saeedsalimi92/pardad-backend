@@ -10,94 +10,37 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 
-/**
- * @property mixed $featuredImage
- * @property mixed $id
- * @property mixed $status
- * @property mixed $status_translate
- * @property mixed $props
- * @property mixed $published_at
- * @property mixed $created_at
- * @property mixed $updated_at
- * @property mixed $code
- * @OA\Schema(
- *     schema="ApiV1BlogShowResource",
- *     type="object",
- *     @OA\Property(
- *         property="id",
- *         type="integer",
- *         example=1
- *     ),
- *     @OA\Property(
- *         property="image",
- *         type="string",
- *         format="url",
- *         example="https://example.com/storage/images/blog/featured.jpg"
- *     ),
- *     @OA\Property(
- *         property="contents",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/ApiV1BlogContentShowResource")
- *     ),
- *     @OA\Property(
- *         property="status",
- *         type="string",
- *         example="published"
- *     ),
- *     @OA\Property(
- *         property="status_translate",
- *         type="string",
- *         example="Published"
- *     ),
- *     @OA\Property(
- *         property="props",
- *         type="object",
- *         example={"key": "value"}
- *     ),
- *     @OA\Property(
- *         property="related_blogs",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/ApiV1BlogListResource")
- *     ),
- *     @OA\Property(
- *         property="faq",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/ApiV1FaqIndexResource")
- *     ),
- *     @OA\Property(
- *         property="published_at",
- *         type="string",
- *         format="date-time",
- *         example="2023-05-01T12:00:00Z"
- *     ),
- *     @OA\Property(
- *         property="created_at",
- *         type="string",
- *         format="date-time",
- *         example="2023-05-01T12:00:00Z"
- *     ),
- *     @OA\Property(
- *         property="updated_at",
- *         type="string",
- *         format="date-time",
- *         example="2023-05-01T12:00:00Z"
- *     )
- * )
- */
 class BlogShowResource extends JsonResource
 {
-
     public function toArray(Request $request): array
-
     {
+        $contents = BlogContentShowResource::collection($this->contents);
+        $category = CategoryContentShowResource::make($this->category?->contents?->first());
 
-        $canonical = $this->contents?->first()->props['canonical'];
-        $valid_utl= "/blog/{$canonical}";
+        // بررسی وجود canonical
+        $canonical = $this->contents?->first()->props['canonical'] ?? null;
+
+        if ($canonical) {
+            $valid_url = $canonical;
+        } else {
+            // استخراج مقادیر مورد نیاز برای ساخت URL
+            $categorySlug = $this->category?->contents?->first()->slug ?? null;
+            $contentSlug = $this->contents?->first()->slug ?? null;
+            $blogCode = $this->code;
+
+            // اگر هر یک از مقادیر ضروری وجود نداشت، null برگردان
+            if ($categorySlug === null || $contentSlug === null || $blogCode === null) {
+                $valid_url = null;
+            } else {
+                $valid_url = "/blog/{$categorySlug}/{$blogCode}/{$contentSlug}";
+            }
+        }
+
         return [
             "id" => $this->code,
-            "category" => CategoryContentShowResource::make($this->category?->contents?->first()),
+            "category" => $category,
             "image" => url($this?->featuredImage?->path),
-            "contents" => BlogContentShowResource::collection($this->contents),
+            "contents" => $contents,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "related_blogs" => BlogIndexResource::collection($this->relatedBlogs),
@@ -107,7 +50,7 @@ class BlogShowResource extends JsonResource
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             "author" => UserShowResource::make($this->author),
-            "valid_url" => $valid_utl,
+            "valid_url" => $valid_url,
         ];
     }
 }

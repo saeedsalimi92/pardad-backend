@@ -14,36 +14,44 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
         return Blog::class;
     }
 
+
+
     public function index($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
             ->when(isset($data['type']), function ($query) use ($data) {
+                // استفاده از whereHas برای فیلتر بر اساس type دسته‌بندی
                 $query->whereHas('category', function ($q) use ($data) {
                     $q->where('type', $data['type']);
                 });
             })
-            ->with(['contents' => function($query) use ($data) {
-                $query
-                    ->when(isset($data['locale']), function ($query) use ($data) {
-                        $query->where('locale', $data["locale"]);
-                    })
-                    ->when(isset($data['title']), function ($query) use ($data) {
-                        $query->where('title', "LIKE", "%".$data["title"]."%");
-                    });
-            }, 'category' => function($query) use ($data) {
-                $query
-                    ->when(isset($data['category_id']), function ($query) use ($data) {
-                        $query->where('id', $data["category_id"]);
-                    });
-            }])
+            ->with([
+                'contents' => function($query) use ($data) {
+                    $query
+                        ->when(isset($data['locale']), function ($q) use ($data) {
+                            $q->where('locale', $data["locale"]);
+                        })
+                        ->when(isset($data['title']), function ($q) use ($data) {
+                            $q->where('title', "LIKE", "%".$data["title"]."%");
+                        });
+                },
+                'category' => function($query) use ($data) {
+                    $query->with(['contents' => function($q) use ($data) {
+                        $q->when(isset($data['locale']), function ($q) use ($data) {
+                            $q->where('locale', $data["locale"]);
+                        });
+                    }]);
+                },
+                'category.contents' // اضافه کردن محتوای دسته‌بندی
+            ])
             ->when(isset($data['user_id']), function ($query) use ($data) {
                 $query->where('author_id', $data['user_id']);
             })
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
             })
-            ->when(isset($data['title']), function ($query) use ($data) {
-                $query->where('title', "LIKE", "%".$data["title"]."%");
+            ->when(isset($data['category_id']), function ($query) use ($data) {
+                $query->where('category_id', $data["category_id"]);
             })
             ->orderByDesc('created_at')
             ->paginate($perPage);
@@ -113,7 +121,7 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
         return $this->query()
             ->with(['contents' => function($query) use ($data) {
                 $query
-                    ->select('id', 'blog_id' ,'title')
+                    ->select('id', 'blog_id', 'title')
                     ->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
                     })
@@ -126,6 +134,12 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
             })
             ->when(isset($data['category_id']), function ($query) use ($data) {
                 $query->where('category_id', $data["category_id"]);
+            })
+            ->when(isset($data['type']), function ($query) use ($data) {
+                // فیلتر بر اساس type دسته‌بندی
+                $query->whereHas('category', function ($q) use ($data) {
+                    $q->where('type', $data['type']);
+                });
             })
             ->orderByDesc('created_at')
             ->get();

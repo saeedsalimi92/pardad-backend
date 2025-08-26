@@ -48,6 +48,7 @@ class BlogContentShowResource extends JsonResource
             "locale" => $this->locale,
             "content" => $this->content,
             "props" => $this->props,
+            "slug" => $this->slug,
         ];
     }
 }
