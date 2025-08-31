@@ -92,7 +92,6 @@ readonly class ProductService
     public function update(Product $product, ProductUpdateRequest $request): bool
     {
         $data = $request->validated();
-
         DB::beginTransaction();
         try {
             $this->productRepository->update($product->id, [
