@@ -520,7 +520,11 @@ class ProductController extends Controller
      */
     public function update(Product $product, ProductUpdateRequest $request): \Illuminate\Http\JsonResponse
     {
+
+
         $this->productService->update($product, $request);
+
+
 
         $product->refresh();
 

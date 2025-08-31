@@ -89,7 +89,7 @@ readonly class ProductService
         return $this->productRepository->update($id, ["status" => $status]);
     }
 
-    public function update(Product $product, ProductUpdateRequest $request): int
+    public function update(Product $product, ProductUpdateRequest $request): bool
     {
         $data = $request->validated();
 
