@@ -394,7 +394,7 @@ class BlogController extends Controller
      */
     public function show(Blog $blog, BlogShowRequest $request): \Illuminate\Http\JsonResponse
     {
-        $blog->load(["contents", "relatedBlogs"]);
+        $blog->load(["contents", "relatedBlogs" , "relatedProducts"]);
 
         $resource = BlogShowResource::make($blog);
 

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\CategoryContent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property Category $children
@@ -77,6 +78,7 @@ class CategoryShowResource extends JsonResource
             "parent_name" => $this->parent?->contents->first()->title,
             "children" => CategoryListResource::collection($this->children),
             'contents' => CategoryContentIndexResource::collection($this->contents),
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "type" => $this->type,

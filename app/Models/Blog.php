@@ -61,6 +61,15 @@ class Blog extends Model
             'related_blog_id'
         );
     }
+    public function relatedProducts(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            Blog::class,
+            'product_blog_relations',
+            'blog_id',
+            'related_product_id'
+        );
+    }
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');

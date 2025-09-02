@@ -105,7 +105,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         return $this->query()
             ->with(['contents' => function($query) use ($data) {
                 $query
-                    ->select('id', 'blog_id' ,'title')
+                    ->select('id', 'product_id' ,'title')
                     ->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
                     })

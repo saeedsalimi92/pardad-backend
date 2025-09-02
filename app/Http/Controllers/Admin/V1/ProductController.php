@@ -385,7 +385,7 @@ class ProductController extends Controller
      */
     public function show(Product $product, ProductShowRequest $request): \Illuminate\Http\JsonResponse
     {
-        $product->load(["contents"]);
+        $product->load(["contents" , "relatedBlogs"]);
 
         $resource = ProductShowResource::make($product);
 

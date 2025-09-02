@@ -70,6 +70,9 @@ readonly class BlogService
             if (isset($data['related_blog_ids'])) {
                 $blog->relatedBlogs()->sync($data['related_blog_ids']);
             }
+            if (isset($data['related_product_ids'])) {
+                $blog->relatedProducts()->sync($data['related_product_ids']);
+            }
 
             if($request->hasFile('image')) {
                 $blog->storeFeaturedImage($request->file('image'), 'blog');
@@ -127,6 +130,9 @@ readonly class BlogService
 
             if (isset($data['related_blog_ids'])) {
                 $blog->relatedBlogs()->sync($data['related_blog_ids']);
+            }
+            if (isset($data['related_product_ids'])) {
+                $blog->relatedProducts()->sync($data['related_product_ids']);
             }
 
             if($request->hasFile('image')) {

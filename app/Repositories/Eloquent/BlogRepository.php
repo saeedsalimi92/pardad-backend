@@ -78,7 +78,8 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
                 $query
                     ->where('status', BlogStatus::Published->value)
                     ->where("published_at", "<=", now());
-            }, 'faqs' => function ($query) use ($data) {
+            },
+                'faqs' => function ($query) use ($data) {
                 $query->select(["id","faqable_id", "faqable_type", "question", "answer"]);
             }])
             ->first();

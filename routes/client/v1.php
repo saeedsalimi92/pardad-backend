@@ -4,6 +4,7 @@ use App\Http\Controllers\Client\V1\BlogController;
 use App\Http\Controllers\Client\V1\BrandController;
 use App\Http\Controllers\Client\V1\CategoryController;
 use App\Http\Controllers\Client\V1\RedirectController;
+use App\Http\Controllers\Client\V1\ProductController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
@@ -17,6 +18,10 @@ Route::group(['as' => 'client.'], function () {
         Route::get('{code}/comments', [BlogController::class, 'comments']);
         Route::post('{code}/comments', [BlogController::class, 'commentStore']);
         Route::get('/{code}', [BlogController::class, 'show']);
+    });
+    Route::group(['prefix' => 'product'], function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/{code}', [ProductController::class, 'show']);
     });
 
     Route::group(['prefix' => 'categories'], function () {

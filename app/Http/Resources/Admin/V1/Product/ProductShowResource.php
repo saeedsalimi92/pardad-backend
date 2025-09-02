@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Admin\V1\Product;
 
-use App\Http\Resources\Admin\V1\Category\BrandShowResource;
+use App\Http\Resources\Admin\V1\Product\ProductListResource;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -122,9 +124,10 @@ class ProductShowResource extends JsonResource
             "category_id" => $this->category?->id,
             "category_parent_id" => $this->category?->parent_id,
             "category_title" => $this->category?->contents()->first()?->title,
-            "image" => url($this?->featuredImage?->path),
-            "gallery" => url($this?->featuredImage?->path),
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
+            "gallery" => $this->galleryImage ? url(Storage::url($this->galleryImage->path)) : null,
             "contents" => ProductContentShowResource::collection($this->contents),
+            "related_blogs" => ProductListResource::collection($this->relatedBlogs),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "props" => $this->props,

@@ -46,6 +46,16 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function relatedBlogs(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'product_blog_relations',
+            'blog_id',
+            'related_product_id'
+        );
+    }
+
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');

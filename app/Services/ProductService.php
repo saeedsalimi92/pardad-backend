@@ -66,6 +66,12 @@ readonly class ProductService
                 ]);
             }
 
+
+
+            if (isset($data['related_blog_ids'])) {
+                $product->relatedBlogs()->sync($data['related_blog_ids']);
+            }
+
             if($request->hasFile('image')) {
                 $product->storeFeaturedImage($request->file('image'), 'product');
             }
@@ -117,6 +123,11 @@ readonly class ProductService
             }
 
 
+            if (isset($data['related_blog_ids'])) {
+                $product->relatedBlogs()->sync($data['related_blog_ids']);
+            }
+
+
             if($request->hasFile('image')) {
                 $product->storeFeaturedImage($request->file('image'), 'product');
             }
@@ -142,6 +153,11 @@ readonly class ProductService
         }
 
         return $product->delete();
+    }
+
+    public function getProductsPaginated($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->productRepository->getPublishedProductsPaginated($data, $perPage);
     }
 
 }

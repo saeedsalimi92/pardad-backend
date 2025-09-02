@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin\V1\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -77,6 +78,7 @@ class CategoryIndexResource extends JsonResource
             "parent_id" => $this->parent_id,
             "parent_name" => $this->parent?->contents->first()?->title,
             "title" => $this->contents->first()->title ?? "",
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "type" => $this->type,
