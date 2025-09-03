@@ -119,6 +119,7 @@ class BlogShowResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "code" => $this->code,
             "category_id" => $this->category?->id,
             "category_parent_id" => $this->category?->parent_id,
             "category_title" => $this->category?->contents()->first()?->title,

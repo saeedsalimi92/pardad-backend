@@ -122,7 +122,7 @@ class BlogRepository extends BaseRepository implements BlogRepositoryInterface
         return $this->query()
             ->with(['contents' => function($query) use ($data) {
                 $query
-                    ->select('id', 'blog_id', 'title')
+                    ->select('id', 'blog_id' , 'slug', 'title')
                     ->when(isset($data['locale']), function ($query) use ($data) {
                         $query->where('locale', $data["locale"]);
                     })

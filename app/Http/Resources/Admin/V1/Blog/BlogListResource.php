@@ -39,6 +39,7 @@ class BlogListResource extends JsonResource
         return [
             "id" => $this->id,
             "title" => $this->contents?->first()->title ?? "",
+            "slug" => $this->contents?->first()->slug ?? "",
         ];
     }
 }
