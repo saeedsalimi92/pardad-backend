@@ -13,18 +13,11 @@ class ProductListRequest extends FormRequest
 
     public function authorize(): bool
     {
-        if (auth()->user()->can('list', Product::class)) {
-            return true;
-        }
 
         return false;
     }
 
     public function rules(): array
     {
-        return [
-            'status' => ['nullable', 'string', Rule::in(Status::statuses())],
-            'locale' => ['nullable', 'string', Rule::in(Locale::allLocale())],
-        ];
     }
 }

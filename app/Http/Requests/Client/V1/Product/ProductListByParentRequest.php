@@ -18,10 +18,6 @@ class ProductListByParentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['nullable', 'string'],
-            'status' => ['nullable', 'string', Rule::in(Status::statuses())],
-            'parent_id' => ['required', 'integer', 'exists:blogs,id'],
-            'parent_type' => ['required', 'string']
         ];
     }
 }

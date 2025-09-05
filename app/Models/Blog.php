@@ -64,10 +64,10 @@ class Blog extends Model
     public function relatedProducts(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
-            Blog::class,
-            'product_blog_relations',
+            Product::class,
+            'product_blog_relations', // ✅ باید دقیقاً همین باشه
             'blog_id',
-            'related_product_id'
+            'product_id'
         );
     }
     public function author()

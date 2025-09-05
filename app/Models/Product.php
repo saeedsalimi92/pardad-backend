@@ -49,10 +49,10 @@ class Product extends Model
     public function relatedBlogs(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
-            Product::class,
+            Blog::class,
             'product_blog_relations',
-            'blog_id',
-            'related_product_id'
+            'product_id',
+            'blog_id'
         );
     }
 

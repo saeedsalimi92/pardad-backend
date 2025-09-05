@@ -185,8 +185,8 @@ class BlogUpdateRequest extends FormRequest
             'published_at' => ['required', 'date_format:Y-m-d H:i:s'],
             'related_blog_ids' => ['nullable', 'array'],
             'related_blog_ids.*' => ['integer', 'exists:blogs,id'],
-            'product_ids' => ['nullable', 'array'],
-            'product_ids.*' => ['integer', 'exists:product,id'],
+            'related_product_ids' => ['nullable', 'array'],
+            'related_product_ids.*' => ['integer', 'exists:products,id'],
         ];
     }
 
@@ -216,9 +216,9 @@ class BlogUpdateRequest extends FormRequest
             ? explode(",", $this->input('related_blog_ids'))
             : $this->input('related_blog_ids');
 
-        $relatedProductIds = is_string($this->input('product_ids'))
-            ? explode(",", $this->input('product_ids'))
-            : $this->input('product_ids');
+        $relatedProductIds = is_string($this->input('related_product_ids'))
+            ? explode(",", $this->input('related_product_ids'))
+            : $this->input('related_product_ids');
 
         $this->merge([
             'contents' => $contents,

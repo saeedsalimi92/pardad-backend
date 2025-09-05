@@ -174,8 +174,8 @@ class ProductUpdateRequest extends FormRequest
             ],
 
             'status' => ['required', 'string', Rule::in(Status::statuses())],
-            'blog_ids' => ['nullable', 'array'],
-            'blog_ids.*' => ['integer', 'exists:blogs,id'],
+            'related_blog_ids' => ['nullable', 'array'],
+            'related_blog_ids.*' => ['integer', 'exists:blogs,id'],
         ];
     }
 
@@ -202,9 +202,9 @@ class ProductUpdateRequest extends FormRequest
         $props = is_array($props) ? $props : ($props ? json_decode($props, true) : null);
 
 
-        $relatedBlogIds = is_string($this->input('blog_ids'))
-            ? explode(",", $this->input('blog_ids'))
-            : $this->input('blog_ids');
+        $relatedBlogIds = is_string($this->input('related_blog_ids'))
+            ? explode(",", $this->input('related_blog_ids'))
+            : $this->input('related_blog_ids');
 
         $this->merge([
             'contents' => $contents,

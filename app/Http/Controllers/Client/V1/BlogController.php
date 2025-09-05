@@ -97,6 +97,7 @@ class BlogController extends Controller
      * )
      */
     public function index(BlogIndexRequest $request): \Illuminate\Http\JsonResponse
+
     {
         $data = $request->validated();
 

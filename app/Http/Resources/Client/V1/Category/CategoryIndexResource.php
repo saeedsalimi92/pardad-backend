@@ -4,6 +4,7 @@ namespace App\Http\Resources\Client\V1\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property mixed $id
@@ -104,6 +105,8 @@ class CategoryIndexResource extends JsonResource
             "children" => CategoryListResource::collection($this->whenLoaded('children')),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
+
             "type" => $this->type,
             "slug" => $this->when(
                 $this->relationLoaded('contents') && $this->contents->isNotEmpty(),

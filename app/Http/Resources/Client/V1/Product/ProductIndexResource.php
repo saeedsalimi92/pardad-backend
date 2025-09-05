@@ -5,6 +5,7 @@ namespace App\Http\Resources\Client\V1\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -95,6 +96,7 @@ class ProductIndexResource extends JsonResource
             "category_id" => $this->category?->id,
             "category_title" => $this->category?->contents()->first()?->title,
             "category_slug" => $this->category?->contents()->first()?->slug,
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
             "title" => $this->contents?->first()->title ?? "",
             "slug" => $this->contents?->first()->slug ?? "",
             "status" => $this->status,
