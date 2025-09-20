@@ -94,6 +94,7 @@ class BlogIndexResource extends JsonResource
             "id" => $this->id,
             "code" => $this->code,
             "category_id" => $this->category?->id,
+            "category_type" => $this->category?->type,
             "category_title" => $this->category?->contents()->first()?->title,
             "category_slug" => $this->category?->contents()->first()?->slug,
             "title" => $this->contents?->first()->title ?? "",

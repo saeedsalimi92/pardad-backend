@@ -91,23 +91,26 @@ class CategoryIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->code,
+            "id" => $this->id,
+            "code" => $this->code,
             "title" => $this->when(
                 $this->relationLoaded('contents') && $this->contents->isNotEmpty(),
                 fn() => $this->contents->first()->title,
                 ""
             ),
+            "contents" => CategoryContentIndexResource::collection($this->whenLoaded('contents')),
             "parent_id" => $this->parent_id,
             "parent_name" => $this->when(
                 $this->relationLoaded('parent') && $this->parent?->relationLoaded('contents'),
                 fn() => $this->parent?->contents->first()?->title
             ),
-            "children" => CategoryListResource::collection($this->whenLoaded('children')),
+            "children" => CategoryChildrenResource::collection($this->whenLoaded('children')),
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
-
+            "short_desc" =>  $this->contents?->first()->props['short_desc'] ?? "",
             "type" => $this->type,
+            "priority" => $this->priority,
             "slug" => $this->when(
                 $this->relationLoaded('contents') && $this->contents->isNotEmpty(),
                 fn() => $this->contents->first()->slug,

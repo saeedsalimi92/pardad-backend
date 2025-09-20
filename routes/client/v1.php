@@ -22,6 +22,7 @@ Route::group(['as' => 'client.'], function () {
     Route::group(['prefix' => 'product'], function () {
         Route::get('/', [ProductController::class, 'index']);
         Route::get('/{code}', [ProductController::class, 'show']);
+        Route::get('/{code}/blogs', [ProductController::class, 'blogs']);
     });
 
     Route::group(['prefix' => 'categories'], function () {

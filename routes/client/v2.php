@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get("list", [ProductController::class, 'list']);
         Route::post('{product}/update', [ProductController::class, 'update']);
         Route::post('{product}/status/change',[ProductController::class, 'changeStatus']);
+
     });
     Route::apiResource('product', ProductController::class)->except(['update']);
 

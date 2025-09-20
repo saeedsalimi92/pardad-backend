@@ -81,6 +81,7 @@ class CategoryIndexResource extends JsonResource
             "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
             "status" => $this->status,
             "status_translate" => $this->status_translate,
+            "priority" => $this->priority,
             "type" => $this->type,
             "type_translate" => $this->type_translate,
             "created_at" => $this->created_at,

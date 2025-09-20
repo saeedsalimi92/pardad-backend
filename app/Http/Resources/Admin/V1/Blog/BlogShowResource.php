@@ -121,6 +121,7 @@ class BlogShowResource extends JsonResource
             "id" => $this->id,
             "code" => $this->code,
             "category_id" => $this->category?->id,
+            "category_type" => $this->category?->type,
             "category_parent_id" => $this->category?->parent_id,
             "category_title" => $this->category?->contents()->first()?->title,
             "image" => url($this?->featuredImage?->path),

@@ -82,6 +82,7 @@ class CategoryShowResource extends JsonResource
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "type" => $this->type,
+            "priority" => $this->priority,
             "type_translate" => $this->type_translate,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

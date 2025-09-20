@@ -58,6 +58,7 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                     default => null,
                 };
             })
+            ->orderByDesc('priority')
             ->orderByDesc('created_at')
             ->paginate($perPage);
     }
@@ -114,6 +115,7 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
                     $q->where('type', $data['category_type']);
                 });
             })
+            ->orderByDesc('priority')
             ->orderByDesc('created_at')
             ->get();
     }

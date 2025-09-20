@@ -6,6 +6,7 @@ use App\Http\Resources\Admin\V1\Category\CategoryListResource;
 use App\Http\Resources\Admin\V1\Category\BrandShowResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
@@ -94,8 +95,11 @@ class ProductIndexResource extends JsonResource
             "id" => $this->id,
             "code" => $this->code,
             "category_id" => $this->category?->id,
+            "category_type" => $this->category?->type,
             "category_title" => $this->category?->contents()->first()?->title,
             "category_slug" => $this->category?->contents()->first()?->slug,
+            "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
+            "gallery" => $this->galleryImage ? url(Storage::url($this->galleryImage->path)) : null,
             "title" => $this->contents?->first()->title ?? "",
             "slug" => $this->contents?->first()->slug ?? "",
             "status" => $this->status,

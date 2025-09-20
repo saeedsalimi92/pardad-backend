@@ -91,7 +91,8 @@ class CategoryShowResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->code,
+            "id" => $this->id,
+            "code" => $this->code,
             "parent_id" => $this->parent_id,
             "parent_name" => $this->when(
                 $this->relationLoaded('parent') && $this->parent?->relationLoaded('contents'),
@@ -102,7 +103,7 @@ class CategoryShowResource extends JsonResource
             "status" => $this->status,
             "status_translate" => $this->status_translate,
             "image" => $this->featuredImage ? url(Storage::url($this->featuredImage->path)) : null,
-
+            "priority" => $this->priority,
             "type" => $this->type,
             "type_translate" => $this->type_translate,
             "created_at" => $this->created_at,

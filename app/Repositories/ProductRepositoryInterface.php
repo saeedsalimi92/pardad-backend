@@ -13,4 +13,5 @@ interface ProductRepositoryInterface extends BaseRepositoryInterface
     public function getList($data): \Illuminate\Database\Eloquent\Collection;
 
     public function getPublishedProductsPaginated($data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function getBlogsByProductCode($code,$data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 }

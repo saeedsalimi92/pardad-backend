@@ -122,4 +122,37 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->orderByDesc('created_at')
             ->get();
     }
+
+
+    public function getBlogsByProductCode($code, $data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->query()
+            ->where('code', $code)
+            ->where('status', Status::Active->value)
+            ->with(['relatedBlogs' => function ($query) use ($data) {
+                $query
+                    ->when(isset($data['locale']), function ($q) use ($data) {
+                        $q->whereHas('contents', function ($qc) use ($data) {
+                            $qc->where('locale', $data['locale']);
+                        });
+                    })
+                    ->when(isset($data['title']), function ($q) use ($data) {
+                        $q->whereHas('contents', function ($qc) use ($data) {
+                            $qc->where('title', "LIKE", "%".$data["title"]."%");
+                        });
+                    })
+                    ->where('status', \App\Enums\BlogStatus::Published->value)
+                    ->where('published_at', '<=', now())
+                    ->with(['contents' => function ($q) use ($data) {
+                        $q->when(isset($data['locale']), function ($qc) use ($data) {
+                            $qc->where('locale', $data['locale']);
+                        });
+                    }])
+                    ->orderByDesc('created_at');
+            }])
+            ->first()
+            ?->relatedBlogs()
+            ->paginate($perPage);
+    }
+
 }

@@ -15,18 +15,21 @@ class GenerateBlogSitemap extends Command
 
     public function handle()
     {
-
         Log::info('Starting sitemap generation...');
-        $baseUrl =  'https://pardad-group.com';
-        $now = now()->toAtomString(); // زمان فعلی برای <lastmod>
+
+        // از ENV قابل تنظیم؛ درصورت نبود، روی پروڈاکشن ست می‌شود
+        $baseUrl = rtrim(env('FRONTEND_BASE_URL', 'https://pardad-group.com'), '/');
+        $now = now()->toAtomString();
 
         $blogs = Blog::with([
+            // نوع کتگوری را هم ایگرلود می‌کنیم تا بتوانیم مسیر را تعیین کنیم
+            'category:id,type',
             'category.contents' => function ($query) {
                 $query->select('category_id', 'slug');
             },
             'contents' => function ($query) {
                 $query->select('blog_id', 'slug');
-            }
+            },
         ])
             ->where('status', 'published')
             ->whereNotNull('published_at')
@@ -34,12 +37,13 @@ class GenerateBlogSitemap extends Command
             ->get();
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $xml .= '<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+        // استاندارد: http (نه https) برای xmlns
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
 
-        $staticUrls = ['/', '/contact', '/about' , '/category', '/industrial-brands' , '/insight-guides'];
-
-        foreach ($staticUrls as $path) {
-            $url = rtrim($baseUrl, '/') . $path;
+        // صفحات استاتیک
+        $staticPaths = ['/', '/contact', '/about', '/category', '/industrial-brands', '/insight-guides'];
+        foreach ($staticPaths as $path) {
+            $url = $baseUrl . $path; // $baseUrl بدون اسلش پایانی است
             $xml .= "  <url>\n";
             $xml .= "    <loc>{$url}</loc>\n";
             $xml .= "    <lastmod>{$now}</lastmod>\n";
@@ -48,15 +52,19 @@ class GenerateBlogSitemap extends Command
             $xml .= "  </url>\n";
         }
 
-
-
+        // پست‌ها
         foreach ($blogs as $blog) {
-            $categoryTitle = $blog->category?->contents->first()?->slug ?? 'uncategorized';
-            $categorySlug = $categoryTitle;
+            // نوع کتگوری
+            $categoryType = $blog->category?->type;
 
-            $blogSlug = $blog->contents->first()?->slug;
-            $url = "{$baseUrl}/blog/{$categoryTitle}/{$blog->code}/{$blogSlug}";
+            // اگر expert → مسیر بخش = technical-knowledge، در غیر این صورت blog
+            $section = $categoryType === 'expert' ? 'technical-knowledge' : 'blog';
 
+            // اسلاگ کتگوری و پست
+            $categorySlug = $blog->category?->contents->first()?->slug ?? 'uncategorized';
+            $blogSlug     = $blog->contents->first()?->slug ?? Str::slug((string)($blog->title ?? $blog->code));
+
+            $url = "{$baseUrl}/{$section}/{$categorySlug}/{$blog->code}/{$blogSlug}";
             $lastMod = $blog->updated_at?->toAtomString() ?? $now;
 
             $xml .= "  <url>\n";
@@ -69,11 +77,11 @@ class GenerateBlogSitemap extends Command
 
         $xml .= '</urlset>';
 
-        // ذخیره در public/blog-sitemap.xml
         File::put(public_path('sitemap.xml'), $xml);
+
         $message = '✅ sitemap.xml generated successfully! Count: ' . count($blogs);
         Log::info($message);
-
         $this->info($message);
     }
 }
+

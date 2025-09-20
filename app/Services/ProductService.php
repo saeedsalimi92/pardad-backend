@@ -159,5 +159,9 @@ readonly class ProductService
     {
         return $this->productRepository->getPublishedProductsPaginated($data, $perPage);
     }
+    public function getBlogs($code,$data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->productRepository->getBlogsByProductCode($code,$data, $perPage);
+    }
 
 }

@@ -7,8 +7,10 @@ use App\Enums\Status;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Client\V1\Product\ProductIndexRequest;
+use App\Http\Requests\Client\V1\Product\ProductBlogsIndexRequest;
 use App\Http\Requests\Client\V1\Product\ProductShowRequest;
 use App\Http\Resources\Client\V1\Product\ProductIndexResource;
+use App\Http\Resources\Client\V1\Blog\BlogIndexResource;
 use App\Http\Resources\Client\V1\Product\ProductShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Services\ProductService;
@@ -182,6 +184,17 @@ class ProductController extends Controller
         $resource = ProductShowResource::make($product);
 
         return $this->apiResponse(data: $resource);
+    }
+
+
+    public function blogs(ProductBlogsIndexRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $data = $request->validated();
+
+        $products = $this->productService->getBlogs($data);
+        $resource = BlogIndexResource::collection($products);
+
+        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($products));
     }
 
 
