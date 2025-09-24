@@ -15,6 +15,7 @@ use App\Http\Resources\Client\V1\Product\ProductShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Services\ProductService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 
 /**
@@ -187,11 +188,30 @@ class ProductController extends Controller
     }
 
 
-    public function blogs(ProductBlogsIndexRequest $request): \Illuminate\Http\JsonResponse
+    public function blogs(ProductBlogsIndexRequest $request , $code): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
 
-        $products = $this->productService->getBlogs($data);
+        $product = $this->productService->findByLocale($code, $data);
+
+
+
+
+        if(is_null($product)) {
+
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        if($product->status !== Status::Active->value) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        if(Carbon::parse($product->published_at)->isFuture()) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+
+        $products = $this->productService->getBlogs($code,$data);
         $resource = BlogIndexResource::collection($products);
 
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($products));
