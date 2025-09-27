@@ -21,13 +21,21 @@ Route::group(['as' => 'client.'], function () {
     });
     Route::group(['prefix' => 'product'], function () {
         Route::get('/', [ProductController::class, 'index']);
-        Route::get('/{code}', [ProductController::class, 'show']);
+
+        Route::get('/slug/{slug}', [ProductController::class, 'showBySlug']);
         Route::get('/{code}/blogs', [ProductController::class, 'blogs']);
+        // 2. بعدش مسیر code/slug
+        Route::get('/{code}/{slug?}', [ProductController::class, 'show'])
+            ->where('code', '[A-Za-z0-9_-]+');
+
     });
 
     Route::group(['prefix' => 'categories'], function () {
        Route::get("/", [CategoryController::class, 'index']);
-       Route::get("{code}/{slug?}", [CategoryController::class, 'show']);
+        Route::get('/slug/{slug}', [CategoryController::class, 'showBySlug']);
+        // 2. بعدش مسیر code/slug
+        Route::get('/{code}/{slug?}', [CategoryController::class, 'show'])
+            ->where('code', '[A-Za-z0-9_-]+');
     });
     Route::group(['prefix' => 'brands'], function () {
         Route::get("/", [BrandController::class, 'index']);

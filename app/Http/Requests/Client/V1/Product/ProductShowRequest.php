@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Client\V1\Product;
 
+use App\Enums\Locale;
 use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProductShowRequest extends FormRequest
 {
@@ -25,7 +27,7 @@ class ProductShowRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "locale" => ['required', 'string', Rule::in(Locale::allLocale())],
         ];
     }
 }

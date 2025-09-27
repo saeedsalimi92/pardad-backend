@@ -9,6 +9,7 @@ use App\Http\Requests\Client\V1\Brand\BrandIndexRequest;
 use App\Http\Requests\Client\V1\Brand\BrandShowRequest;
 use App\Http\Resources\Client\V1\Brand\BrandShowResource;
 use App\Http\Resources\PaginationResource;
+use Illuminate\Support\Facades\Cache;
 
 use App\Services\BrandService;
 
@@ -22,11 +23,16 @@ class BrandController extends Controller
     {
         $data = $request->validated();
         $data["status"] = Status::Active->value;
-        $brands = $this->brandService->index($data);
+        // ساخت کلید کش
+        $cacheKey = 'brands_index_' . md5(json_encode($data));
+
+        $brands = Cache::remember($cacheKey, now()->addHours(24), function () use ($data) {
+            return $this->brandService->index($data);
+        });
 
         $resource = BrandShowResource::collection($brands);
 
-        return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($brands));
+        return $this->apiResponse(data: $resource);
     }
 
     public function show($id, BrandShowRequest $request)

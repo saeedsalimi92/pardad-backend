@@ -4,7 +4,9 @@ namespace App\Http\Requests\Client\V1\Product;
 
 
 
+use App\Enums\Locale;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 
 class ProductIndexRequest extends FormRequest
@@ -19,7 +21,8 @@ class ProductIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            "locale" => ['required', 'string', Rule::in(Locale::allLocale())],
+            "category_id" => ["bail", "nullable"],
         ];
     }
 }

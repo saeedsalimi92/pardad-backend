@@ -212,4 +212,15 @@ class CategoryController extends Controller
 
         return $this->apiResponse(data: $resource);
     }
+    public function showBySlug(string $slug, CategoryShowRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $locale = $request->get('locale', 'fa');
+        $category = $this->categoryService->findBySlug($slug, $locale);
+
+        if (!$category) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        return $this->apiResponse(data: CategoryShowResource::make($category));
+    }
 }

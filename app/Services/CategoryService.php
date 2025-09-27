@@ -130,4 +130,8 @@ readonly class CategoryService
     {
         return $this->categoryRepository->findByLocale($code, $data);
     }
+    public function findBySlug($slug, $locale)
+    {
+        return $this->categoryRepository->findBySlug($slug, $locale);
+    }
 }

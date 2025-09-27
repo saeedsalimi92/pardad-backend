@@ -14,6 +14,7 @@ use App\Http\Resources\Admin\V1\Brand\BrandShowResource;
 use App\Http\Resources\PaginationResource;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Services\BrandService;
 
 class BrandController extends Controller
@@ -39,7 +40,7 @@ class BrandController extends Controller
         if(!$brand) {
             return $this->apiResponse(success: false, message: "response.brand.error", httpStatusCode: 500);
         }
-
+         $this->clearBrandCache();
         $brand->update(['priority' => $brand->id]);
         $resource = BrandShowResource::make($brand);
         return $this->apiResponse(message: __("response.brand.created"), data: $resource);
@@ -66,7 +67,7 @@ class BrandController extends Controller
         $this->brandService->update($brand, $request);
 
         $brand->refresh();
-
+         $this->clearBrandCache();
         $resource = BrandShowResource::make($brand);
 
         return $this->apiResponse(data: $resource);
@@ -78,7 +79,7 @@ class BrandController extends Controller
         if(is_null($brand)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
-
+         $this->clearBrandCache();
         $this->brandService->destroy($brand);
 
         return $this->apiResponse(message: __("response.brand.destroyed"));
@@ -90,7 +91,7 @@ class BrandController extends Controller
         if(is_null($brand)) {
             return $this->apiResponse(httpStatusCode: 404);
         }
-
+         $this->clearBrandCache();
         $this->brandService->changeStatus($brand->id, $request->status);
 
         return $this->apiResponse(message: __("response.brand.change_status", ['status' => $brand->status_translate]));
@@ -103,10 +104,19 @@ class BrandController extends Controller
         if (!is_array($orderedIds) || empty($orderedIds)) {
             return $this->apiResponse(httpStatusCode: 422, message: __('Invalid input.'));
         }
-
+         $this->clearBrandCache();
         $this->brandService->changePriority($orderedIds);
 
         return $this->apiResponse(message: __("response.brand.change_priority"));
+    }
+    private function clearBrandCache(): void
+    {
+        // چون tag نداری، باید کل کش برندها رو با prefix حذف کنی
+        foreach (Cache::getStore()->getIterator() as $key => $value) {
+            if (str_starts_with($key, 'brands_index_')) {
+                Cache::forget($key);
+            }
+        }
     }
 
 

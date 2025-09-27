@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Client\V1;
 use App\Enums\Status;
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\Client\V1\Category\CategoryShowRequest;
 use App\Http\Requests\Client\V1\Product\ProductIndexRequest;
 use App\Http\Requests\Client\V1\Product\ProductBlogsIndexRequest;
 use App\Http\Requests\Client\V1\Product\ProductShowRequest;
+use App\Http\Resources\Client\V1\Category\CategoryShowResource;
 use App\Http\Resources\Client\V1\Product\ProductIndexResource;
 use App\Http\Resources\Client\V1\Blog\BlogIndexResource;
 use App\Http\Resources\Client\V1\Product\ProductShowResource;
@@ -217,6 +219,17 @@ class ProductController extends Controller
         return $this->apiResponse(data: $resource, paginationData: PaginationResource::make($products));
     }
 
+    public function showBySlug(string $slug, ProductShowRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $locale = $request->get('locale', 'fa');
+        $category = $this->productService->findBySlug($slug, $locale);
+
+        if (!$category) {
+            return $this->apiResponse(httpStatusCode: 404);
+        }
+
+        return $this->apiResponse(data: ProductShowResource::make($category));
+    }
 
 
 }

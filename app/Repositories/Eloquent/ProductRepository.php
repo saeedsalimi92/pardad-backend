@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Models\Product;
 use App\Repositories\BaseRepository;
 use App\Repositories\ProductRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductRepository extends BaseRepository implements ProductRepositoryInterface
 {
@@ -22,28 +23,31 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                     $q->where('type', $data['type']);
                 });
             })
-            ->with(['contents' => function($query) use ($data) {
-                $query
-                    ->when(isset($data['locale']), function ($query) use ($data) {
-                        $query->where('locale', $data["locale"]);
-                    })
-                    ->when(isset($data['title']), function ($query) use ($data) {
-                        $query->where('title', "LIKE", "%".$data["title"]."%");
+            ->when(isset($data['category_id']), function ($query) use ($data) {
+                // فیلتر بر اساس category_id روی خود محصولات
+                $query->where('category_id', $data["category_id"]);
+            })
+            ->with([
+                'contents' => function($query) use ($data) {
+                    $query
+                        ->when(isset($data['locale']), function ($q) use ($data) {
+                            $q->where('locale', $data["locale"]);
+                        })
+                        ->when(isset($data['title']), function ($q) use ($data) {
+                            $q->where('title', "LIKE", "%".$data["title"]."%");
+                        });
+                },
+                'category.contents' => function($q) use ($data) {
+                    $q->when(isset($data['locale']), function ($q) use ($data) {
+                        $q->where('locale', $data["locale"]);
                     });
-            }, 'category' => function($query) use ($data) {
-                $query
-                    ->when(isset($data['category_id']), function ($query) use ($data) {
-                        $query->where('id', $data["category_id"]);
-                    });
-            }])
+                }
+            ])
             ->when(isset($data['user_id']), function ($query) use ($data) {
                 $query->where('author_id', $data['user_id']);
             })
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status', $data["status"]);
-            })
-            ->when(isset($data['title']), function ($query) use ($data) {
-                $query->where('title', "LIKE", "%".$data["title"]."%");
             })
             ->orderByDesc('created_at')
             ->paginate($perPage);
@@ -56,6 +60,23 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->with($with)
             ->first();
     }
+
+
+    public function findBySlug(string $slug, string $locale = 'fa')
+    {
+        return $this->query()
+            ->whereHas('contents', function ($query) use ($slug, $locale) {
+                $query->where('slug', $slug)
+                    ->where('locale', $locale);
+            })
+            ->with([
+                'contents' => fn($q) => $q->where('locale', $locale),
+                'category',
+                'category.contents' => fn($q) => $q->where('locale', $locale),
+            ])
+            ->first();
+    }
+
 
     public function findByLocale($code, $data)
     {
@@ -126,32 +147,28 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     public function getBlogsByProductCode($code, $data, $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->query()
+        $product = $this->query()
             ->where('code', $code)
             ->where('status', Status::Active->value)
-            ->with(['relatedBlogs' => function ($query) use ($data) {
-                $query
-                    ->when(isset($data['locale']), function ($q) use ($data) {
-                        $q->whereHas('contents', function ($qc) use ($data) {
-                            $qc->where('locale', $data['locale']);
-                        });
-                    })
-                    ->when(isset($data['title']), function ($q) use ($data) {
-                        $q->whereHas('contents', function ($qc) use ($data) {
-                            $qc->where('title', "LIKE", "%".$data["title"]."%");
-                        });
-                    })
-                    ->where('status', \App\Enums\BlogStatus::Published->value)
-                    ->where('published_at', '<=', now())
-                    ->with(['contents' => function ($q) use ($data) {
-                        $q->when(isset($data['locale']), function ($qc) use ($data) {
-                            $qc->where('locale', $data['locale']);
-                        });
-                    }])
-                    ->orderByDesc('created_at');
+            ->first();
+
+        if (!$product) {
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
+
+        return $product->relatedBlogs()
+            ->where('status', \App\Enums\BlogStatus::Published->value)
+            ->where('published_at', '<=', now())
+            ->when(isset($data['locale']), function ($q) use ($data) {
+                $q->whereHas('contents', fn($qc) => $qc->where('locale', $data['locale']));
+            })
+            ->when(isset($data['title']), function ($q) use ($data) {
+                $q->whereHas('contents', fn($qc) => $qc->where('title', "LIKE", "%".$data["title"]."%"));
+            })
+            ->with(['contents' => function ($q) use ($data) {
+                $q->when(isset($data['locale']), fn($qc) => $qc->where('locale', $data['locale']));
             }])
-            ->first()
-            ?->relatedBlogs()
+            ->orderByDesc('created_at')
             ->paginate($perPage);
     }
 

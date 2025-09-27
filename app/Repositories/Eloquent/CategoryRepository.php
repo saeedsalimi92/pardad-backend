@@ -136,4 +136,19 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
             }])
             ->first();
     }
+    public function findBySlug(string $slug, string $locale = 'fa')
+    {
+        return $this->query()
+            ->whereHas('contents', function ($query) use ($slug, $locale) {
+                $query->where('slug', $slug)
+                    ->where('locale', $locale);
+            })
+            ->with([
+                'contents' => fn($q) => $q->where('locale', $locale),
+                'children',
+                'children.contents' => fn($q) => $q->where('locale', $locale)
+            ])
+            ->first();
+    }
+
 }

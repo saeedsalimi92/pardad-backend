@@ -35,6 +35,10 @@ readonly class ProductService
     {
         return $this->productRepository->findByLocale($code, $data);
     }
+    public function findBySlug($code, $data)
+    {
+        return $this->productRepository->findBySlug($code, $data);
+    }
 
     public function getList($data): \Illuminate\Database\Eloquent\Collection
     {
