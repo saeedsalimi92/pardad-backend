@@ -2,65 +2,77 @@
 
 namespace App\Policies;
 
-use App\Models\Category;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CategoryPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Create a new policy instance.
      */
-    public function viewAny(User $user): bool
+    public function __construct()
     {
-        //
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Category $category): bool
+    public function index(User $user): bool
     {
-        //
+        if ($user->can('admin.category.index')) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function show(User $user): bool
     {
-        //
+        if ($user->can('admin.category.show')) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Category $category): bool
+    public function store(User $user): bool
     {
-        //
+        if ($user->can('admin.category.store')) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Category $category): bool
+    public function update(User $user): bool
     {
-        //
+        if ($user->can('admin.category.update')) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Category $category): bool
+    public function destroy(User $user): bool
     {
-        //
+        if ($user->can('admin.category.destroy')) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Category $category): bool
+    public function change_status(User $user): bool
     {
-        //
+        if ($user->can('admin.category.change_status')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function list(User $user): bool
+    {
+        if ($user->can('admin.category.list')) {
+            return true;
+        }
+
+        return false;
     }
 }
