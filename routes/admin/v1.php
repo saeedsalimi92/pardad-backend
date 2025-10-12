@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\V1\ActivityLogController;
 use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;
@@ -118,6 +119,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('/list', [CategoryController::class, 'allList']);
+
+    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
 });
 Route::middleware('auth:sanctum')->get('/user/permissions', function (Request $request) {
     return [
