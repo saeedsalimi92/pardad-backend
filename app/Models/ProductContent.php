@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property mixed $slug
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProductContent extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'id',
@@ -49,4 +51,10 @@ class ProductContent extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+      public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
+    }
+
 }

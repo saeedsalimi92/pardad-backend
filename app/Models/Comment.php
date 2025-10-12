@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property int $id
@@ -12,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Comment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'parent_id',
@@ -30,14 +33,14 @@ class Comment extends Model
     public function statusTranslate(): Attribute
     {
         return Attribute::make(
-            get: fn () => __("attributes.comment.status.{$this->status}"),
+            get: fn() => __("attributes.comment.status.{$this->status}"),
         );
     }
 
     public function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->first_name. " ". $this->last_name,
+            get: fn() => $this->first_name . " " . $this->last_name,
         );
     }
 
@@ -64,5 +67,10 @@ class Comment extends Model
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }

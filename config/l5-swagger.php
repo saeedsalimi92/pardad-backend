@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'default' => 'client',
+    'default' => 'admin',
     'documentations' => [
 
 

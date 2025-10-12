@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $status
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  */
 class Product extends Model
 {
-    use HasFactory, HasImage, HasComment, SoftDeletes;
+    use HasFactory, HasImage, HasComment, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'id',
@@ -32,7 +34,7 @@ class Product extends Model
     public function statusTranslate(): Attribute
     {
         return Attribute::make(
-            get: fn () => __("attributes.product.status.{$this->status}"),
+            get: fn() => __("attributes.product.status.{$this->status}"),
         );
     }
 
@@ -59,5 +61,10 @@ class Product extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults();
     }
 }
