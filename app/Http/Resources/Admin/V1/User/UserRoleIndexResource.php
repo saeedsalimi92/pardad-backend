@@ -7,9 +7,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *     schema="UserIndexResource",
+ *     schema="UserRoleIndexResource",
  *     type="object",
- *     title="User Index Resource",
+ *     title="User Role Index Resource",
  *     required={"id", "name", "email", "status", "mobile"},
  *     properties={
  *         @OA\Property(property="id", type="integer", example=1),

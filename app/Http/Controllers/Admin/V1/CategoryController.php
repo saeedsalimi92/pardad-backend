@@ -113,8 +113,7 @@ class CategoryController extends Controller
      *             ),
      *         @OA\Property(
      *                  property="pagination_info",
-     *                  type="array",
-     *                  @OA\Items(ref="#/components/schemas/PaginationResource")
+     *                  ref="#/components/schemas/PaginationResource"
      *              ),
      *         )
      *     ),
@@ -192,7 +191,7 @@ class CategoryController extends Controller
      *             @OA\Property(property="message", type="string", example="Category created successfully"),
      *             @OA\Property(
      *                 property="data",
-     *                 ref="#/components/schemas/CategoryShowResource"
+     *                 ref="#/components/schemas/AdminV1CategoryShowResource"
      *             )
      *         )
      *     ),
@@ -361,7 +360,7 @@ class CategoryController extends Controller
      *             @OA\Property(property="message", type="string", example="Category updated successfully"),
      *             @OA\Property(
      *                 property="data",
-     *                 ref="#/components/schemas/CategoryShowResource"
+     *                 ref="#/components/schemas/AdminV1CategoryShowResource"
      *             )
      *         )
      *     ),

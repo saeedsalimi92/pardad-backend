@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
- *     schema="AdminV1BrandIndexResource",
- *     title="Brand Resource",
- *     description="Brand resource representation",
+ *     schema="AdminV1RedirectIndexResource",
+ *     title="Redirect Resource",
+ *     description="Redirect resource representation",
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -81,3 +81,5 @@ class RedirectIndexResource extends JsonResource
         ];
     }
 }
+
+
