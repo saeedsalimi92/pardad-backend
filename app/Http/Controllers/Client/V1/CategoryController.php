@@ -100,8 +100,7 @@ class CategoryController extends Controller
      *             ),
      *         @OA\Property(
      *                  property="pagination_info",
-     *                  type="array",
-     *                  @OA\Items(ref="#/components/schemas/PaginationResource")
+     *                  ref="#/components/schemas/PaginationResource"
      *              ),
      *         )
      *     ),

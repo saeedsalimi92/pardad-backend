@@ -48,7 +48,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="contents",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/AdminV1BlogContentIndexResource")
+ *         @OA\Items(ref="#/components/schemas/ApiV1BlogContentIndexResource")
  *     )
  * )
  */

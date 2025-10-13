@@ -7,6 +7,14 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *   schema="UserChangeStatusRequest",
+ *   type="object",
+ *   required={"status"},
+ *   @OA\Property(property="status", type="string", example="active")
+ * )
+ */
 class UserChangeStatusRequest extends FormRequest
 {
     /**

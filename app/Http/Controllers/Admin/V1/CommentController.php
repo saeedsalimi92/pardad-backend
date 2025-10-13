@@ -82,8 +82,7 @@ class CommentController extends Controller
      *             ),
      *         @OA\Property(
      *                  property="pagination_info",
-     *                  type="array",
-     *                  @OA\Items(ref="#/components/schemas/PaginationResource")
+     *                  ref="#/components/schemas/PaginationResource"
      *              ),
      *         )
      *     ),
@@ -166,8 +165,7 @@ class CommentController extends Controller
      *             ),
      *         @OA\Property(
      *                  property="pagination_info",
-     *                  type="array",
-     *                  @OA\Items(ref="#/components/schemas/PaginationResource")
+     *                  ref="#/components/schemas/PaginationResource"
      *              ),
      *         )
      *     ),
@@ -394,5 +392,4 @@ class CommentController extends Controller
         return $this->apiResponse(message: __("response.comment.change_status", ['status' => $comment->status_translate]));
     }
 }
-
 

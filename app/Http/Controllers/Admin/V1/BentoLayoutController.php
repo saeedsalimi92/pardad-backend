@@ -72,8 +72,7 @@ class BentoLayoutController extends Controller
      *             ),
      *             @OA\Property(
      *                 property="pagination_info",
-     *                 type="array",
-     *                 @OA\Items(type="object")
+     *                 ref="#/components/schemas/PaginationResource"
      *             )
      *         )
      *     )
@@ -148,8 +147,7 @@ class BentoLayoutController extends Controller
      *              ),
      *              @OA\Property(
      *                  property="pagination_info",
-     *                  type="array",
-     *                  @OA\Items(type="object")
+     *                  ref="#/components/schemas/PaginationResource"
      *              )
      *          )
      *      ),
@@ -228,8 +226,7 @@ class BentoLayoutController extends Controller
      *             ),
      *             @OA\Property(
      *                 property="pagination_info",
-     *                 type="array",
-     *                 @OA\Items(type="object")
+     *                 ref="#/components/schemas/PaginationResource"
      *             )
      *         )
      *     ),
