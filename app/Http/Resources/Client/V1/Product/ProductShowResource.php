@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Schema(
- *     schema="AdminV1ProductShowResource",
+ *     schema="ApiV1ProductShowResource",
  *     title="Admin Product Show Resource",
  *     description="Detailed product resource for admin panel with all related data",
  *     type="object",
@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Storage;
  *     @OA\Property(
  *         property="contents",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/AdminV1ProductContentShowResource")
+ *         @OA\Items(ref="#/components/schemas/ApiV1ProductContentShowResource")
  *     ),
  *     @OA\Property(
  *         property="status",

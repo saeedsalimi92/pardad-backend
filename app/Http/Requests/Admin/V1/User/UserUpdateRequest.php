@@ -8,6 +8,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *   schema="UserUpdateRequest",
+ *   type="object",
+ *   required={"name","email","mobile","status"},
+ *   @OA\Property(property="name", type="string", example="Seo Manager"),
+ *   @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+ *   @OA\Property(property="mobile", type="string", example="09123456789"),
+ *   @OA\Property(property="status", type="string", example="active")
+ * )
+ */
 class UserUpdateRequest extends FormRequest
 {
 

@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *     schema="AdminV1ProductContentShowResource",
+ *     schema="ApiV1ProductContentShowResource",
  *     title="Product Content Show Resource",
  *     description="Detailed product content resource for admin panel",
  *     type="object",

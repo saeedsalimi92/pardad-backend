@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
  * @property CategoryContent $contents
  * @property mixed $code
  * @OA\Schema(
- *     schema="ApiV1CategoryListResource",
+ *     schema="ApiV1CategoryChildrenResource",
  *     title="Category Resource",
  *     description="Category resource representation",
  *     @OA\Property(
@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
  *     @OA\Property(
  *         property="contents",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/CategoryContentIndexResource")
+ *         @OA\Items(ref="#/components/schemas/ApiV1CategoryContentIndexResource")
  *     ),
  * )
  */
