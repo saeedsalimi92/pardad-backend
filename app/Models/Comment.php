@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property int $id
@@ -15,7 +14,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class Comment extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'parent_id',
@@ -69,8 +68,5 @@ class Comment extends Model
         return $this->belongsTo(Comment::class, 'parent_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+     
 }

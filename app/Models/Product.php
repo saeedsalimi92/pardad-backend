@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use App\Traits\HasComment;
 use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+
 
 /**
  * @property string $status
@@ -19,7 +19,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class Product extends Model
 {
-    use HasFactory, HasImage, HasComment, SoftDeletes, LogsActivity;
+    use HasFactory, HasImage, HasComment, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'id',
@@ -63,8 +63,5 @@ class Product extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+     
 }

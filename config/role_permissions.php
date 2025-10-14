@@ -101,6 +101,9 @@ return [
             'admin.user.destroy',
             'admin.user.change_status',
             'admin.user.change_password',
+
+            //activity-log
+            'admin.activity_log.index',
         ],
     ],
 

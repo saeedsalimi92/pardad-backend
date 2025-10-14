@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\ActivityLog;
 
 class Role extends \Spatie\Permission\Models\Role
 {
-    use LogsActivity;
+    use ActivityLog;
+    
     protected $fillable = [
         'name',
         'guard_name',
@@ -15,9 +15,6 @@ class Role extends \Spatie\Permission\Models\Role
     ];
 
 
-      public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+       
 
 }

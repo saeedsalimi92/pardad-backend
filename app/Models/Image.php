@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+
 
 class Image extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, ActivityLog;
 
     const TYPE_FEATURED = 'featured';
     const TYPE_GALLERY = 'gallery';
@@ -34,9 +34,6 @@ class Image extends Model
         return $this->morphTo();
     }
 
-      public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+       
 
 }

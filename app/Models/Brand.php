@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Brand extends Model
 {
     //
-    use HasFactory, SoftDeletes, HasImage, LogsActivity;
+    use HasFactory, SoftDeletes, HasImage, ActivityLog;
 
     protected $fillable = [
         'name',
@@ -29,8 +28,5 @@ class Brand extends Model
         );
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+     
 }

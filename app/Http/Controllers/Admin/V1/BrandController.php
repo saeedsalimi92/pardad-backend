@@ -112,11 +112,11 @@ class BrandController extends Controller
     private function clearBrandCache(): void
     {
         // چون tag نداری، باید کل کش برندها رو با prefix حذف کنی
-        foreach (Cache::getStore()->getIterator() as $key => $value) {
-            if (str_starts_with($key, 'brands_index_')) {
-                Cache::forget($key);
-            }
-        }
+        // foreach (Cache::getStore()->getIterator() as $key => $value) {
+        //     if (str_starts_with($key, 'brands_index_')) {
+        //         Cache::forget($key);
+        //     }
+        // }
     }
 
 

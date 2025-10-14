@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\V1\ActivityLog;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -78,6 +79,36 @@ class ActivityLogIndexResource extends JsonResource
      */
     public function toArray(Request $request)
     {
-        return $this;
+        $model = explode("\\", $this->subject_type);
+
+        $changes = $this->changes;
+
+        if ($changes->has(['attributes', 'old'])) {
+            $attributes = collect($changes['attributes']);
+            $old = collect($changes['old']);
+
+            $attributes = $attributes->reject(function ($value, $key) use ($old) {
+                return $old[$key] === $value;
+            });
+
+            $old = $old->only($attributes->keys());
+
+            $changes->forget(['attributes', 'old']);
+            $changes['from'] = $old->toArray();
+            $changes['to'] = $attributes->toArray();
+        } else if ($changes->has('old')) {
+            $changes = $changes['old'];
+        } else if ($changes->has('attributes')) {
+            $changes = $changes['attributes'];
+        }
+
+        return [
+            'description' => $this->description,
+            'model_name' => end($model),
+            'model_id' => $this->subject_id,
+            'changes' => json_encode($changes, JSON_PRETTY_PRINT),
+            'user' => $this->causer->name,
+            'created_at' => $this->created_at,
+        ];
     }
 }

@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\HasSlug;
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class CategoryContent extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'id',
@@ -37,10 +35,7 @@ class CategoryContent extends Model
         return $this->belongsTo(Category::class);
     }
 
-      public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+       
 
 }
 

@@ -119,8 +119,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('/list', [CategoryController::class, 'allList']);
-
-    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
 });
 Route::middleware('auth:sanctum')->get('/user/permissions', function (Request $request) {
     return [

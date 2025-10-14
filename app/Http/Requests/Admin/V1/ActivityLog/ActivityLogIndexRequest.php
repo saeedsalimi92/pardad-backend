@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Admin\V1\ActivityLog;
 
+use App\Models\ActivityLog;
 use Illuminate\Foundation\Http\FormRequest;
-use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogIndexRequest extends FormRequest
 {
@@ -12,7 +12,7 @@ class ActivityLogIndexRequest extends FormRequest
      */
      public function authorize(): bool
     {
-        if (auth()->user()->can('index', Activity::class)) {
+        if (auth()->user()->can('index', ActivityLog::class)) {
             return true;
         }
 

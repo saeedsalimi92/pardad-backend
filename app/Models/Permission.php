@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+use App\Traits\ActivityLog;
 
 class Permission extends \Spatie\Permission\Models\Permission
 {
-    use LogsActivity;
+    use ActivityLog;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults();
-    }
+     
 }
