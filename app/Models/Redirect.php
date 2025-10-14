@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Redirect extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'source_url', 'destination_url', 'status_code', 'status'
@@ -24,4 +25,7 @@ class Redirect extends Model
             get: fn () => __("attributes.redirect.status.{$this->status}"),
         );
     }
+
+       
+
 }

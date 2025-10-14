@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\V1\ActivityLogController;
 use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;

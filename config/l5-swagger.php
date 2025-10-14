@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'default' => 'client',
+    'default' => 'admin',
     'documentations' => [
 
 
@@ -25,7 +25,7 @@ return [
                     base_path('app/Http/Controllers/Admin/V1'),
                     base_path('app/Http/Resources/Admin/V1'),
                     base_path('app/Http/Requests/Admin/V1'),
-                    base_path('app/Http/Resources/'),
+                    // shared schemas are defined in app/Http/Swagger/Admin.php
                 ],
             ],
         ],
@@ -50,7 +50,7 @@ return [
                     base_path('app/Http/Controllers/Client/V1'),
                     base_path('app/Http/Resources/Client/V1'),
                     base_path('app/Http/Requests/Client/V1'),
-                    base_path('app/Http/Resources/'),
+                    // shared schemas are defined in app/Http/Swagger/Client.php
                 ],
             ],
         ],

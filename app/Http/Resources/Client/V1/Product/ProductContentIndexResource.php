@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Admin\V1\Product;
+namespace App\Http\Resources\Client\V1\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *     schema="AdminV1ProductContentIndexResource",
+ *     schema="ApiV1ProductContentIndexResource",
  *     title="Product Content Index Resource",
  *     description="Basic product content information",
  *     type="object",

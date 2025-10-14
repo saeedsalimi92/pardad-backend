@@ -7,6 +7,18 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *   schema="UserStoreRequest",
+ *   type="object",
+ *   required={"name","email","password","mobile","status"},
+ *   @OA\Property(property="name", type="string", example="Seo Manager"),
+ *   @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+ *   @OA\Property(property="password", type="string", example="Secret123!"),
+ *   @OA\Property(property="mobile", type="string", example="09123456789"),
+ *   @OA\Property(property="status", type="string", example="active")
+ * )
+ */
 class UserStoreRequest extends FormRequest
 {
 

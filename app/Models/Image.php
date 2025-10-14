@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Image extends Model
 {
-    use HasFactory;
+    use HasFactory, ActivityLog;
 
     const TYPE_FEATURED = 'featured';
     const TYPE_GALLERY = 'gallery';
@@ -31,4 +33,7 @@ class Image extends Model
     {
         return $this->morphTo();
     }
+
+       
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use App\Traits\HasComment;
 use App\Traits\HasFaq;
 use App\Traits\HasImage;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  */
 class Blog extends Model
 {
-    use HasFactory, HasImage, HasFaq, HasComment, SoftDeletes;
+    use HasFactory, HasImage, HasFaq, HasComment, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'id',
@@ -38,7 +39,7 @@ class Blog extends Model
     public function statusTranslate(): Attribute
     {
         return Attribute::make(
-            get: fn () => __("attributes.blog.status.{$this->status}"),
+            get: fn() => __("attributes.blog.status.{$this->status}"),
         );
     }
 
@@ -74,4 +75,6 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+     
 }

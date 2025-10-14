@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -9,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -24,7 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'name',
@@ -62,7 +65,9 @@ class User extends Authenticatable
     public function statusTranslate(): Attribute
     {
         return Attribute::make(
-            get: fn () => __("attributes.user.status.{$this->status}"),
+            get: fn() => __("attributes.user.status.{$this->status}"),
         );
     }
+
+     
 }

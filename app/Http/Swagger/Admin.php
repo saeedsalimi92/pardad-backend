@@ -12,6 +12,15 @@ namespace App\Http\Swagger;
  *      url=L5_SWAGGER_CONST_HOST,
  * )
  *
+ * @OA\Schema(
+ *   schema="PaginationResource",
+ *   type="object",
+ *   @OA\Property(property="current_page", type="integer", example=1),
+ *   @OA\Property(property="per_page", type="integer", example=10),
+ *   @OA\Property(property="total", type="integer", example=1000),
+ *   @OA\Property(property="last_page", type="integer", example=100)
+ * )
+ *
  * @OA\SecurityScheme(
  *     type="http",
  *     scheme="bearer",

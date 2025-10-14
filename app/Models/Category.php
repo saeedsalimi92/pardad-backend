@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory, HasImage, SoftDeletes;
+    use HasFactory, HasImage, SoftDeletes, ActivityLog;
 
     protected $fillable = [
         'id',
@@ -25,14 +26,14 @@ class Category extends Model
     public function statusTranslate(): Attribute
     {
         return Attribute::make(
-            get: fn () => __("attributes.category.status.{$this->status}"),
+            get: fn() => __("attributes.category.status.{$this->status}"),
         );
     }
 
     public function typeTranslate(): Attribute
     {
         return Attribute::make(
-            get: fn () => __("attributes.category.type.{$this->type}"),
+            get: fn() => __("attributes.category.type.{$this->type}"),
         );
     }
 
@@ -51,4 +52,5 @@ class Category extends Model
         return $this->hasMany(Category::class, "parent_id", "id");
     }
 
+     
 }

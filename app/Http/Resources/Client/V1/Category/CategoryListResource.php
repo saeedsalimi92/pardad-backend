@@ -21,7 +21,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="contents",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/CategoryContentIndexResource")
+ *         @OA\Items(ref="#/components/schemas/ApiV1CategoryContentIndexResource")
  *     ),
  * )
  */

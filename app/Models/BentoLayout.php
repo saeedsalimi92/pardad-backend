@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BentoLayout extends Model
 {
-    use HasFactory, SoftDeletes;
+  use HasFactory, SoftDeletes, ActivityLog;
 
-    protected $table = 'bento_layouts';
+  protected $table = 'bento_layouts';
 
-    protected $fillable = [
-        "param"
-    ];
+  protected $fillable = [
+    "param"
+  ];
 
-    protected $casts = [
-      "param" => 'array'
-    ];
+  protected $casts = [
+    "param" => 'array'
+  ];
+
 }

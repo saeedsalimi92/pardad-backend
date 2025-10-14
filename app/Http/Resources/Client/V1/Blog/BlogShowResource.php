@@ -11,6 +11,40 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str; // ⬅️ اضافه شد
 
+/**
+ * @OA\Schema(
+ *     schema="ApiV1BlogShowResource",
+ *     title="Blog Show Resource",
+ *     description="Detailed blog resource for client",
+ *     type="object",
+ *     @OA\Property(property="id", type="string", example="B123"),
+ *     @OA\Property(property="category", type="object"),
+ *     @OA\Property(property="image", type="string", format="url", example="https://example.com/image.jpg"),
+ *     @OA\Property(
+ *         property="contents",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/ApiV1BlogContentShowResource")
+ *     ),
+ *     @OA\Property(property="status", type="string", example="published"),
+ *     @OA\Property(property="status_translate", type="string", example="Published"),
+ *     @OA\Property(
+ *         property="related_blogs",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/ApiV1BlogIndexResource")
+ *     ),
+ *     @OA\Property(
+ *         property="faq",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/ApiV1FaqIndexResource")
+ *     ),
+ *     @OA\Property(property="props", type="object"),
+ *     @OA\Property(property="published_at", type="string", format="date-time"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="author", ref="#/components/schemas/UserShowResource"),
+ *     @OA\Property(property="valid_url", type="string")
+ * )
+ */
 class BlogShowResource extends JsonResource
 {
     public function toArray(Request $request): array

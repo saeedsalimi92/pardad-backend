@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\V1\ActivityLogController;
 use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BentoLayoutController;
 use App\Http\Controllers\Admin\V1\BlogController;
@@ -29,10 +30,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/menu', [MenuController::class, 'getMenu']);
 
-    Route::post('/upload-image', [UploadController::class , 'uploadImage']);
-    Route::post('/upload-images', [UploadController::class , 'uploadImages']);
-    Route::post('/upload-file', [UploadController::class , 'uploadFile']);
-    Route::post('/upload-media', [UploadController::class , 'uploadMedia']);
+    Route::post('/upload-image', [UploadController::class, 'uploadImage']);
+    Route::post('/upload-images', [UploadController::class, 'uploadImages']);
+    Route::post('/upload-file', [UploadController::class, 'uploadFile']);
+    Route::post('/upload-media', [UploadController::class, 'uploadMedia']);
 
 
     Route::group(["prefix" => "roles"], function () {
@@ -74,7 +75,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get("statuses", [BlogController::class, 'statuses']);
         Route::post('{blog}/update', [BlogController::class, 'update']);
 
-        Route::post('{blog}/status/change',[BlogController::class, 'changeStatus']);
+        Route::post('{blog}/status/change', [BlogController::class, 'changeStatus']);
         Route::group(['prefix' => '{blog}/faq'], function () {
             Route::get("/", [BlogController::class, 'faqIndex']);
             Route::post("/", [BlogController::class, 'faqStore']);
@@ -88,8 +89,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'product'], function () {
         Route::get("list", [ProductController::class, 'list']);
         Route::post('{product}/update', [ProductController::class, 'update']);
-        Route::post('{product}/status/change',[ProductController::class, 'changeStatus']);
-
+        Route::post('{product}/status/change', [ProductController::class, 'changeStatus']);
     });
     Route::apiResource('product', ProductController::class)->except(['update']);
 
@@ -102,8 +102,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(["prefix" => "brands"], function () {
         Route::post('{brand}/update', [BrandController::class, 'update']);
-        Route::post('{brand}/status/change',[BrandController::class, 'changeStatus']);
-        Route::post('priority/change',[BrandController::class, 'changePriority']);
+        Route::post('{brand}/status/change', [BrandController::class, 'changeStatus']);
+        Route::post('priority/change', [BrandController::class, 'changePriority']);
     });
     Route::apiResource('brands', BrandController::class)->except(['update']);
 
@@ -119,6 +119,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
     Route::get('/list', [CategoryController::class, 'allList']);
+
+    Route::get('/activity-log', [ActivityLogController::class, 'index']);
 });
 Route::middleware('auth:sanctum')->get('/user/permissions', function (Request $request) {
     return [

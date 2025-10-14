@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLog;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BlogContent extends Model
 {
-    use HasFactory;
+    use HasFactory, ActivityLog;
 
     protected $fillable = [
         'id',
@@ -49,4 +50,6 @@ class BlogContent extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+     
 }
