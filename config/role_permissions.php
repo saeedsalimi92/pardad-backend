@@ -101,6 +101,9 @@ return [
             'admin.user.destroy',
             'admin.user.change_status',
             'admin.user.change_password',
+
+            //file manager
+            'admin.file_manager.index',
         ],
     ],
 
